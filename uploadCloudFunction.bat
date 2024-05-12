@@ -1,0 +1,1 @@
+"D:\微信web开发者工具\cli.bat" cloud functions deploy --e cloud1-2gozlmfx8e3a937c --n quickstartFunctions --r --project "D:\weapp-workspace\jr-classmgr" --report_first --report
