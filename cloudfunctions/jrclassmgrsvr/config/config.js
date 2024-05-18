@@ -10,7 +10,7 @@ module.exports = {
 	// ##################################################################
 	// #### 调试相关 
 	TEST_MODE: false, // 测试模式 涉及小程序码生成路径， 用以下 TEST_TOKEN_ID openid.. 
-	TEST_TOKEN_ID: 'oD58U5Ej-gK0BjqSspqjQEPgXuQQ',
+	TEST_TOKEN_ID: '',
  
 
 	// #### 内容安全
