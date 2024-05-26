@@ -5,7 +5,7 @@
  */
 
 const BaseProjectAdminService = require('./base_project_admin_service.js');
-const UserModel = require('../../model/user_model.js');
+const StudentModel = require('../../model/student_model.js');
 const MeetModel = require('../../model/meet_model.js');
 const NewsModel = require('../../model/news_model.js');
 const LessonLogModel = require('../../model/lesson_log_model.js');
@@ -21,7 +21,7 @@ class AdminHomeService extends BaseProjectAdminService {
 	async adminHome() {
 		let where = {};
 
-		let userCnt = await UserModel.count(where);
+		let userCnt = await StudentModel.count(where);
 		let newsCnt = await NewsModel.count(where);
 		let meetCnt = await MeetModel.count(where);
 		return [

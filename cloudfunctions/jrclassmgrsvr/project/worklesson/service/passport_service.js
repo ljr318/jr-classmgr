@@ -1,12 +1,12 @@
 /**
- * Notes: passport模块业务逻辑 
+ * Notes: passport模块业务逻辑, 登录相关
  * Date: 2020-10-14 07:48:00 
  * Ver : CCMiniCloud Framework 2.0.1 ALL RIGHTS RESERVED BY cclinux0730 (wechat)
  */
 
 const BaseProjectService = require('./base_project_service.js');
 const cloudBase = require('../../../framework/cloud/cloud_base.js');
-const UserModel = require('../model/user_model.js');
+const StudentModel = require('../model/student_model.js');
 const dataUtil = require('../../../framework/utils/data_util.js');
 const LessonLogModel = require('../model/lesson_log_model.js');
 const MeetService = require('../service/meet_service.js');
@@ -24,7 +24,7 @@ class PassportService extends BaseProjectService {
 		let where = {
 			USER_MINI_OPENID: userId,
 		}
-		let cnt = await UserModel.count(where);
+		let cnt = await StudentModel.count(where);
 		if (cnt > 0)
 			return await this.login(userId);
 
@@ -32,7 +32,7 @@ class PassportService extends BaseProjectService {
 			where = {
 				USER_MOBILE: mobile
 			}
-			cnt = await UserModel.count(where);
+			cnt = await StudentModel.count(where);
 			if (cnt > 0) this.AppError('该手机已注册');
 
 			// 入库
@@ -46,7 +46,7 @@ class PassportService extends BaseProjectService {
 				USER_REG_TIME: this._timestamp,
 				USER_LESSON_TOTAL_CNT: 30
 			}
-			await UserModel.insert(data);
+			await StudentModel.insert(data);
 
 			let meetService = new MeetService();
 			meetService.editUserMeetLesson(null, userId, 30, LessonLogModel.TYPE.INIT);
@@ -61,7 +61,7 @@ class PassportService extends BaseProjectService {
 			USER_NAME: name,
 			USER_MOBILE: mobile
 		}
-		cnt = await UserModel.count(where);
+		cnt = await StudentModel.count(where);
 		if (cnt == 0)
 			this.AppError('该“姓名与手机”未登记为学员，请修改或者联系管理员~');
 
@@ -73,7 +73,7 @@ class PassportService extends BaseProjectService {
 			USER_FORMS: forms,
 			USER_REG_TIME: this._timestamp
 		}
-		await UserModel.edit(where, data);
+		await StudentModel.edit(where, data);
 
 		// 更新课时记录
 		LessonLogModel.edit(
@@ -105,7 +105,7 @@ class PassportService extends BaseProjectService {
 			USER_MINI_OPENID: userId
 		}
 		let fields = 'USER_LESSON_TOTAL_CNT,USER_LESSON_USED_CNT,USER_MOBILE,USER_NAME,USER_FORMS,USER_OBJ,USER_STATUS,USER_CHECK_REASON'
-		return await UserModel.getOne(where, fields);
+		return await StudentModel.getOne(where, fields);
 	}
 
 	/** 修改用户资料 */
@@ -115,7 +115,7 @@ class PassportService extends BaseProjectService {
 		forms,
 		userCheck
 	}) {
-		let user = await UserModel.getOne({ USER_MINI_OPENID: userId });
+		let user = await StudentModel.getOne({ USER_MINI_OPENID: userId });
 		if (!user) return;
 
 		if (!userCheck) {
@@ -124,7 +124,7 @@ class PassportService extends BaseProjectService {
 				USER_MOBILE: mobile,
 				USER_MINI_OPENID: ['<>', userId]
 			}
-			let cnt = await UserModel.count(whereMobile);
+			let cnt = await StudentModel.count(whereMobile);
 			if (cnt > 0) this.AppError('该手机已注册，请更换');
 
 			let data = {
@@ -133,7 +133,7 @@ class PassportService extends BaseProjectService {
 				USER_OBJ: dataUtil.dbForms2Obj(forms),
 				USER_FORMS: forms,
 			};
-			await UserModel.edit({ USER_MINI_OPENID: userId }, data);
+			await StudentModel.edit({ USER_MINI_OPENID: userId }, data);
 			return;
 
 		}
@@ -146,7 +146,7 @@ class PassportService extends BaseProjectService {
 				USER_NAME: name,
 				USER_MOBILE: mobile
 			}
-			let cnt = await UserModel.count(where);
+			let cnt = await StudentModel.count(where);
 			if (cnt == 0)
 				this.AppError('该“姓名与手机”未登记为学员，请修改或者联系管理员~');
 
@@ -155,7 +155,7 @@ class PassportService extends BaseProjectService {
 				USER_TYPE: 0,
 				USER_MINI_OPENID: user.USER_MOBILE
 			};
-			await UserModel.edit(
+			await StudentModel.edit(
 				{ USER_MINI_OPENID: userId, USER_TYPE: 1 },
 				data);
 
@@ -166,7 +166,7 @@ class PassportService extends BaseProjectService {
 				USER_OBJ: dataUtil.dbForms2Obj(forms),
 				USER_FORMS: forms,
 			};
-			await UserModel.edit(
+			await StudentModel.edit(
 				{ USER_MINI_OPENID: mobile, USER_TYPE: 0 },
 				data);
 
@@ -190,7 +190,7 @@ class PassportService extends BaseProjectService {
 			};
 
 
-			await UserModel.edit(
+			await StudentModel.edit(
 				{ USER_MINI_OPENID: userId, USER_TYPE: 1 },
 				data);
 		}
@@ -207,7 +207,7 @@ class PassportService extends BaseProjectService {
 			USER_TYPE: 1
 		};
 		let fields = 'USER_ID,USER_MINI_OPENID,USER_NAME,USER_PIC,USER_STATUS';
-		let user = await UserModel.getOne(where, fields);
+		let user = await StudentModel.getOne(where, fields);
 		let token = {};
 		if (user) {
 
@@ -222,8 +222,8 @@ class PassportService extends BaseProjectService {
 			let dataUpdate = {
 				USER_LOGIN_TIME: this._timestamp
 			};
-			UserModel.edit(where, dataUpdate);
-			UserModel.inc(where, 'USER_LOGIN_CNT', 1);
+			StudentModel.edit(where, dataUpdate);
+			StudentModel.inc(where, 'USER_LOGIN_CNT', 1);
 
 		} else
 			token = null;

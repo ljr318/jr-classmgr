@@ -14,7 +14,7 @@ const timeUtil = require('../../../framework/utils/time_util.js');
 const dataUtil = require('../../../framework/utils/data_util.js');
 const projectConfig = require('../public/project_config.js');
 
-const UserModel = require('../model/user_model.js');
+const StudentModel = require('../model/student_model.js');
 const LessonLogModel = require('../model/lesson_log_model.js');
 
 const MEET_LOG_LEVEL = 'debug';
@@ -49,7 +49,7 @@ class MeetService extends BaseProjectService {
 		let whereUser = {
 			USER_MINI_OPENID: userId,
 		}
-		let user = await UserModel.getOne(whereUser, 'USER_LESSON_TOTAL_CNT');
+		let user = await StudentModel.getOne(whereUser, 'USER_LESSON_TOTAL_CNT');
 		if (!user) this.AppError('用户不存在');
 
 
@@ -105,7 +105,7 @@ class MeetService extends BaseProjectService {
 			USER_LESSON_USED_CNT: Math.abs(Number(usedCnt)),
 			USER_LESSON_TIME: this._timestamp
 		}
-		await UserModel.edit(whereUser, userData);
+		await StudentModel.edit(whereUser, userData);
 	}
 
 	/** 统一获取Meet（某天) */
@@ -342,7 +342,7 @@ class MeetService extends BaseProjectService {
 		}
 
 		// 用户课时控制
-		let user = await UserModel.getOne({ USER_MINI_OPENID: userId }, 'USER_LESSON_TOTAL_CNT');
+		let user = await StudentModel.getOne({ USER_MINI_OPENID: userId }, 'USER_LESSON_TOTAL_CNT');
 		if (!user) this.AppError('用户不存在');
 		if (user.USER_LESSON_TOTAL_CNT <= 0) this.AppError('您当前的课时数为0，暂无法进行预约');
 

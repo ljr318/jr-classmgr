@@ -6,7 +6,7 @@
 
 const BaseProjectAdminController = require('./base_project_admin_controller.js');
 
-const UserModel = require('../../model/user_model.js');
+const StudentModel = require('../../model/student_model.js');
 const AdminUserService = require('../../service/admin/admin_user_service.js');
 const timeUtil = require('../../../../framework/utils/time_util.js');
 
@@ -67,7 +67,7 @@ class AdminUserController extends BaseProjectAdminController {
 		// 数据格式化
 		let list = result.list;
 		for (let k = 0; k < list.length; k++) {
-			list[k].USER_STATUS_DESC = UserModel.getDesc('STATUS', list[k].USER_STATUS);
+			list[k].USER_STATUS_DESC = StudentModel.getDesc('STATUS', list[k].USER_STATUS);
 			list[k].USER_ADD_TIME = timeUtil.timestamp2Time(list[k].USER_ADD_TIME);
 			list[k].USER_REG_TIME = timeUtil.timestamp2Time(list[k].USER_REG_TIME);
 			list[k].USER_LOGIN_TIME = list[k].USER_LOGIN_TIME ? timeUtil.timestamp2Time(list[k].USER_LOGIN_TIME) : '未登录';
@@ -113,7 +113,7 @@ class AdminUserController extends BaseProjectAdminController {
 		// 取得数据
 		let input = this.validateData(rules);
 
-		let title = await UserModel.getOneField({ USER_MINI_OPENID: input.id }, 'USER_NAME');
+		let title = await StudentModel.getOneField({ USER_MINI_OPENID: input.id }, 'USER_NAME');
 
 		let service = new AdminUserService();
 		await service.delUser(input.id);

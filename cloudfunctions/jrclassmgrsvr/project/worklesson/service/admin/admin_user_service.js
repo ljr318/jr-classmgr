@@ -10,7 +10,7 @@ const util = require('../../../../framework/utils/util.js');
 const exportUtil = require('../../../../framework/utils/export_util.js');
 const timeUtil = require('../../../../framework/utils/time_util.js');
 const dataUtil = require('../../../../framework/utils/data_util.js');
-const UserModel = require('../../model/user_model.js');
+const StudentModel = require('../../model/student_model.js');
 const LessonLogModel = require('../../model/lesson_log_model.js');
 const AdminHomeService = require('./admin_home_service.js');
 const MeetService = require('../meet_service.js');
@@ -29,7 +29,7 @@ class AdminUserService extends BaseProjectAdminService {
 		let where = {
 			USER_MINI_OPENID: userId,
 		}
-		return await UserModel.getOne(where, fields);
+		return await StudentModel.getOne(where, fields);
 	}
 
 	/** 取得用户分页列表 */
@@ -83,7 +83,7 @@ class AdminUserService extends BaseProjectAdminService {
 				}
 			}
 		}
-		let result = await UserModel.getList(where, fields, orderBy, page, size, true, oldTotal, false);
+		let result = await StudentModel.getList(where, fields, orderBy, page, size, true, oldTotal, false);
 
 
 		// 为导出增加一个参数condition

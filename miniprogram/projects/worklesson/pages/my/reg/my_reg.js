@@ -6,7 +6,7 @@ const ProjectBiz = require('../../../biz/project_biz.js');
 const projectSetting = require('../../../public/project_setting.js');
 const setting = require('../../../../../setting/setting.js');
 const PassportBiz = require('../../../../../comm/biz/passport_biz.js');
-
+const defaultAvatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'
 Page({
 	/**
 	 * 页面的初始数据
@@ -14,7 +14,7 @@ Page({
 	data: {
 		isLoad: false,
 		isEdit: false,
-
+    avatarUrl: defaultAvatarUrl,
 		mobileCheck: setting.MOBILE_CHECK
 	},
 
@@ -49,7 +49,12 @@ Page({
 			formForms: []
 		});
 	},
-
+  onChooseAvatar(e) {
+    const { avatarUrl } = e.detail 
+    this.setData({
+      avatarUrl,
+    })
+  },
 	/**
 	 * 生命周期函数--监听页面初次渲染完成
 	 */
@@ -92,6 +97,8 @@ Page({
 	},
 
 	bindGetPhoneNumber: async function (e) {
+    console.log('DBG MARK1');
+    console.log(e);
 		PassportBiz.getPhone(e, this);
 	},
 
