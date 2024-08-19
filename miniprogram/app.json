@@ -31,6 +31,7 @@
     "projects/worklesson/pages/admin/user/list/admin_user_list",
     "projects/worklesson/pages/admin/user/detail/admin_user_detail",
     "projects/worklesson/pages/admin/user/export/admin_user_export",
+    "projects/worklesson/pages/admin/teacher/list/admin_teacher_list",
     "projects/worklesson/pages/meet/index/meet_index",
     "projects/worklesson/pages/meet/calendar/meet_calendar",
     "projects/worklesson/pages/meet/join/meet_join",

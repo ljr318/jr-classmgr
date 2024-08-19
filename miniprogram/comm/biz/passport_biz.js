@@ -247,9 +247,8 @@ class PassportBiz extends BaseBiz {
 
 /** 表单校验    */
 PassportBiz.CHECK_FORM = {
-	name: 'formName|must|string|min:1|max:30|name=昵称',
+	name: 'formName|must|name|min:1|max:30|name=昵称',
 	mobile: 'formMobile|must|len:11|name=手机',
-	forms: 'formForms|array'
 };
 
 

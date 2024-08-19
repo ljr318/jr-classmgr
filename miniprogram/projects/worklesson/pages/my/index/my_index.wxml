@@ -2,12 +2,12 @@
 	<image class="bg" mode="widthFix" src="../../../images/my.jpg" />
 	<view class="top" bindtap="url" data-url="{{user?'../edit/my_edit':'../reg/my_reg'}}">
 		<view class="left">
-			<image mode="aspectFill" src="../../../images/tabbar/my_cur.png"></image>
+			<image mode="aspectFill" src="{{user && user.AVATAR ? user.AVATAR : '../../../images/tabbar/my_cur.png'}}"></image>
 		</view>
 		<view class="right">
 			<view class="name content-cut-one">
-				<text>{{user?user.USER_NAME:'注册 / 登录'}}</text>
-				<text wx:if="{{user&&user.USER_STATUS==9}}" class="tag small radius bg-red margin-left-xs light">已禁用</text>
+				<text>{{user?user.STUDENT_NAME:'注册 / 登录'}}</text>
+				<text wx:if="{{user&&user.STATUS==2}}" class="tag small radius bg-red margin-left-xs light">已禁用</text>
 			</view>
 			<view class="desc">{{user?'欢迎回来~~~':'马上注册，使用更多功能'}}</view>
 		</view>
@@ -23,9 +23,13 @@
 			<view class="title">{{user?user.USER_LESSON_USED_CNT:'0'}}节</view>
 			<view class="desc">已约课时</view>
 		</view>
-		<view class="item" bindtap="url" data-url="../../meet/lesson_log/meet_lesson_log">
+		<!--<view class="item" bindtap="url" data-url="../../meet/lesson_log/meet_lesson_log">
 			<view class="title">课时记录</view>
 			<view class="desc">查看变更</view>
+		</view>-->
+    <view class="item" bindtap="url" data-url="../../meet/lesson_log/meet_lesson_log">
+			<view class="title">{{user && user.STUDENT_TYPE == 1 ? "本校" : "临时"}}</view>
+			<view class="desc">学员类型</view>
 		</view>
 	</view>
 
@@ -67,7 +71,7 @@
 
 
 	<view class="list-menu">
-		<view wx:if="{{user&&user.USER_STATUS!=9}}" class="item" bindtap="url" data-url="../edit/my_edit">
+		<view wx:if="{{user&&user.STATUS!=2}}" class="item" bindtap="url" data-url="../edit/my_edit">
 			<view class="title">
 				<text class="icon-edit title-ico"></text>
 				<text>修改我的个人资料</text>

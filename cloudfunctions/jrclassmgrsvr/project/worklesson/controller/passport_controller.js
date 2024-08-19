@@ -38,9 +38,8 @@ class PassportController extends BaseProjectController {
 		// 数据校验
 		let rules = {
 			name: 'must|string|min:1|max:30|name=昵称',
-			mobile: 'must|mobile|name=手机',
-			forms: 'array|name=表单',
-			userCheck: 'bool|name=校验规则',
+			phoneNumber: 'must|mobile|name=手机',
+      avatarUrl: 'string|name=头像链接',
 		};
 
 		// 取得数据

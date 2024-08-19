@@ -93,7 +93,7 @@ async function app(event, context) {
 		// 引入逻辑controller 
 		controllerName = controllerName.toLowerCase().trim();
 		const ControllerClass = require('project/'+PID +'/controller/' + controllerName + '.js');
-		const controller = new ControllerClass(r, PID + '^^^' + openId, event);
+		const controller = new ControllerClass(r, openId, event);
  
 		// 调用方法    
 		await controller['initSetup']();

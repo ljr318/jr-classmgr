@@ -10,7 +10,7 @@ const timeUtil = require('../utils/time_util.js');
 const dataUtil = require('../utils/data_util.js');
 const AppError = require('../core/app_error.js');
 const cloudBase = require('../cloud/cloud_base.js');
-
+const logger = cloudBase.getCloud().logger();
 class Model {
 
 	static async getOne(where, fields = '*', orderBy = {}) {
@@ -19,19 +19,19 @@ class Model {
 
 	static async edit(where, data) {
 
-		if (this.UPDATE_TIME) {
-			let editField = this.FIELD_PREFIX + 'EDIT_TIME';
-			if (!util.isDefined(data[editField])) data[editField] = timeUtil.time();
-		}
+		// if (this.UPDATE_TIME) {
+		// 	let editField = this.FIELD_PREFIX + 'EDIT_TIME';
+		// 	if (!util.isDefined(data[editField])) data[editField] = timeUtil.time();
+		// }
 
-		if (this.UPDATE_IP) {
-			let cloud = cloudBase.getCloud();
-			let ip = cloud.getWXContext().CLIENTIP;
+		// if (this.UPDATE_IP) {
+		// 	let cloud = cloudBase.getCloud();
+		// 	let ip = cloud.getWXContext().CLIENTIP;
 
 
-			let editField = this.FIELD_PREFIX + 'EDIT_IP';
-			if (!util.isDefined(data[editField])) data[editField] = ip;
-		}
+		// 	let editField = this.FIELD_PREFIX + 'EDIT_IP';
+		// 	if (!util.isDefined(data[editField])) data[editField] = ip;
+		// }
 
 		data = this.clearEditData(data);
 
@@ -44,32 +44,32 @@ class Model {
 
 	static async insert(data) {
 		// 自动ID
-		if (this.ADD_ID) {
-			let idField = this.FIELD_PREFIX + 'ID';
-			if (!util.isDefined(data[idField])) data[idField] = dataUtil.makeID();
-		}
+		// if (this.ADD_ID) {
+		// 	let idField = this.FIELD_PREFIX + 'ID';
+		// 	if (!util.isDefined(data[idField])) data[idField] = dataUtil.makeID();
+		// }
 
 		// 更新时间
-		if (this.UPDATE_TIME) {
-			let timestamp = timeUtil.time();
-			let addField = this.FIELD_PREFIX + 'ADD_TIME';
-			if (!util.isDefined(data[addField])) data[addField] = timestamp;
+		// if (this.UPDATE_TIME) {
+		// 	let timestamp = timeUtil.time();
+		// 	let addField = this.FIELD_PREFIX + 'ADD_TIME';
+		// 	if (!util.isDefined(data[addField])) data[addField] = timestamp;
 
-			let editField = this.FIELD_PREFIX + 'EDIT_TIME';
-			if (!util.isDefined(data[editField])) data[editField] = timestamp;
-		}
+		// 	let editField = this.FIELD_PREFIX + 'EDIT_TIME';
+		// 	if (!util.isDefined(data[editField])) data[editField] = timestamp;
+		// }
 
 		// 更新IP
-		if (this.UPDATE_IP) {
-			let cloud = cloudBase.getCloud();
-			let ip = cloud.getWXContext().CLIENTIP;
+		// if (this.UPDATE_IP) {
+		// 	let cloud = cloudBase.getCloud();
+		// 	let ip = cloud.getWXContext().CLIENTIP;
 
-			let addField = this.FIELD_PREFIX + 'ADD_IP';
-			if (!util.isDefined(data[addField])) data[addField] = ip;
+		// 	let addField = this.FIELD_PREFIX + 'ADD_IP';
+		// 	if (!util.isDefined(data[addField])) data[addField] = ip;
 
-			let editField = this.FIELD_PREFIX + 'EDIT_IP';
-			if (!util.isDefined(data[editField])) data[editField] = ip;
-		}
+		// 	let editField = this.FIELD_PREFIX + 'EDIT_IP';
+		// 	if (!util.isDefined(data[editField])) data[editField] = ip;
+		// }
 
 		// 数据清洗
 		data = this.clearCreateData(data);
@@ -335,7 +335,7 @@ class Model {
 	static clearDirtyData(data) {
 		for (let key in data) {
 			if (!this.DB_STRUCTURE.hasOwnProperty(key) && !key.includes('.')) {
-				console.error('脏数据:' + key);
+				logger.error({dbgmsg: '脏数据:' + key});
 				throw new AppError('脏数据');
 			}
 		}

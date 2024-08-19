@@ -294,7 +294,7 @@ async function getTempFileURLOne(fileID) {
 }
 
 async function transTempPics(imgList, dir, id, prefix = '') {
-	if (setting.IS_DEMO) return imgList; 
+	// if (setting.IS_DEMO) return imgList; 
 
 	if (prefix && !prefix.endsWith('_')) prefix += '_';
 	if (!id) id = timeHelper.time('YMD');
@@ -423,7 +423,6 @@ async function transFormsTempPics(forms, dir, id, route) {
 }
 
 async function transTempPicOne(img, dir, id, isCheck = true) {
-
 	if (isCheck) {
 		wx.showLoading({
 			title: '图片校验中',
@@ -445,8 +444,6 @@ async function transTempPicOne(img, dir, id, isCheck = true) {
 	else {
 		return imgList[0];
 	}
-
-
 }
 
 module.exports = {

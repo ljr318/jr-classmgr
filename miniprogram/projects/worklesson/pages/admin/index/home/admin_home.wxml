@@ -27,17 +27,17 @@
 	</view>
 
 	<view class="comm-list grid col-3">
-		<view class="item" bindtap="url" data-url="../../user/list/admin_user_list"> <text class="icon-group_fill text-green"></text> <text class="text-black">学员&课时管理</text>
+		<view class="item" bindtap="url" data-url="../../user/list/admin_user_list"> <text class="icon-group_fill text-green"></text> <text class="text-black">学员管理</text>
 		</view>
 
-		<view class="item" bindtap="url" data-url="../../news/list/admin_news_list"> <text class="icon-form text-darkgreen"></text> <text class="text-black">通知管理</text>
+		<!--<view class="item" bindtap="url" data-url="../../news/list/admin_news_list"> <text class="icon-form text-darkgreen"></text> <text class="text-black">通知管理</text>
+		</view>-->
+
+    <view class="item" bindtap="url" data-url="../../teacher/list/admin_teacher_list"> <text class="icon-friend text-red"></text> <text class="text-black">教练管理</text>
 		</view>
 
-		<view class="item" bindtap="url" data-url="../../meet/list/admin_meet_list"> <text class="icon-friend text-blue"></text> <text class="text-black">老师&预约管理</text>
+		<view class="item" bindtap="url" data-url="../../meet/admin-list/admin_meet_list"> <text class="icon-calendar text-blue"></text> <text class="text-black">课程&预约管理</text>
 		</view> 
-
-
-
 	</view>
 
 

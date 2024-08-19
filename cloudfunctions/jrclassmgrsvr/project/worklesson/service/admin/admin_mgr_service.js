@@ -16,7 +16,7 @@ class AdminMgrService extends BaseProjectAdminService {
 
 	//**管理员登录  */
 	async adminLogin(name, password) {
-
+    console.log('password: ', password, ' after md5: ', md5Lib.md5(password));
 		// 判断是否存在
 		let where = {
 			ADMIN_STATUS: 1,
@@ -98,7 +98,6 @@ class AdminMgrService extends BaseProjectAdminService {
 			}
 		}
 		let result = await LogModel.getList(where, fields, orderBy, page, size, true, oldTotal);
-
 
 		return result;
 	}

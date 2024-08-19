@@ -351,7 +351,10 @@
  				case 'bool':
  				case 'boolean':
  					dataType = 'Boolean';
- 					break;
+           break;
+        case 'name':
+          dataType = 'RealName'
+          break;
  			}
  		}
 
@@ -454,7 +457,14 @@
  					return _showError(desc + '必须为字符串格式', formName, that);
  				}
  				break;
- 			}
+       }
+       case 'RealName': {
+        let re = /^[a-zA-Z0-9\u4e00-\u9fa5·]{2,20}$/;
+        if (!re.test(formName)) {
+          return _showError(desc + '必须为合法的正式姓名', formName, that);
+        }
+        break;
+       }
  		}
 
  		returnData[key] = val;

@@ -19,7 +19,7 @@ class BaseProjectService extends BaseService {
 
 		let F = (c) => 'bx_' + c;
 		const INSTALL_CL = 'setup_worklesson';
-		const COLLECTIONS = ['setup', 'admin', 'log', 'day', 'fav', 'join', 'meet', 'news', 'temp', 'user', 'lesson_log'];
+		const COLLECTIONS = ['setup', 'admin', 'log', 'day', 'fav', 'join', 'meet', 'news', 'temp', 'user', 'lesson_log','student','teacher'];
 		const CONST_PIC = '/images/cover.gif';
 
 		const NEWS_CATE = '1=最新通知';

@@ -16,21 +16,21 @@ class MultiModel extends Model {
 		return config.COLLECTION_PRFIX + cl;
 	}
 
-	static _getWhere(where, mustPID = true) {
-		if (mustPID) {
-			if (typeof (where) == 'string' || typeof (where) == 'number') {
-				where = {
-					_id: where,
-					_pid: util.getProjectId()
-				};
-			} else
-				where._pid = util.getProjectId();
-		}
+	static _getWhere(where) {
+		// if (mustPID) {
+		// 	if (typeof (where) == 'string' || typeof (where) == 'number') {
+		// 		where = {
+		// 			_id: where,
+		// 			_pid: util.getProjectId()
+		// 		};
+		// 	} else
+		// 		where._pid = util.getProjectId();
+		// }
 		return where;
 	}
 
 	static async getOneField(where, field, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		let one = await super.getOne(where, field);
 		if (!one)
 			return null;
@@ -44,17 +44,17 @@ class MultiModel extends Model {
 	}
 
 	static async getOne(where, fields = '*', orderBy = {}, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getOne(where, fields, orderBy);
 	}
 
 	static async edit(where, data, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.edit(where, data);
 	}
 
 	static async editForms(where, formName, objName, hasImageForms, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 
 		let forms = await this.getOneField(where, formName, mustPID);
 		if (!forms) return;
@@ -81,12 +81,12 @@ class MultiModel extends Model {
 	}
 
 	static async count(where, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.count(where);
 	}
 
 	static async insert(data, mustPID = true) {
-		if (mustPID) data._pid = util.getProjectId();
+		// if (mustPID) data._pid = util.getProjectId();
 		return await super.insert(data);
 	}
 
@@ -108,7 +108,7 @@ class MultiModel extends Model {
 	}
 
 	static async del(where, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.del(where);
 	}
 
@@ -117,12 +117,12 @@ class MultiModel extends Model {
 	}
 
 	static async inc(where, field, val = 1, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.inc(where, field, val);
 	}
 
 	static async mul(where, field, val = 1, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.mul(where, field, val);
 	}
 
@@ -132,67 +132,67 @@ class MultiModel extends Model {
 	}
 
 	static async groupCount(where, groupField, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.groupCount(where, groupField);
 	}
 
 	static async sum(where, field, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.sum(where, field);
 	}
 
 	static async distinct(where, field, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.distinct(where, field);
 	}
 
 	static async distinctCnt(where, field, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.distinctCnt(where, field);
 	}
 
 	static async max(where, field, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.max(where, field);
 	}
 
 	static async min(where, field, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.min(where, field);
 	}
 
 	static async rand(where, field, size = 1, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.rand(where, field, size);
 	}
 
 	static async getAll(where, fields, orderBy, size = 100, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getAll(where, fields, orderBy, size);
 	}
 
 	static async getAllBig(where, fields, orderBy, size = 1000, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getAllBig(where, fields, orderBy, size);
 	}
 
 	static async getAllByArray(arrField, where, fields, orderBy, size = 100, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getAllByArray(arrField, where, fields, orderBy, size);
 	}
 
 	static async getList(where, fields, orderBy, page, size, isTotal, oldTotal, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getList(where, fields, orderBy, page, size, isTotal, oldTotal);
 	}
 
 	static async getListJoin(joinParams, where, fields, orderBy, page = 1, size, isTotal = true, oldTotal = 0, is2Many = false, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getListJoin(joinParams, where, fields, orderBy, page, size, isTotal, oldTotal, is2Many);
 	}
 
 	static async getListJoinCount(joinParams, where, mustPID = true) {
-		where = MultiModel._getWhere(where, mustPID);
+		where = MultiModel._getWhere(where);
 		return await super.getListJoinCount(joinParams, where);
 	}
 
