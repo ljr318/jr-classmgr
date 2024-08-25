@@ -2,7 +2,7 @@
 	<cmpt-comm-list id="cmpt-comm-list" source='admin' type="admin-user-list" search="{{search||''}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="admin/user_list" sortMenusDefaultIndex="0" topBottom="50" placeholder="搜索" bind:list="bindCommListCmpt">
 
 		<view slot="searchEnd">
-			<button bindtap="url" data-url="../add/admin_user_add" class="btn mid radius bg-orange text-white margin-right-s"><text class="icon-add margin-right-xxs"></text>添加教练员</button>
+			<button bindtap="url" data-url="../add/admin_teacher_add" class="btn mid radius bg-orange text-white margin-right-s"><text class="icon-add margin-right-xxs"></text>添加教练员</button>
 			<!--<button bindtap="url" data-url="../export/admin_user_export?condition={{dataList.condition}}" class="btn mid radius bg-admin text-white margin-right-s"><text class="icon-down margin-right-xxs"></text>导出学员</button>-->
 		</view>
 

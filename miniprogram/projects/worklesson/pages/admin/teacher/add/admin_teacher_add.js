@@ -10,7 +10,14 @@ Page({
 	 * 页面的初始数据
 	 */
 	data: {
-
+    isLoad: false,
+    formName: '',
+    formNameFocus: false,
+    formMobile: '',
+    formMobileFocus: false,
+    formPassword: '',
+    formPasswordFocus: false,
+    formAvatar: '',
 	},
 
 	/**
@@ -67,22 +74,20 @@ Page({
 
 		let data = this.data;
 
-		let rules = {
-			name: 'formName|must|string|min:2|max:20|name=姓名',
-			mobile: 'formMobile|must|string|len:11|name=手机',
-			lessonCnt: 'formLessonCnt|must|int|name=课时数',
-		}
-		data = validate.check(data, rules, this);
+		// let rules = {
+		// 	name: 'formName|must|string|min:2|max:20|name=姓名',
+		// 	mobile: 'formMobile|must|string|len:11|name=手机',
+		// }
+		// data = validate.check(data, rules, this);
 
 		if (!data) return;
-
+    console.log('teacher form data: ', data);
 		try {
-			await cloudHelper.callCloudSumbit('admin/user_insert', data).then(res => {
+			await cloudHelper.callCloudSumbit('admin/teacher_insert', data).then(res => {
 
 				let callback = async function () {
-					PublicBiz.removeCacheList('admin-user-list');
+					PublicBiz.removeCacheList('admin-teacher-list');
 					wx.navigateBack();
-
 				}
 				pageHelper.showSuccToast('添加成功', 2000, callback);
 			});
