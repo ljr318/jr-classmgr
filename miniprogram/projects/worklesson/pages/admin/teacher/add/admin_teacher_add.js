@@ -11,13 +11,13 @@ Page({
 	 */
 	data: {
     isLoad: false,
-    formName: '',
-    formNameFocus: false,
-    formMobile: '',
-    formMobileFocus: false,
-    formPassword: '',
-    formPasswordFocus: false,
-    formAvatar: '',
+    teacherName: '',
+    teacherNameFocus: false,
+    phoneNumber: '',
+    phoneNumberFocus: false,
+    password: '',
+    passwordFocus: false,
+    // formAvatar: '',
 	},
 
 	/**
@@ -31,8 +31,6 @@ Page({
 		});
 
 	},
-
-
 
 	/**
 	 * 生命周期函数--监听页面初次渲染完成

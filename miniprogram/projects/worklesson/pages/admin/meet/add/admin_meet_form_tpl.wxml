@@ -1,72 +1,139 @@
 <view class="form-box shadow">
-	<view class="form-group">
-		<view class="title must">标题</view>
-		<input placeholder="简短的标题" placeholder-class="phc" model:value="{{formTitle}}" focus="{{formTitleFocus}}" maxlength="50"></input>
-	</view>
-	<view wx:if="{{formTitleFocus}}" class="hint-desc error">{{formTitleFocus}}</view>
+  <view class="form-group">
+    <view class="title must">课程标题</view>
+    <input placeholder="请输入一个简短的标题" placeholder-class="phc" model:value="{{meetTitle}}" focus="{{meetTitleFocus}}" maxlength="50"></input>
+  </view>
+  <view wx:if="{{meetTitleFocus}}" class="hint-desc error">{{meetTitleFocus}}</view>
 
-	<view wx:if="{{cateIdOptions.length>1&&isAdmin}}" class="form-group arrow" id="formCateId">
-		<view class="title must">分类</view>
+  <!--<view class="form-group arrow" id="formCateId">
+		<view class="title must">课程类型</view>
 		<cmpt-picker id="cate-picker" sourceData="{{cateIdOptions}}" bind:select="bindCateIdSelect" data-type="picker" data-item="formCateId" item="{{formCateId}}"> </cmpt-picker>
 	</view>
-	<view wx:if="{{formCateIdFocus}}" class="hint-desc error">{{formCateIdFocus}}</view>
+	<view wx:if="{{formCateIdFocus}}" class="hint-desc error">{{formCateIdFocus}}</view>-->
 
+  <view class="form-group" id="meetCateID">
+    <view class="title must">课程类型</view>
+    <cmpt-picker mark="meetCateID" style="flex:1" model:item="{{meetCateID}}" sourceDataStr="0=模拟,1=训练" />
+  </view>
+  <view wx:if="{{meetCateIDFocus}}" class="hint-desc error">{{meetCateIDFocus}}</view>
 
+  <view class="form-group" id="meetSubjectType">
+    <view class="title must">科目</view>
+    <cmpt-picker mark="meetSubjectType" style="flex:1" model:item="{{meetSubjectType}}" sourceDataStr="1=科目二,2=科目三" />
+  </view>
+  <view wx:if="{{meetSubjectTypeFocus}}" class="hint-desc error">{{meetSubjectTypeFocus}}</view>
 
-	<view class="form-group" wx:if="{{isAdmin}}">
+  <view class="form-group" id="meetDrivingLicenseType">
+    <view class="title must">驾照等级</view>
+    <cmpt-picker mark="meetDrivingLicenseType" style="flex:1" model:item="{{meetDrivingLicenseType}}" sourceDataStr="C1,C2,B1,B2,A1,A2" />
+  </view>
+  <view wx:if="{{meetDrivingLicenseTypeFocus}}" class="hint-desc error">{{meetDrivingLicenseTypeFocus}}</view>
+
+  <view class="form-group">
+    <view class="title must">课程详情</view>
+    <textarea placeholder="请输入课程详情" placeholder-class="phc" model:value="{{meetDesc}}" focus="{{meetDescFocus}}" maxlength="100"></textarea>
+  </view>
+  <view wx:if="{{meetDescFocus}}" class="hint-desc error">{{meetDescFocus}}</view>
+
+  <view class="form-group arrow">
+    <view class="title must">开始时间</view>
+    <cmpt-picker-time mark="formMeetStartTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetStartTime" startYear="2021" endYear="2065" model:item="{{formMeetStartTime}}">
+      <view class="form-text">{{formMeetStartTime||'请选择'}}</view>
+    </cmpt-picker-time>
+  </view>
+  <view wx:if="{{meetStartTimeFocus}}" class="hint-desc error">{{meetStartTimeFocus}}</view>
+
+  <view class="form-group arrow">
+    <view class="title must">结束时间</view>
+    <cmpt-picker-time mark="formMeetEndTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetEndTime" startYear="2021" endYear="2065" model:item="{{formMeetEndTime}}">
+      <view class="form-text">{{formMeetEndTime||'请选择'}}</view>
+    </cmpt-picker-time>
+  </view>
+  <view wx:if="{{meetEndTimeFocus}}" class="hint-desc error">{{meetEndTimeFocus}}</view>
+
+  <view class="form-group">
+    <view class="title must">使用车辆</view>
+    <input placeholder="请选择要使用的训练车辆" placeholder-class="phc" model:value="{{meetUsingCarID}}" focus="{{meetUsingCarIDFocus}}" maxlength="100"></input>
+  </view>
+  <view wx:if="{{meetUsingCarIDFocus}}" class="hint-desc error">{{meetUsingCarIDFocus}}</view>
+
+  <view class="form-group">
+    <view class="title must">课程地点</view>
+    <input placeholder="请选择要使用的训练车辆" placeholder-class="phc" model:value="{{meetLocation}}" focus="{{meetLocationFocus}}" maxlength="100"></input>
+  </view>
+  <view wx:if="{{meetLocationFocus}}" class="hint-desc error">{{meetLocationFocus}}</view>
+
+  <view class="form-group">
+		<view class="title must">可预约人数上限</view>
+		<input placeholder="课程最大可参加的人数" type="number" placeholder-class="phc" model:value="{{meetReserveStudentCnt}}" focus="{{meetReserveStudentCntFocus}}"></input>
+	</view>
+  <view wx:if="{{meetReserveStudentCntFocus}}" class="hint-desc error">{{meetReserveStudentCntFocus}}</view>
+
+  <view class="form-group" id="meetCancelSet">
+    <view class="title must">取消规则</view>
+    <cmpt-picker mark="meetCancelSet" style="flex:1" model:item="{{meetCancelSet}}" sourceDataStr="0=不允许取消,1=开始前1小时可取消,2=开始前2小时可取消,3=开始前3小时可取消,4=开课前均可取消" />
+  </view>
+  <view wx:if="{{meetCancelSetFocus}}" class="hint-desc error">{{meetCancelSetFocus}}</view>
+
+  <view class="form-group" id="meetCanReserveStudentType">
+    <view class="title must">可预约学员类型</view>
+    <cmpt-picker mark="meetCanReserveStudentType" style="flex:1" model:item="{{meetCanReserveStudentType}}" sourceDataStr="0=本校外校均可,1=本校学员,2=外校学员" />
+  </view>
+  <view wx:if="{{meetCanReserveStudentTypeFocus}}" class="hint-desc error">{{meetCanReserveStudentTypeFocus}}</view>
+
+  <!--<view class="form-group" wx:if="{{isAdmin}}">
 		<view class="title must">排序号<text class="text-grey text-normal margin-left-xs">(小的先显示)</text></view>
 		<input placeholder="排序号，小的先显示" type="number" placeholder-class="phc" model:value="{{formOrder}}" focus="{{formOrderFocus}}" maxlength="4"></input>
 	</view>
-	<view wx:if="{{formOrderFocus}}" class="hint-desc error">{{formOrderFocus}}</view>
+  <view wx:if="{{formOrderFocus}}" class="hint-desc error">{{formOrderFocus}}</view>-->
 
-
-	<view class="form-group" id="formCancelSet">
-		<view class="title must">取消设置</view>
-		<cmpt-picker mark="cancelSet" style="flex:1" model:item="{{formCancelSet}}" sourceDataStr="0=不可取消,1=随时可取消,10=开始前均可取消,11=开始前1小时可取消,12=开始前2小时可取消,13=开始前3小时可取消,14=开始前4小时可取消,15=开始前5小时可取消" />
-	</view>
-	<view wx:if="{{formCancelSetFocus}}" class="hint-desc error">{{formCancelSetFocus}}</view>
+  <!--<view class="form-group" id="formCancelSet">
+    <view class="title must">取消设置</view>
+    <cmpt-picker mark="cancelSet" style="flex:1" model:item="{{formCancelSet}}" sourceDataStr="0=不可取消,1=随时可取消,10=开始前均可取消,11=开始前1小时可取消,12=开始前2小时可取消,13=开始前3小时可取消,14=开始前4小时可取消,15=开始前5小时可取消" />
+  </view>
+  <view wx:if="{{formCancelSetFocus}}" class="hint-desc error">{{formCancelSetFocus}}</view>-->
 
 </view>
 
-<view id="formDaysSet" class="form-box shadow" style="background-color: #fef2ce;">
-	<view bindtap="url" data-url="../time/{{isAdmin?'admin':'work'}}_meet_time" class="form-group arrow">
-		<view class="title must ">预约时段排期设置</view>
-		<view wx:if="{{formDaysSet.length}}" class="form-text text-red text-bold">{{formDaysSet.length}}天可约</view>
-		<view wx:else class="form-text text-orange">请配置可预约时段</view>
-	</view>
-	<view wx:if="{{formDaysSetFocus}}" class="hint-desc error">{{formDaysSetFocus}}</view>
+<!--<view id="formDaysSet" class="form-box shadow" style="background-color: #fef2ce;">
+  <view bindtap="url" data-url="../time/{{isAdmin?'admin':'work'}}_meet_time" class="form-group arrow">
+    <view class="title must ">预约时段排期设置</view>
+    <view wx:if="{{formDaysSet.length}}" class="form-text text-red text-bold">{{formDaysSet.length}}天可约</view>
+    <view wx:else class="form-text text-orange">请配置可预约时段</view>
+  </view>
+  <view wx:if="{{formDaysSetFocus}}" class="hint-desc error">{{formDaysSetFocus}}</view>
 
 </view>
 
 
 <view id="formPhone" class="form-box shadow" wx:if="{{isAdmin&&formCateId==1}}">
-	<view class="form-group">
-		<view class="title">老师登陆手机</view>
-		<input maxlength="11" type="number" placeholder="请填写登陆手机号码" model:value="{{formPhone}}" focus="{{formPhoneFocus}}"></input>
-	</view>
-	<view wx:if="{{formPhoneFocus}}" class="hint-desc error">{{formPhoneFocus}}</view>
+  <view class="form-group">
+    <view class="title">老师登陆手机</view>
+    <input maxlength="11" type="number" placeholder="请填写登陆手机号码" model:value="{{formPhone}}" focus="{{formPhoneFocus}}"></input>
+  </view>
+  <view wx:if="{{formPhoneFocus}}" class="hint-desc error">{{formPhoneFocus}}</view>
 
-	<view class="form-group text-orange" wx:if="{{isAdmin&&isEdit}}">
-		<text class="icon-info" style="font-size: 24rpx;">不修改密码则保持以下为空</text>
-	</view>
-	<view class="form-group">
-		<view class="title">老师登陆密码</view>
-		<input maxlength="30" placeholder="请填写登陆密码" model:value="{{formPassword}}" focus="{{formPasswordFocus}}"></input>
-	</view>
-	<view wx:if="{{formPasswordFocus}}" class="hint-desc error">{{formPasswordFocus}}</view>
+  <view class="form-group text-orange" wx:if="{{isAdmin&&isEdit}}">
+    <text class="icon-info" style="font-size: 24rpx;">不修改密码则保持以下为空</text>
+  </view>
+  <view class="form-group">
+    <view class="title">老师登陆密码</view>
+    <input maxlength="30" placeholder="请填写登陆密码" model:value="{{formPassword}}" focus="{{formPasswordFocus}}"></input>
+  </view>
+  <view wx:if="{{formPasswordFocus}}" class="hint-desc error">{{formPasswordFocus}}</view>
 
 
 </view>
 
 
 <view class="form-box shadow margin-top-xs">
-	<cmpt-form-show id="cmpt-form" mark="cmpt-form" source="admin" isCacheMatch="{{false}}" fields="{{fields}}" forms="{{formForms}}" isDefMatch="{{id?false:true}}">
-	</cmpt-form-show>
+  <cmpt-form-show id="cmpt-form" mark="cmpt-form" source="admin" isCacheMatch="{{false}}" fields="{{fields}}" forms="{{formForms}}" isDefMatch="{{id?false:true}}">
+  </cmpt-form-show>
 </view>
 
 <view class="form-box shadow" wx:if="{{isAdmin}}">
-	<view class="form-group">
-		<view class="title must">预约用户填写数据项目 <text class="text-grey text-normal">(共{{formJoinForms.length}}个字段)</text></view>
-	</view>
-	<cmpt-form-set id="form-set" bind:formset="bindJoinFormsCmpt" fields="{{formJoinForms}}" />
-</view>
+  <view class="form-group">
+    <view class="title must">预约用户填写数据项目 <text class="text-grey text-normal">(共{{formJoinForms.length}}个字段)</text></view>
+  </view>
+  <cmpt-form-set id="form-set" bind:formset="bindJoinFormsCmpt" fields="{{formJoinForms}}" />
+</view>-->

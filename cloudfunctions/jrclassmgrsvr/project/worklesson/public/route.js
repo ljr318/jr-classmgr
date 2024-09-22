@@ -28,6 +28,8 @@ module.exports = {
 	'work/pwd': 'work/work_home_controller@pwdWork#demo',
 	'work/meet_detail': 'work/work_meet_controller@getMeetDetail',
 	'work/meet_edit': 'work/work_meet_controller@editMeet#demo',
+	'work/meet_add': 'work/work_meet_controller@insertMeet',
+	'work/meet_list': 'work/work_meet_controller@getMeetList',
 	'work/meet_update_forms': 'work/work_meet_controller@updateMeetForms#demo',
 
 	'work/meet_temp_insert': 'work/work_meet_controller@insertMeetTemp#demo',
@@ -60,7 +62,13 @@ module.exports = {
 
 	'admin/setup_set': 'admin/admin_setup_controller@setSetup#demo',
 	'admin/setup_set_content': 'admin/admin_setup_controller@setContentSetup#demo',
-	'admin/setup_qr': 'admin/admin_setup_controller@genMiniQr',
+  'admin/setup_qr': 'admin/admin_setup_controller@genMiniQr',
+  
+  // 管理教练
+  'admin/teacher_insert': 'admin/admin_teacher_controller@insertTeacher',
+  'admin/teacher_list': 'admin/admin_teacher_controller@getTeacherList',
+  'admin/teacher_status': 'admin/admin_teacher_controller@statusTeacher',
+  'admin/teacher_del': 'admin/admin_teacher_controller@delTeacher',
  
 	
 	// 用户

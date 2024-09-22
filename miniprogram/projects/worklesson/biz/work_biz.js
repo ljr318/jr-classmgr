@@ -40,7 +40,8 @@ class WorkBiz extends BaseBiz {
 
 		try {
 			await cloudHelper.callCloudSumbit('work/login', params, opt).then(res => {
-				if (res && res.data && res.data.name)
+        console.log('teacher login res: ', res);
+				if (res && res.data)
 					cacheHelper.set(constants.CACHE_WORK, res.data, constants.WORK_TOKEN_EXPIRE);
 
 				wx.reLaunch({
@@ -78,9 +79,19 @@ class WorkBiz extends BaseBiz {
 	static getWorkId() {
 		let token = cacheHelper.get(constants.CACHE_WORK);
 		if (!token) return '';
-		return token.id || '';
+		return token._id || '';
 	}
 
+  static autoLogin(that) {
+		let work = cacheHelper.get(constants.CACHE_WORK);
+		if (!work) {
+			return false
+		}
+		that.setData({
+			isWork: true,
+		});
+		return true;
+	}
 
 	//  登录状态判定
 	static isWork(that) {

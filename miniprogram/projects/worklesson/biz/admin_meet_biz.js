@@ -15,109 +15,112 @@ const formSetHelper = require('../../../cmpts/public/form/form_set_helper.js');
 class AdminMeetBiz extends BaseBiz {
 
 
-	static getCateName(cateId) {
-		let cateList = projectSetting.MEET_CATE;
+  static getCateName(cateId) {
+    let cateList = projectSetting.MEET_CATE;
 
-		for (let k = 0; k < cateList.length; k++) {
-			if (cateList[k].id == cateId) return cateList[k].title;
-		}
-		return '';
-	}
+    for (let k = 0; k < cateList.length; k++) {
+      if (cateList[k].id == cateId) return cateList[k].title;
+    }
+    return '';
+  }
 
-	// 计算剩余天数
-	static getLeaveDay(days) {
-		let now = timeHelper.time('Y-M-D');
-		let count = 0;
-		for (let k = 0; k < days.length; k++) {
-			if (days[k].day >= now) count++;
-		}
-		return count;
-	}
+  // 计算剩余天数
+  static getLeaveDay(days) {
+    let now = timeHelper.time('Y-M-D');
+    let count = 0;
+    for (let k = 0; k < days.length; k++) {
+      if (days[k].day >= now) count++;
+    }
+    return count;
+  }
 
-	// 格式化日期字段，
-	static getNewTimeNode(day, timeTemp = null) {
-		let node = dataHelper.deepClone(timeTemp || projectSetting.MEET_NEW_NODE);
-		day = day.replace(/-/g, '');
-		node.mark = 'T' + day + 'AAA' + dataHelper.genRandomAlpha(10).toUpperCase();
-		return node;
-	}
-
-
-	/** 表单初始化相关数据 */
-	static async initFormData() {
-		let cateIdOptions = MeetBiz.getCateList();
-		return {
-
-			// 选项数据  
-			cateIdOptions,
-
-			fields: projectSetting.MEET_FIELDS,
+  // 格式化日期字段，
+  static getNewTimeNode(day, timeTemp = null) {
+    let node = dataHelper.deepClone(timeTemp || projectSetting.MEET_NEW_NODE);
+    day = day.replace(/-/g, '');
+    node.mark = 'T' + day + 'AAA' + dataHelper.genRandomAlpha(10).toUpperCase();
+    return node;
+  }
 
 
-			// 表单数据  
-			formTitle: '',
-			formCateId: (cateIdOptions.length == 1) ? cateIdOptions[0].val : '',
-			formOrder: 9999,
-			formCancelSet: 1,
+  /** 表单初始化相关数据 */
+  static async initFormData() {
+    let cateIdOptions = MeetBiz.getCateList();
+    return {
 
-			formForms: [],
+      // 选项数据  
+      cateIdOptions,
 
-			formDaysSet: [], // 时间设置  
-
-			formPhone: '',
-			formPassword: '',
+      fields: projectSetting.MEET_FIELDS,
 
 
-			formJoinForms: formSetHelper.initFields(projectSetting.MEET_JOIN_FIELDS)
-		}
+      // 表单数据  
+      formTitle: '',
+      formCateId: (cateIdOptions.length == 1) ? cateIdOptions[0].val : '',
+      formOrder: 9999,
+      formCancelSet: 1,
 
-	}
+      formForms: [],
+
+      formDaysSet: [], // 时间设置  
+
+      formPhone: '',
+      formPassword: '',
 
 
-	static getDaysTimeOptions() {
-		let HourArr = [];
-		let clockArr = [];
-		let k = 0;
+      formJoinForms: formSetHelper.initFields(projectSetting.MEET_JOIN_FIELDS)
+    }
 
-		for (k = 0; k <= 23; k++) {
-			let node = {};
-			node.label = k + '点';
-			node.val = k < 10 ? '0' + k : k;
-			HourArr.push(node);
-		}
+  }
 
-		for (k = 0; k < 59;) {
-			let node = {};
-			node.label = k + '分';
-			node.val = k < 10 ? '0' + k : k;
-			clockArr.push(node);
-			k += 5;
 
-			if (k == 60) {
-				node = {};
-				node.label = '59分';
-				node.val = '59';
-				clockArr.push(node);
-			}
-		}
+  static getDaysTimeOptions() {
+    let HourArr = [];
+    let clockArr = [];
+    let k = 0;
 
-		return [HourArr, clockArr];
-	}
+    for (k = 0; k <= 23; k++) {
+      let node = {};
+      node.label = k + '点';
+      node.val = k < 10 ? '0' + k : k;
+      HourArr.push(node);
+    }
+
+    for (k = 0; k < 59;) {
+      let node = {};
+      node.label = k + '分';
+      node.val = k < 10 ? '0' + k : k;
+      clockArr.push(node);
+      k += 5;
+
+      if (k == 60) {
+        node = {};
+        node.label = '59分';
+        node.val = '59';
+        clockArr.push(node);
+      }
+    }
+
+    return [HourArr, clockArr];
+  }
 
 }
 
 
 /** 表单校验  */
 AdminMeetBiz.CHECK_FORM = {
-	title: 'formTitle|must|string|min:2|max:50|name=标题',
-	cateId: 'formCateId|must|id|name=分类',
-	order: 'formOrder|must|int|min:0|max:9999|name=排序号',
-	cancelSet: 'formCancelSet|must|int|name=取消设置',
-	daysSet: 'formDaysSet|must|array|name=预约时间设置',
-	phone: 'formPhone|string|len:11|name=老师登陆手机',
-	password: 'formPassword|string|min:6|max:30|name=老师登陆密码',
-	forms: 'formForms|array',
-	joinForms: 'formJoinForms|must|array|name=用户填写项目',
+  meetTitle: 'meetTitle|must|string|min:2|max:50|name=课程标题',
+  meetCateID: 'meetCateID|must|int|name=课程类型',
+  meetSubjectType: 'meetSubjectType|must|int|name=科目类型',
+  meetDrivingLicenseType: 'meetDrivingLicenseType|must|string|name=驾照等级',
+  meetDesc: 'meetDesc|must|string|min:6|max:30|name=课程详情',
+  meetUsingCarID: 'meetUsingCarID|string|min:6|max:30|name=课程使用的车辆ID',
+  meetStartTime: 'meetStartTime|must|int|name=课程开始时间',
+  meetEndTime: 'meetEndTime|must|int|name=课程结束时间',
+  meetLocation: 'meetLocation|must|string|name=课程地点',
+  meetReserveStudentCnt: 'meetReserveStudentCnt|must|int|name=课程可预约人数',
+  meetCancelSet: 'meetCancelSet|must|int|name=可取消时间',
+  meetCanReserveStudentType: 'meetCanReserveStudentType|must|int|name=可预约学员类型',
 };
 
 

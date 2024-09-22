@@ -13,7 +13,7 @@ class TeacherModel extends BaseProjectModel {}
 TeacherModel.CL = BaseProjectModel.C('teacher');
 
 TeacherModel.DB_STRUCTURE = {
-  TEACHER_ID: 'string|true',
+  _id: 'string|true|comment=教练员ID',
   TEACHER_NAME: 'string|true',
   PHONE_NUMBER: 'string|true|comment=添加的管理员',
   AVATAR: 'string|true|default=|comment=头像cdn链接',
@@ -21,6 +21,9 @@ TeacherModel.DB_STRUCTURE = {
   PUBLISHED_LESSONS: 'array|true|default=[]|comment=发布的所有课程',
   LOGIN_PASSWORD: 'string|true|comment=登陆密码',
   LAST_LOGIN_OPENID: 'string|true|comment=上一次登入用户的微信openid',
+  TEACHER_LOGIN_TIME: 'int|false|comment=最近登录时间',
+  TEACHER_TOKEN: 'string|false|comment=当前登录token',
+  TEACHER_TOKEN_TIME: 'int|true|default=0|comment=当前登录token time',
 
   // MEET_DAYS: 'array|true|default=[]|comment=最近一次修改保存的可用日期',
 
@@ -40,11 +43,7 @@ TeacherModel.DB_STRUCTURE = {
 
   // MEET_PHONE: 'string|false|comment=登录手机',
   // MEET_PASSWORD: 'string|false|comment=登录密码',
-  // MEET_TOKEN: 'string|false|comment=当前登录token',
-  // MEET_TOKEN_TIME: 'int|true|default=0|comment=当前登录token time',
   // MEET_MINI_OPENID: 'string|false|comment=小程序openid',
-  // MEET_LOGIN_CNT: 'int|true|default=0|comment=登陆次数',
-  // MEET_LOGIN_TIME: 'int|false|comment=最近登录时间',
 
 
   // MEET_ADD_TIME: 'int|true',

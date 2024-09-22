@@ -97,7 +97,7 @@ Component({
 					this.setData({
 						pulldownMaskShow: false //返回去遮罩
 					});
-					this._fmtSearchData();
+					// this._fmtSearchData();
 				}
 
 				this.data._dataList = null;
@@ -433,18 +433,18 @@ Component({
 			if (sortVal != oldSortVal || sortType != oldSortType) {
 				// 点击分类 
 
-				if (this.data.startDate || this.data.endDate) {
-					this.setData({
-						startDate: '',
-						endDate: ''
-					});
-				}
-				if (this.data.search) {
-					//清空搜索
-					this.triggerEvent('list', {
-						search: ''
-					});
-				} else
+				// if (this.data.startDate || this.data.endDate) {
+				// 	this.setData({
+				// 		startDate: '',
+				// 		endDate: ''
+				// 	});
+				// }
+				// if (this.data.search) {
+				// 	//清空搜索
+				// 	this.triggerEvent('list', {
+				// 		search: ''
+				// 	});
+				// } else
 					this._getList(1);
 
 			}

@@ -13,6 +13,6 @@ module.exports = {
 
 
 	CACHE_WORK: 'WORK_TOKEN', // 服务者登录   
-	WORK_TOKEN_EXPIRE: 3600 * 10, //服务者过期时间  秒  
+	WORK_TOKEN_EXPIRE: 3600 * 10, //服务者过期时间  秒 
 
 }

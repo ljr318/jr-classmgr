@@ -71,50 +71,35 @@ Page({
 	},
 
 	bindDelTap: async function (e) {
-		if (!AdminBiz.isAdmin(this)) return;
-		let id = pageHelper.dataset(e, 'id');
+		if (!AdminBiz.isAdmin(this, true)) return;
+
+		let id = e.currentTarget.dataset.id;
+		if (!id) return;
 
 		let params = {
-			id
+			id,
 		}
 
 		let callback = async () => {
 			try {
-				let opts = {
-					title: '删除中'
-				}
-				await cloudHelper.callCloudSumbit('admin/user_del', params, opts).then(res => {
-
-					pageHelper.delListNode(id, this.data.dataList.list, 'USER_MINI_OPENID');
+				await cloudHelper.callCloudSumbit('admin/teacher_del', params).then(res => {
+					pageHelper.delListNode(id, this.data.dataList.list, '_id');
 					this.data.dataList.total--;
 					this.setData({
 						dataList: this.data.dataList
 					});
-					pageHelper.showSuccToast('删除成功');
+					pageHelper.showSuccToast('删除成功', 2000);
+
 				});
+
 			} catch (e) {
 				console.log(e);
 			}
 		}
 		pageHelper.showConfirm('确认删除？删除不可恢复', callback);
-
 	},
 
 
-	bindClearReasonTap: function (e) {
-		this.setData({
-			formReason: ''
-		})
-	},
-
-	bindCheckTap: function (e) {
-		let curIdx = pageHelper.dataset(e, 'idx');
-		this.setData({
-			formReason: cacheHelper.get(CACHE_USER_CHECK_REASON) || '',
-			curIdx,
-			checkModalShow: true,
-		});
-	},
 
 	bindCheckCmpt: async function () {
 		let e = {
@@ -130,47 +115,30 @@ Page({
 	},
 
 	bindStatusTap: async function (e) {
-		if (!AdminBiz.isAdmin(this)) return;
+		if (!AdminBiz.isAdmin(this, true)) return;
+
+		let id = pageHelper.dataset(e, 'id');
 		let status = pageHelper.dataset(e, 'status');
-
-		let idx = Number(pageHelper.dataset(e, 'idx'));
-
-		let dataList = this.data.dataList;
-		let id = dataList.list[idx].USER_MINI_OPENID;
+		if (!id || !status) return;
+		status = Number(status);
 
 		let params = {
 			id,
-			status,
-			reason: this.data.formReason
+			status
 		}
 
-		let cb = async () => {
-			try {
-				await cloudHelper.callCloudSumbit('admin/user_status', params).then(res => {
-						let data1Name = 'dataList.list[' + idx + '].USER_CHECK_REASON';
-						let data2Name = 'dataList.list[' + idx + '].USER_STATUS';
-						this.setData({
-							[data1Name]: this.data.formReason,
-							[data2Name]: status
-						});
-
-					this.setData({
-						checkModalShow: false,
-						formReason: '',
-						curIdx: -1,
-					});
-					pageHelper.showSuccToast('操作成功');
+		let that = this;
+		try {
+			await cloudHelper.callCloudSumbit('admin/teacher_status', params).then(res => {
+				pageHelper.modifyListNode(id, that.data.dataList.list, 'STATUS', status, '_id');
+				that.setData({
+					dataList: that.data.dataList,
 				});
-			} catch (e) {
-				console.log(e);
-			}
+				pageHelper.showSuccToast('设置成功');
+			});
+		} catch (e) {
+			console.log(e);
 		}
-
-		if (status == 8) {
-			pageHelper.showConfirm('该用户审核不通过，用户修改资料后可重新提交审核', cb)
-		}
-		else
-			pageHelper.showConfirm('确认执行此操作?', cb);
 	},
 
 
@@ -241,24 +209,16 @@ Page({
 			{ label: '创建时间正序', type: 'sort', value: 'USER_ADD_TIME|asc' },
 			{ label: '创建时间倒序', type: 'sort', value: 'USER_ADD_TIME|desc' },
 		];
-		let sortItems2 = [
-			{ label: '课时数', type: '', value: '' },
-			{ label: '课时数正序', type: 'sort', value: 'USER_LESSON_TOTAL_CNT|asc' },
-			{ label: '课时数倒序', type: 'sort', value: 'USER_LESSON_TOTAL_CNT|desc' },
-		];
 		let sortMenus = [
 			{ label: '全部', type: '', value: '' },
-			{ label: '正常', type: 'status', value: 1 },
-			{ label: '禁用', type: 'status', value: 9 },
-			{ label: '已注册', type: 'type', value: 1 },
-			{ label: '待注册', type: 'type', value: 0 }
-
+			{ label: '在岗', type: 'status', value: 1 },
+			{ label: '离岗', type: 'status', value: 2 }
 		]
 
 
 		this.setData({
 			search: '',
-			sortItems: [sortItems1, sortItems2],
+			sortItems: [sortItems1],
 			sortMenus,
 			isLoad: true
 		})

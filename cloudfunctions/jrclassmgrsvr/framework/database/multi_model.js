@@ -48,7 +48,7 @@ class MultiModel extends Model {
 		return await super.getOne(where, fields, orderBy);
 	}
 
-	static async edit(where, data, mustPID = true) {
+	static async edit(where, data, mustPID = false) {
 		where = MultiModel._getWhere(where);
 		return await super.edit(where, data);
 	}

@@ -1,5 +1,5 @@
 /**
- * Notes: 服务者实体
+ * Notes: 课程实体
  * Ver : CCMiniCloud Framework 2.0.1 ALL RIGHTS RESERVED BY cclinux0730 (wx)
  * Date: 2022-01-17 19:20:00 
  */
@@ -15,65 +15,49 @@ class MeetModel extends BaseProjectModel {
 MeetModel.CL = BaseProjectModel.C('meet');
 
 MeetModel.DB_STRUCTURE = {
-	_pid: 'string|true',
-	MEET_ID: 'string|true',
-	MEET_ADMIN_ID: 'string|true|comment=添加的管理员',
-	MEET_TITLE: 'string|true|comment=标题',
- 
-	MEET_JOIN_FORMS: 'array|true|default=[]|comment=表单字段设置',
-	MEET_DAYS: 'array|true|default=[]|comment=最近一次修改保存的可用日期',
-
-	MEET_CATE_ID: 'string|true|comment=分类编号',
-	MEET_CATE_NAME: 'string|true|comment=分类冗余', 
-
-	MEET_FORMS: 'array|true|default=[]',
-	MEET_OBJ: 'object|true|default={}',  
-
-	MEET_CANCEL_SET: 'int|true|default=1|comment=取消设置 0=不允,1=允许,10=开始前均可取消,11=开始前1小时可取消,12=开始前2小时可取消,13=开始前3小时可取消,14=开始前4小时可取消,15=开始前5小时可取消',
-
-	MEET_STATUS: 'int|true|default=1|comment=状态 0=未启用,1=使用中,9=停止预约,10=已关闭',
-	MEET_ORDER: 'int|true|default=9999',
-	MEET_VOUCH: 'int|true|default=0',
-
-	MEET_QR: 'string|false',
-
-	MEET_PHONE: 'string|false|comment=登录手机',
-	MEET_PASSWORD: 'string|false|comment=登录密码',
-	MEET_TOKEN: 'string|false|comment=当前登录token',
-	MEET_TOKEN_TIME: 'int|true|default=0|comment=当前登录token time',
-	MEET_MINI_OPENID: 'string|false|comment=小程序openid',
-	MEET_LOGIN_CNT: 'int|true|default=0|comment=登陆次数',
-	MEET_LOGIN_TIME: 'int|false|comment=最近登录时间',
-
-
-	MEET_ADD_TIME: 'int|true',
-	MEET_EDIT_TIME: 'int|true',
-	MEET_ADD_IP: 'string|false',
-	MEET_EDIT_IP: 'string|false',
+  // _id: 'string|true|comment=课程ID',
+  MEET_TEACHER_ID: 'string|true|comment=添加的教练员ID',
+  MEET_TITLE: 'string|true|comment=课程标题',
+  MEET_CATE_ID: 'int|true|default=0|comment=课程类型 0：模拟 1：训练',
+  MEET_SUBJECT_TYPE: 'int|true|default=0|comment=科目 0：科目一 1：科目二 2：科目三 3：科目四',
+  MEET_DRIVING_LICENSE_TYPE: 'string|true|default=C1|comment=驾照等级 C1 C2 B1 B2 A1 A2',
+  MEET_DESC: 'string|true|comment=课程详情',
+  MEET_USING_CAR_ID: 'string|true|comment=课程使用的车辆ID',
+  MEET_START_TIME: 'int|false|comment=课程开始时间',
+  MEET_END_TIME: 'int|false|comment=课程结束时间',
+  MEET_LOCATION: 'string|true|comment=课程地点',
+  MEET_RESERVE_STUDENT_CNT: 'int|true|default=0|comment=课程可预约人数',
+  MEET_CANCEL_SET: 'int|true|default=1|comment=可取消时间 0=不允许取消,1=开始前1小时可取消,2=开始前2小时可取消,3=开始前3小时可取消,4=开课前均可取消',
+  MEET_CAN_RESERVE_STUDENT_TYPE: 'int|true|default=0|comment=可预约学员类型 0=本校外校均可,1=本校学员,2=外校学员',
+  MEET_STATUS: 'int|true|default=0|comment=课程状态 0=开放预约/待开课,1=已开课,2=课程已结束,3=课程以取消,4=课程异常未开',
+  MEET_QR: 'string|false',
+  MEET_RESERVE_STUDENT_REMAIN_CNT: 'int|true|default=0|comment=剩余课程可预约人数',
+  MEET_ADD_TIME: 'int|true',
+  MEET_EDIT_TIME: 'int|true',
 };
 
 // 字段前缀
 MeetModel.FIELD_PREFIX = "MEET_";
 
 /**
- * 状态 0=未启用,1=使用中,9=停止预约,10=已关闭 
+ * 状态 0=开放预约,1=已开课,2=课程已结束,3=课程以取消,4=课程异常未开
  */
 MeetModel.STATUS = {
-	UNUSE: 0,
-	COMM: 1,
-	OVER: 9,
-	CLOSE: 10
+  OPEN: 0,
+  COMM: 1,
+  OVER: 9,
+  CLOSE: 10
 };
 
-MeetModel.STATUS_DESC = {
-	UNUSE: '未启用',
-	COMM: '使用中',
-	OVER: '停止预约(可见)',
-	CLOSE: '已关闭(不可见)'
-};
+// MeetModel.STATUS_DESC = {
+//   UNUSE: '未启用',
+//   COMM: '使用中',
+//   OVER: '停止预约(可见)',
+//   CLOSE: '已关闭(不可见)'
+// };
 
 
-MeetModel.NAME = '老师';
+MeetModel.NAME = '课程';
 
 
 module.exports = MeetModel;

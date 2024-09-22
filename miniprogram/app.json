@@ -58,6 +58,7 @@
     "projects/worklesson/pages/work/meet/record/work_meet_record",
     "projects/worklesson/pages/work/meet/join/work_meet_join",
     "projects/worklesson/pages/work/meet/scan/work_meet_scan",
+    "projects/worklesson/pages/work/meet/list/work_meet_list",
     "cmpts/public/form/form_set/field/form_set_field",
     "cmpts/public/form/form_show/content/form_show_content"
   ],

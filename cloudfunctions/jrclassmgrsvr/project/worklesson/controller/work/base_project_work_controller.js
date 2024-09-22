@@ -33,7 +33,7 @@ class BaseProjectWorkController extends BaseController {
 	/** 是否登陆  */
 	async isWork() {
 		let service = new BaseWorkService();
-		let work = await service.isWork(this._token);
+		let work = await service.isWork(this._openId);
 		this._work = work;
 		this._workId = work._id; 
  
