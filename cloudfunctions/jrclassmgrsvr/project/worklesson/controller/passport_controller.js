@@ -10,79 +10,78 @@ const contentCheck = require('../../../framework/validate/content_check.js');
 
 class PassportController extends BaseProjectController {
 
-	/** 取得我的用户信息 */
-	async getMyDetail() {
-		let service = new PassportService();
-		return await service.getMyDetail(this._userId);
-	}
+  /** 取得我的用户信息 */
+  async getMyDetail() {
+    let service = new PassportService();
+    return await service.getMyDetail(this._userId);
+  }
 
-	/** 获取手机号码 */
-	async getPhone() {
+  /** 获取手机号码 */
+  async getPhone() {
 
-		// 数据校验
-		let rules = {
-			cloudID: 'must|string|min:1|max:200|name=cloudID',
-		};
+    // 数据校验
+    let rules = {
+      cloudID: 'must|string|min:1|max:200|name=cloudID',
+    };
 
-		// 取得数据
-		let input = this.validateData(rules);
-
-
-		let service = new PassportService();
-		return await service.getPhone(input.cloudID);
-	}
+    // 取得数据
+    let input = this.validateData(rules);
 
 
-	/** 注册 */
-	async register() {
-		// 数据校验
-		let rules = {
-			name: 'must|string|min:1|max:30|name=昵称',
-			phoneNumber: 'must|mobile|name=手机',
+    let service = new PassportService();
+    return await service.getPhone(input.cloudID);
+  }
+
+
+  /** 注册 */
+  async register() {
+    // 数据校验
+    let rules = {
+      name: 'must|string|min:1|max:30|name=昵称',
+      phoneNumber: 'must|mobile|name=手机',
       avatarUrl: 'string|name=头像链接',
-		};
+    };
 
-		// 取得数据
-		let input = this.validateData(rules);
+    // 取得数据
+    let input = this.validateData(rules);
 
-		// 内容审核
-		await contentCheck.checkTextMultiClient(input);
+    // 内容审核
+    await contentCheck.checkTextMultiClient(input);
 
-		let service = new PassportService();
-		return await service.register(this._userId, input);
-	}
+    let service = new PassportService();
+    return await service.register(this._userId, input);
+  }
 
-	/** 修改用户资料 */
-	async editBase() {
-		// 数据校验
-		let rules = {
-			name: 'must|string|min:1|max:30|name=昵称',
-			mobile: 'must|mobile|name=手机',
-			forms: 'array|name=表单',
-			userCheck: 'bool|name=校验规则',
-		};
+  /** 修改用户资料 */
+  async editBase() {
+    // 数据校验
+    let rules = {
+      mobile: 'must|mobile|name=手机',
+      name: 'must|string|min:1|max:30|name=昵称',
+      avatarUrl: 'string|name=头像',
+    };
 
-		// 取得数据
-		let input = this.validateData(rules);
+    // 取得数据
+    let input = this.validateData(rules);
 
-		// 内容审核
-		await contentCheck.checkTextMultiClient(input);
+    // 内容审核
+    await contentCheck.checkTextMultiClient(input);
 
-		let service = new PassportService();
-		return await service.editBase(this._userId, input);
-	}
+    let service = new PassportService();
+    return await service.editBase(this._userId, input);
+  }
 
-	/** 登录 */
-	async login() {
-		// 数据校验
-		let rules = {};
+  /** 登录 */
+  async login() {
+    // 数据校验
+    let rules = {};
 
-		// 取得数据
-		let input = this.validateData(rules);
+    // 取得数据
+    let input = this.validateData(rules);
 
-		let service = new PassportService();
-		return await service.login(this._userId);
-	}
+    let service = new PassportService();
+    return await service.login(this._userId);
+  }
 
 }
 

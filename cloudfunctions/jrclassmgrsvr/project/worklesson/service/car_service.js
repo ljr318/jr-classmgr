@@ -10,71 +10,65 @@ const CarModel = require('../model/car_model.js');
 
 class CarService extends BaseProjectService {
 
-  /** 浏览资讯信息 */
-  // async viewNews(id) {
-
-  // 	let fields = '*';
-
-  // 	let where = {
-  // 		_id: id,
-  // 		NEWS_STATUS: 1
-  // 	}
-  // 	let news = await NewsModel.getOne(where, fields);
-  // 	if (!news) return null;
-
-
-
-  // 	return news;
-  // }
-
-
-  /** 取得分页列表 */
+  /** 取得车辆列表，不做分页 */
   async getCarList({
     carID,
     carNumber, // 车牌号
-    carName, // 车辆名称
     carStatus, // 车辆状态
-    page,
-    size,
-    isTotal = true,
-    oldTotal
   }) {
 
     orderBy = {
       'UPDATE_TIME': 'desc'
     };
-    let fields = 'CAR_ID,CAR_NUMBER,CAR_NAME,CAR_IMG,CAR_STATUS,CREATE_TIME,UPDATE_TIME';
+    let fields = '*';
 
     let where = {};
-    where.and = {
-      CAR_ID: carID,
-
-    };
-    where.NEWS_STATUS = 1; // 状态 
-
-    if (cateId && cateId !== '0') where.and.NEWS_CATE_ID = cateId;
-
-    if (util.isDefined(search) && search) {
-      where.or = [{
-        NEWS_TITLE: ['like', search]
-      }, ];
-    } else if (sortType && util.isDefined(sortVal)) {
-      // 搜索菜单
-      switch (sortType) {
-        case 'sort': {
-          orderBy = this.fmtOrderBySort(sortVal, 'NEWS_ADD_TIME');
-          break;
-        }
-        case 'cateId': {
-          if (sortVal) where.and.NEWS_CATE_ID = String(sortVal);
-          break;
-        }
-      }
+    if (carID && carID.length() > 0) {
+      where._id = carID;
     }
-
-    return await CarModel.getList(where, fields, orderBy, page, size, isTotal, oldTotal);
+    if (carNumber && carNumber.length() > 0) {
+      where.CAR_NUMBER = carNumber;
+    }
+    if (carStatus) {
+      where.CAR_STATUS = carStatus;
+    }
+    return await CarModel.getList(where, fields, orderBy, 1, 2000, true, 0);
   }
 
+  // 新增车辆
+  async insertCar(car) {
+    console.log('Car about to insert: ', car);
+    let tmpCar = {
+      CAR_NUMBER: car.carNumber,
+      CAR_NAME: car.carName,
+      CAR_STATUS: car.carStatus,
+      CREATE_TIME: timeUtil.time() / 1000,
+      UPDATE_TIME: timeUtil.time() / 1000,
+    };
+    return await CarModel.insert(tmpCar);
+  }
+
+  async editCar(car) {
+    const whereCar = {
+      _id: car._id
+    }
+    const editData = {
+      CAR_NUMBER: car.carNumber,
+      CAR_NAME: car.carName,
+      CAR_STATUS: car.carStatus,
+    }
+    return await CarModel.edit(whereCar, editData);
+  }
+
+  // 删除车辆
+  async delCar(carID) {
+    console.log('Car about to delete: ', carID);
+    // TODO: 检查当前车辆是否会被使用，会的话就拒绝删除
+    const where = {
+      _id: carID,
+    };
+    return await CarModel.del(where);
+  }
 }
 
 module.exports = CarService;

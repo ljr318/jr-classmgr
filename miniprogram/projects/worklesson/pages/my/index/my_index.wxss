@@ -38,10 +38,9 @@ page {
 }
 
 .top .left image {
-	width: 65rpx;
-	height: 65rpx;
+	width: 86rpx;
+	height: 86rpx;
 	border-radius: 50%;
-	
 }
 
 .top .right {

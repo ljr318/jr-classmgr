@@ -69,6 +69,7 @@ module.exports = {
   'admin/teacher_list': 'admin/admin_teacher_controller@getTeacherList',
   'admin/teacher_status': 'admin/admin_teacher_controller@statusTeacher',
   'admin/teacher_del': 'admin/admin_teacher_controller@delTeacher',
+  'admin/teacher_detail': 'admin/admin_teacher_controller@getTeacherDetail',
  
 	
 	// 用户
@@ -145,4 +146,12 @@ module.exports = {
 	'admin/join_data_export': 'admin/admin_meet_controller@joinDataExport',
 	'admin/join_data_del': 'admin/admin_meet_controller@joinDataDel',
 
+  // 车辆
+  'admin/car_insert': 'admin/admin_car_controller@insertCar',
+  'admin/car_edit': 'admin/admin_car_controller@editCar',
+  'admin/car_del': 'admin/admin_car_controller@delCar',
+  'car/get_cars': 'car_controller@getCarList',
+
+  // 安全检查
+  'check/img': 'check_controller@checkImg',
 }

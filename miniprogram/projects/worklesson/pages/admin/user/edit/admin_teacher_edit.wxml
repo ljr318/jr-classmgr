@@ -1,0 +1,46 @@
+<view wx:if="{{isLoad===null}}" class="margin-top load notexist text-l text-admin"></view>
+<view wx:if="{{isLoad===false}}" class="margin-top load loading text-l text-admin"></view>
+
+<view class="main-admin" wx:if="{{isLoad&&isAdmin}}">
+  <!-- edit form begin -->
+  <view class="form-box shadow">
+    <view class="form-group">
+      <view class="title must">上传头像</view>
+      <button class="avatar-upload-button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{AVATAR ? AVATAR : '../../../../images/tabbar/my_cur.png'}}"></image>
+      </button>
+    </view>
+    <view class="form-group">
+      <view class="title must">教练姓名</view>
+      <input maxlength="30" placeholder="请填写教练姓名" model:value="{{TEACHER_NAME}}" focus="{{TEACHER_NAMEFocus}}"></input>
+    </view>
+    <view wx:if="{{TEACHER_NAMEFocus}}" class="hint-desc error">{{TEACHER_NAMEFocus}}</view>
+
+    <view class="form-group">
+      <view class="title">手机</view>
+      <input maxlength="11" placeholder="请填写手机号码" model:value="{{PHONE_NUMBER}}" focus="{{PHONE_NUMBERFocus}}"></input>
+    </view>
+    <view wx:if="{{PHONE_NUMBERFocus}}" class="hint-desc error">{{formPhoneFocus}}</view>
+
+    <view class="form-group">
+      <view class="title must">登录密码</view>
+      <input maxlength="30" type="text" placeholder="请填写登录密码" model:value="{{LOGIN_PASSWORD}}" focus="{{LOGIN_PASSWORDFocus}}"></input>
+    </view>
+    <view wx:if="{{LOGIN_PASSWORDFocus}}" class="hint-desc error">{{LOGIN_PASSWORDFocus}}</view>
+
+  </view>
+
+  <!--<view class="form-box shadow">
+		<view class="form-group text-orange">
+			<text class="icon-info">不修改密码则保持以下为空</text>
+		</view>  
+		<view class="form-group">
+			<view class="title must">新密码</view>
+			<input maxlength="30" type="password" placeholder="请填写密码" model:value="{{formPassword}}" focus="{{formPasswordFocus}}"></input>
+		</view>
+		<view wx:if="{{formPasswordFocus}}" class="hint-desc error">{{formPasswordFocus}}</view>
+	</view>-->
+
+  <button bindtap="bindFormSubmit" class="btn-admin margin-top">提交修改</button>
+
+</view>

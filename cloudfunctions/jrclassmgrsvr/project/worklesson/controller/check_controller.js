@@ -5,7 +5,7 @@
  */
 
 const BaseProjectController = require('./base_project_controller.js');
-const contentCheck = require('../../framework/validate/content_check.js');
+const contentCheck = require('../../../framework/validate/content_check');
 
 class CheckController extends BaseProjectController {
 
@@ -23,7 +23,7 @@ class CheckController extends BaseProjectController {
 		// 取得数据
 		let input = this.validateData(rules);
 
-		return await contentCheck.checkImg(input.img, 'jpg');
+		return await contentCheck.checkImg(input.img, 'jpeg');
 
 	}
 

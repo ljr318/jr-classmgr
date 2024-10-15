@@ -119,8 +119,8 @@ class AdminMeetService extends BaseProjectAdminService {
     meet.MEET_CANCEL_SET = meetCancelSet;
     meet.MEET_CAN_RESERVE_STUDENT_TYPE = meetCanReserveStudentType;
     meet.MEET_STATUS = meetStatus;
-    meet.MEET_ADD_TIME = timeUtil.time();
-    meet.MEET_EDIT_TIME = timeUtil.time();
+    meet.MEET_ADD_TIME = timeUtil.time()/1000;
+    meet.MEET_EDIT_TIME = timeUtil.time()/1000;
     console.log('Meet about to insert: ', meet);
     return await MeetModel.insert(meet);
   }

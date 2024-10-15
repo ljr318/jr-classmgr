@@ -149,7 +149,7 @@ class AdminTeacherController extends BaseProjectAdminController {
 		await service.pwdtMgr(this._adminId, input.oldPassword, input.password);
 	}
 
-	/** 获取管理员信息用于编辑修改 */
+	/** 获取教练信息用于编辑修改 */
 	async getTeacherDetail() {
 		await this.isSuperAdmin();
 
@@ -162,8 +162,7 @@ class AdminTeacherController extends BaseProjectAdminController {
 		let input = this.validateData(rules);
 
 		let service = new AdminTeacherService();
-		return await service.getMgrDetail(input.id);
-
+		return await service.getTeacherDetail(input.id);
 	} 
 }
 

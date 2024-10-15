@@ -5,6 +5,7 @@ const ProjectBiz = require('../../../biz/project_biz.js');
 const projectSetting = require('../../../public/project_setting.js');
 const setting = require('../../../../../setting/setting.js');
 const PassportBiz = require('../../../../../comm/biz/passport_biz.js');
+const contentCheckHelper = require('../../../../../helper/content_check_helper.js');
 
 Page({
   /**
@@ -101,24 +102,10 @@ Page({
     } = e.detail;
     console.log('avatar:', avatarUrl);
 
-    // if (!contentCheckHelper.imgTypeCheck(path)) {
-    //   wx.hideLoading();
-    //   return pageHelper.showNoneToast('只能上传png、jpg、jpeg格式', 3000);
-    // }
-
-    // let maxSize = 20; //TODO setting
-    // let imageMaxSize = 1024 * 1000 * maxSize;
-    // console.log('IMGX SIZE=' + size + 'Byte,' + size / 1024 + 'K');
-    // if (!contentCheckHelper.imgSizeCheck(size, imageMaxSize)) {
-    //   wx.hideLoading();
-    //   return pageHelper.showModal('图片大小不能超过 ' + maxSize + '兆');
-    // }
-
-
     wx.showLoading({
       title: '上传中'
     });
-    const cdnLink = await cloudHelper.transTempPicOne(avatarUrl, 'student_avatar', '', false);
+    const cdnLink = await cloudHelper.transTempPicOne(avatarUrl, 'student_avatar', '', true);
     wx.hideLoading();
 
     this.setData({
@@ -135,12 +122,13 @@ Page({
 
       let forms = this.selectComponent("#cmpt-form").getForms(true);
       if (!forms) return;
-      data.forms = forms;
+      // data.forms = forms;
       data.userCheck = projectSetting.USER_REG_CHECK;
 
       let opts = {
         title: '提交中'
       };
+      console.log('Edit data:', data);
       await cloudHelper.callCloudSumbit('passport/edit_base', data, opts).then(res => {
         let callback = () => {
           wx.reLaunch({

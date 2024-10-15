@@ -2,7 +2,7 @@
 	<image class="bg" mode="widthFix" src="../../../images/my.jpg" />
 	<view class="top" bindtap="url" data-url="{{user?'../edit/my_edit':'../reg/my_reg'}}">
 		<view class="left">
-			<image mode="aspectFill" src="{{user && user.AVATAR ? user.AVATAR : '../../../images/tabbar/my_cur.png'}}"></image>
+			<image mode="scaleToFill" src="{{user && user.AVATAR ? user.AVATAR : '../../../images/tabbar/my_cur.png'}}"></image>
 		</view>
 		<view class="right">
 			<view class="name content-cut-one">
@@ -11,7 +11,6 @@
 			</view>
 			<view class="desc">{{user?'欢迎回来~~~':'马上注册，使用更多功能'}}</view>
 		</view>
-
 	</view>
 
 	<view class="menu">

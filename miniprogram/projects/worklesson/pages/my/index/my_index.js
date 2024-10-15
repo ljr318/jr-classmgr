@@ -69,7 +69,7 @@ Page({
 			});
 			return;
 		}
-
+    console.log('user detail:', user);
 		this.setData({
 			user
 		})

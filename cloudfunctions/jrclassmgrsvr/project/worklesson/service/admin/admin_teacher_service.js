@@ -114,9 +114,9 @@ class AdminTeacherService extends BaseProjectAdminService {
 		let where = {
 			_id: id
 		}
-		let teacher = await AdminModel.getOne(where, fields);
-		if (!teacher) return null;
-
+		let teacher = await TeacherModel.getOne(where, fields);
+    console.log('Got teacher detail:', id, teacher);
+    if (!teacher) return null;
 		return teacher;
 	}
 

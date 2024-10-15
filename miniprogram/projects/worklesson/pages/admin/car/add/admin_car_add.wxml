@@ -1,0 +1,29 @@
+<view wx:if="{{!isLoad}}" class="margin-top load loading text-l text-grey"></view>
+<view class="main-admin" wx:if="{{isAdmin&&isLoad}}">
+	<view class="form-box shadow">
+		<view class="form-group text-orange" style="padding:30rpx">
+			※ 此处添加教练员：教练员无法自行注册，仅能够通过此处设置的手机号和相应的密码进行登录。
+		</view>
+		<view class="form-group">
+			<view class="title must">教练员姓名</view>
+			<input placeholder="请填写教练员姓名" placeholder-class="phc" model:value="{{teacherName}}" focus="{{teacherNameFocus}}" maxlength="20"></input>
+		</view>
+		<view wx:if="{{teacherNameFocus}}" class="hint-desc error">{{teacherNameFocus}}</view>
+
+		<view class="form-group">
+			<view class="title must">教练员手机号</view>
+			<input placeholder="请填写手机号" type="number" placeholder-class="phc" model:value="{{phoneNumber}}" focus="{{phoneNumberFocus}}" maxlength="11"></input>
+		</view>
+		<view wx:if="{{phoneNumberFocus}}" class="hint-desc error">{{phoneNumberFocus}}</view>
+
+		<view class="form-group">
+			<view class="title must">登录密码</view>
+			<input placeholder="请填写登录密码" type="password" placeholder-class="phc" model:value="{{password}}" focus="{{passwordFocus}}" maxlength="20"></input>
+		</view>
+		<view wx:if="{{passwordFocus}}" class="hint-desc error">{{passwordFocus}}</view>
+
+	</view>
+	<button bindtap="bindFormSubmit" class="btn-admin margin-top-xs">提交</button>
+
+
+</view>
