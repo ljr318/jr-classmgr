@@ -26,7 +26,7 @@
 		</view>
 	</view>
 
-	<view class="comm-list grid col-3">
+	<view class="comm-list grid col-4">
 		<view class="item" bindtap="url" data-url="../../user/list/admin_user_list"> <text class="icon-group_fill text-green"></text> <text class="text-black">学员管理</text>
 		</view>
 
@@ -37,6 +37,9 @@
 		</view>
 
 		<view class="item" bindtap="url" data-url="../../meet/admin-list/admin_meet_list"> <text class="icon-calendar text-blue"></text> <text class="text-black">课程&预约管理</text>
+		</view> 
+
+		<view class="item" bindtap="url" data-url="../../car/list/admin_car_list"> <text class=".icon-taxi text-blue"></text> <text class="text-black">车辆管理</text>
 		</view> 
 	</view>
 

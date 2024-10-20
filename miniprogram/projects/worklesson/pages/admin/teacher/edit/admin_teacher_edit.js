@@ -91,18 +91,18 @@ Page({
     } = e.detail;
     console.log('avatar:', avatarUrl);
 
-    if (!contentCheckHelper.imgTypeCheck(path)) {
-      wx.hideLoading();
-      return pageHelper.showNoneToast('只能上传png、jpg、jpeg格式', 3000);
-    }
+    // if (!contentCheckHelper.imgTypeCheck(path)) {
+    //   wx.hideLoading();
+    //   return pageHelper.showNoneToast('只能上传png、jpg、jpeg格式', 3000);
+    // }
 
-    let maxSize = 20; //TODO setting
-    let imageMaxSize = 1024 * 1000 * maxSize;
-    console.log('IMGX SIZE=' + size + 'Byte,' + size / 1024 + 'K');
-    if (!contentCheckHelper.imgSizeCheck(size, imageMaxSize)) {
-      wx.hideLoading();
-      return pageHelper.showModal('图片大小不能超过 ' + maxSize + '兆');
-    }
+    // let maxSize = 20; //TODO setting
+    // let imageMaxSize = 1024 * 1000 * maxSize;
+    // console.log('IMGX SIZE=' + size + 'Byte,' + size / 1024 + 'K');
+    // if (!contentCheckHelper.imgSizeCheck(size, imageMaxSize)) {
+    //   wx.hideLoading();
+    //   return pageHelper.showModal('图片大小不能超过 ' + maxSize + '兆');
+    // }
 
 
     wx.showLoading({
@@ -112,7 +112,7 @@ Page({
     wx.hideLoading();
 
     this.setData({
-      avatarUrl: cdnLink,
+      AVATAR: cdnLink,
     })
   },
 
@@ -125,25 +125,15 @@ Page({
     let data = this.data;
 
     // 数据校验 
-    data = validate.check(data, AdminBiz.CHECK_FORM_MGR_EDIT, this);
+    data = validate.check(data, AdminBiz.CHECK_FORM_TEACHER_EDIT, this);
     if (!data) return;
 
     try {
-      let adminId = this.data.id;
-      data.id = adminId;
-
-      await cloudHelper.callCloudSumbit('admin/mgr_edit', data).then(res => {
-
+      await cloudHelper.callCloudSumbit('admin/teacher_edit', data).then(res => {
         let callback = () => {
-          // 更新列表页面数据
-          let node = {
-            'ADMIN_NAME': data.name,
-            'ADMIN_DESC': data.desc,
-            'ADMIN_PHONE': data.phone,
-          }
-          pageHelper.modifyPrevPageListNodeObject(adminId, node);
-
-          wx.navigateBack();
+          wx.redirectTo({
+            url: '../list/admin_teacher_list'
+          });
         }
         pageHelper.showSuccToast('修改成功', 1500, callback);
       });

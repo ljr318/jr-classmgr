@@ -31,6 +31,8 @@ class WorkMeetController extends BaseProjectWorkController {
   // 发布课程
   async insertMeet() {
     await this.isWork();
+    // 先获取下锁
+    
     let rules = {
       meetTitle: 'must|string|min:2|max:50|name=课程标题',
       meetCateID: 'must|int|name=课程类型',

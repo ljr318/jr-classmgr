@@ -15,7 +15,6 @@ class AdminModel extends BaseModel {
 AdminModel.CL = BaseModel.C('admin');
 
 AdminModel.DB_STRUCTURE = {
-	_pid: 'string|true',
 	ADMIN_ID: 'string|true',
 	ADMIN_NAME: 'string|true', 
 	ADMIN_DESC: 'string|true',
@@ -33,7 +32,8 @@ AdminModel.DB_STRUCTURE = {
 	ADMIN_ADD_TIME: 'int|true',
 	ADMIN_EDIT_TIME: 'int|true',
 	ADMIN_ADD_IP: 'string|false',
-	ADMIN_EDIT_IP: 'string|false',
+  ADMIN_EDIT_IP: 'string|false',
+  ADMIN_LAST_LOGIN_OPENID: 'string|false', 
 };
 
 // 字段前缀

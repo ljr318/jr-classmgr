@@ -18,8 +18,7 @@ class PassportService extends BaseProjectService {
   async register(userId, {
     phoneNumber,
     name,
-    avatarUrl,
-    inviteCode
+    avatarUrl
   }) {
     // 判断是否存在
     let where = {
@@ -31,15 +30,15 @@ class PassportService extends BaseProjectService {
     console.log('register select cnt:', cnt);
     if (cnt > 0)
       return await this.login(userId);
-    // 外校学员
-    if (!inviteCode) {
-      where = {
-        USER_MOBILE: phoneNumber
-      }
-      cnt = await StudentModel.count(where);
-      if (cnt > 0) this.AppError('该手机已注册');
 
-      // 入库
+    // 看下是不是已经提前预注册好了
+    where = {
+      PHONE_NUMBER: phoneNumber
+    }
+    cnt = await StudentModel.count(where);
+
+    if (cnt === 0) {
+      // 没提前注册好则新插入一条数据
       let data = {
         STUDENT_ID: shortUUID.generate(),
         STUDENT_TYPE: StudentModel.STUDENT_TYPE.OUTER_STUDENT,
@@ -53,44 +52,22 @@ class PassportService extends BaseProjectService {
         BOOKING_LIST: []
       }
       await StudentModel.insert(data);
-
-      // let meetService = new MeetService();
-      // meetService.editUserMeetLesson(null, userId, 30, LessonLogModel.TYPE.INIT);
-
       return await this.login(userId);
     }
 
 
-    // 是否在校验库里
-    where = {
-      STUDENT_TYPE: StudentModel.STUDENT_TYPE.INNER_STUDENT,
-      STUDENT_NAME: name,
-      PHONE_NUMBER: mobile,
-      INVITE_CODE: inviteCode,
-    }
-    cnt = await StudentModel.count(where);
-    if (cnt == 0)
-      this.AppError('无效的邀请码或身份不匹配！');
-
+    // 如果已经在库里的则直接更新一下openid和注册时间
     // 入库
-    let data = {
-      STUDENT_TYPE: StudentModel.STUDENT_TYPE.INNER_STUDENT,
-      OPENID: userId,
+    const editWhere = {
       PHONE_NUMBER: phoneNumber,
-      STUDENT_NAME: name,
-      AVATAR: avatarUrl,
-      STATUS: StudentModel.STATUS.AT_SCHOOL,
-      UPDATE_TIME: this._timestamp,
+    };
+    let data = {
       REG_TIME: this._timestamp,
+      AVATAR: avatarUrl,
+      STUDENT_NAME:name,
+      OPENID: userId
     }
-    await StudentModel.edit(where, data);
-
-    // 更新课时记录
-    // LessonLogModel.edit(
-    // 	{ LESSON_LOG_USER_ID: mobile },
-    // 	{ LESSON_LOG_USER_ID: userId }
-    // );
-
+    await StudentModel.edit(editWhere, data);
     return await this.login(userId);
   }
 

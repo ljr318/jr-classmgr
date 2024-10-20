@@ -1,82 +1,75 @@
 <block wx:if="{{isAdmin&&isLoad}}">
-	<cmpt-comm-list source='admin' type="admin-mgr" search="{{search||''}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="admin/teacher_list" sortMenusDefaultIndex="0" topBottom="50" placeholder="搜索账号，姓名，手机" bind:list="bindCommListCmpt">
+  <cmpt-comm-list source='admin' type="admin-mgr" search="{{search||''}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="admin/teacher_list" sortMenusDefaultIndex="0" topBottom="50" placeholder="搜索账号，姓名，手机" bind:list="bindCommListCmpt">
 
-		<view slot="searchEnd">
-			<button bindtap="url" data-url="../add/admin_teacher_add" class="btn radius bg-admin text-white  margin-right-s"><text class="icon-roundadd margin-right-xxs"></text>添加教练员</button>
-		</view>
+    <view slot="searchEnd">
+      <button bindtap="url" data-url="../add/admin_teacher_add" class="btn radius bg-admin text-white  margin-right-s"><text class="icon-roundadd margin-right-xxs"></text>添加教练员</button>
+    </view>
 
-		<!-- List Begin -->
-		<view class="admin-comm-list">
+    <!-- List Begin -->
+    <view class="admin-comm-list">
 
-			<view wx:if="{{dataList && dataList.total }}" class="load text-grey">共有{{dataList.total}}条符合条件记录 </view>
+      <view wx:if="{{dataList && dataList.total }}" class="load text-grey">共有{{dataList.total}}条符合条件记录 </view>
 
-			<view class="item" wx:for="{{dataList.list}}" wx:key="key">
-				<view class="no">{{index+1}}</view>
-				<view class="header">
-					<view class="left text-cut">{{item.ADMIN_NAME}}
-					</view>
-					<view class="right">
-						<text class="text-green" wx:if="{{item.ADMIN_STATUS==1}}">「正常」</text>
-						<text class="text-red" wx:if="{{item.ADMIN_STATUS==0}}">「停用」</text>
-					</view>
-				</view>
+      <view class="item" wx:for="{{dataList.list}}" wx:key="key">
+        <view class="no">{{index+1}}</view>
+        <view class="header">
+          <view class="right">
+            <text class="text-green" wx:if="{{item.STATUS==1}}">「在岗」</text>
+            <text class="text-red" wx:if="{{item.STATUS==2}}">「离岗」</text>
+          </view>
+        </view>
+        <view class="header">
+          <view class="left text-cut">{{item.ADMIN_NAME}}
+          </view>
+          <view class="right">
+            <text class="text-green" wx:if="{{item.ADMIN_STATUS==1}}">「正常」</text>
+            <text class="text-red" wx:if="{{item.ADMIN_STATUS==0}}">「停用」</text>
+          </view>
+        </view>
 
-				<view class="info title-mid">
-					<view class="info-item">
-						<view class="title">教练员姓名</view>
-						<view class="mao">：</view>
-						<view class="content">{{item.TEACHER_NAME}}</view>
-					</view>
+        <view class="info title-mid">
+          <view class="info-item">
+            <view class="title">教练员姓名</view>
+            <view class="mao">：</view>
+            <view class="content">{{item.TEACHER_NAME}}</view>
+          </view>
 
-					<view class="info-item">
-						<view class="title">手机号</view>
-						<view class="mao">：</view>
-						<view class="content">{{item.PHONE_NUMBER}}</view>
-					</view>
+          <view class="info-item">
+            <view class="title">手机号</view>
+            <view class="mao">：</view>
+            <view class="content">{{item.PHONE_NUMBER}}</view>
+          </view>
 
-					<view class="info-item">
-						<view class="title">登录密码</view>
-						<view class="mao">：</view>
-						<view class="content">{{item.LOGIN_PASSWORD}}</view>
-					</view>
+          <view class="info-item">
+            <view class="title">登录密码</view>
+            <view class="mao">：</view>
+            <view class="content">{{item.LOGIN_PASSWORD}}</view>
+          </view>
 
-					<view class="info-item">
-						<view class="title">状态</view>
-						<view class="mao">：</view>
-						<view class="content">
-              <view wx-if="{{item.STATUS == 1}}">
-                <text>在岗</text>
-              </view>
-              <view wx-if="{{item.STATUS == 2}}">
-                <text>离岗</text>
-              </view>
-            </view>
-					</view> 
-					 
 
-					<view class="oprt">
-						<view bindtap="url" data-url="../edit/admin_teacher_edit?id={{item._id}}" class="btn  margin-right-s"><text class="icon-edit margin-right-xxs"></text>编辑</view>
+          <view class="oprt">
+            <view bindtap="url" data-type="redirect" data-url="../edit/admin_teacher_edit?id={{item._id}}" class="btn  margin-right-s"><text class="icon-edit margin-right-xxs"></text>编辑</view>
 
-						<block>
-							<view wx:if="{{item.STATUS==2}}" class="btn text-green" bindtap="bindStatusTap" data-id="{{item._id}}" data-status="1" class="btn  margin-right-s"><text class="icon-roundadd margin-right-xxs"></text>上岗</view>
+            <block>
+              <view wx:if="{{item.STATUS==2}}" class="btn text-green" bindtap="bindStatusTap" data-id="{{item._id}}" data-status="1" class="btn  margin-right-s"><text class="icon-roundadd margin-right-xxs"></text>上岗</view>
 
-							<view wx:if="{{item.STATUS==1}}" class="btn margin-left-s text-orange" bindtap="bindStatusTap" data-id="{{item._id}}" data-status="2" class="btn margin-right-s"><text class="icon-roundclose margin-right-xxs text-red"></text>下岗</view>
+              <view wx:if="{{item.STATUS==1}}" class="btn margin-left-s text-orange" bindtap="bindStatusTap" data-id="{{item._id}}" data-status="2" class="btn margin-right-s"><text class="icon-roundclose margin-right-xxs text-red"></text>下岗</view>
 
-							<view bindtap="bindDelTap" data-id="{{item._id}}" class="btn margin-right-s"><text class="icon-delete margin-right-xxs text-orange"></text>删除</view>
-						</block>
+              <view bindtap="bindDelTap" data-id="{{item._id}}" class="btn margin-right-s"><text class="icon-delete margin-right-xxs text-orange"></text>删除</view>
+            </block>
 
-					</view>
-				</view>
-			</view>
+          </view>
+        </view>
+      </view>
 
-		</view>
-		<!-- List END -->
+    </view>
+    <!-- List END -->
 
-		<!--load begin-->
-		<import src="../../../../../../tpls/public/list_load_tpl.wxml" />
-		<template is="listLoadTpl" data="{{dataList, skin:'text-grey'}}" />
-		<!--load end--> 
+    <!--load begin-->
+    <import src="../../../../../../tpls/public/list_load_tpl.wxml" />
+    <template is="listLoadTpl" data="{{dataList, skin:'text-grey'}}" />
+    <!--load end-->
 
-	</cmpt-comm-list>
+  </cmpt-comm-list>
 
 </block>

@@ -103,18 +103,18 @@ class AdminTeacherController extends BaseProjectAdminController {
 		await service.insertTeacher(input);
 	}
 
-	/** 修改管理员 */
+	/** 修改教练信息 */
 	async editTeacher() {
 		await this.isSuperAdmin();
 
 		// 数据校验
 		let rules = {
-			id: 'must|id|name=id',
-			name: 'must|string|min:5|max:30|name=账号',
-			desc: 'must|string|max:30|name=姓名',
-			phone: 'string|len:11|name=手机',
-			password: 'string|min:6|max:30|name=新密码',
-
+			_id: 'must|id|name=id',
+			TEACHER_NAME: 'must|string|min:2|max:30|name=教练姓名',
+			PHONE_NUMBER: 'must|string|len:11|name=姓名',
+			LOGIN_PASSWORD: 'string|min:6|name=登录密码',
+			AVATAR: 'string|name=头像',
+			STATUS: 'must|int|name=教练状态',
 		};
 
 		// 取得数据
@@ -124,7 +124,7 @@ class AdminTeacherController extends BaseProjectAdminController {
 		await contentCheck.checkTextMultiAdmin(input);
 
 		let service = new AdminTeacherService();
-		await service.editMgr(input.id, input);
+		await service.editTeacher(input);
 	}
 
 	/** 修改自己的密码 */

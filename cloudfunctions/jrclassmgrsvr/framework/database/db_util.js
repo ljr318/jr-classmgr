@@ -695,12 +695,12 @@ async function getOne(collectionName, where, fields = '*', orderBy = {}) {
       _id: where
     };
   }
-
+  console.log("inner where:", fmtWhere(where));
   // 查询条件 
   let query = await db.collection(collectionName)
     .where(fmtWhere(where))
     .limit(1);
-
+  
   // 取出特定字段 
   if (fields != '*')
     query = await query.field(fmtFields(fields));

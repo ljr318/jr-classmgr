@@ -22,10 +22,10 @@
   </view>
   <view wx:if="{{formMobileFocus}}" class="hint-desc error">{{formMobileFocus}}</view>
 
-  <view wx:if="{{!isEdit}}" class="form-group">
+  <!--<view wx:if="{{!isEdit}}" class="form-group">
     <view class="title">邀请码</view>
     <input placeholder="本校学员需填写报名时给予的邀请码" placeholder-class="phc" model:value="{{formInviteCode}}" maxlength="30"></input>
-  </view>
+  </view>-->
 </view>
 
 

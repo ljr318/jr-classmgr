@@ -15,19 +15,19 @@
 
 	<view class="menu">
 		<view class="item">
-			<view class="title">{{user?user.USER_LESSON_TOTAL_CNT:'0'}}节</view>
+			<view class="title">{{user && user.MEMBERSHIP_USAGE_TIMES?user.MEMBERSHIP_USAGE_TIMES:'0'}}节</view>
 			<view class="desc">剩余课时</view>
 		</view>
 		<view class="item">
-			<view class="title">{{user?user.USER_LESSON_USED_CNT:'0'}}节</view>
-			<view class="desc">已约课时</view>
+			<view class="title">{{user && user.MEMBERSHIP_USED_TIMES?user.MEMBERSHIP_USED_TIMES:'0'}}节</view>
+      <view class="desc">已使用课时</view>
 		</view>
 		<!--<view class="item" bindtap="url" data-url="../../meet/lesson_log/meet_lesson_log">
 			<view class="title">课时记录</view>
 			<view class="desc">查看变更</view>
 		</view>-->
     <view class="item" bindtap="url" data-url="../../meet/lesson_log/meet_lesson_log">
-			<view class="title">{{user && user.STUDENT_TYPE == 1 ? "本校" : "临时"}}</view>
+			<view class="title">{{user && user.STUDENT_TYPE == 1 ? "本校" : "外校/临时"}}</view>
 			<view class="desc">学员类型</view>
 		</view>
 	</view>

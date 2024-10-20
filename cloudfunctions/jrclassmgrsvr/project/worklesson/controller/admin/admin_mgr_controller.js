@@ -25,7 +25,20 @@ class AdminMgrController extends BaseProjectAdminController {
 		let input = this.validateData(rules);
 
 		let service = new AdminMgrService();
-		return await service.adminLogin(input.name, input.pwd);
+		return await service.adminLogin(input.name, input.pwd, this._userId);
+  }
+  
+	async adminAutoLogin() {
+
+		// 数据校验
+		let rules = {
+		};
+
+		// 取得数据
+		// let input = this.validateData(rules);
+
+		let service = new AdminMgrService();
+		return await service.adminAutoLogin(this._userId);
 	}
 
 	/** 删除管理员 */

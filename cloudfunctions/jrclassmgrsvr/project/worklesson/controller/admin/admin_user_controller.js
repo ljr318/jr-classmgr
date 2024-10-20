@@ -9,6 +9,7 @@ const BaseProjectAdminController = require('./base_project_admin_controller.js')
 const StudentModel = require('../../model/student_model.js');
 const AdminUserService = require('../../service/admin/admin_user_service.js');
 const timeUtil = require('../../../../framework/utils/time_util.js');
+const contentCheck = require('../../../../framework/validate/content_check.js');
 
 class AdminUserController extends BaseProjectAdminController {
 
@@ -67,11 +68,9 @@ class AdminUserController extends BaseProjectAdminController {
 		// 数据格式化
 		let list = result.list;
 		for (let k = 0; k < list.length; k++) {
-			list[k].USER_STATUS_DESC = StudentModel.getDesc('STATUS', list[k].USER_STATUS);
-			list[k].USER_ADD_TIME = timeUtil.timestamp2Time(list[k].USER_ADD_TIME);
-			list[k].USER_REG_TIME = timeUtil.timestamp2Time(list[k].USER_REG_TIME);
-			list[k].USER_LOGIN_TIME = list[k].USER_LOGIN_TIME ? timeUtil.timestamp2Time(list[k].USER_LOGIN_TIME) : '未登录';
-
+			list[k].CREATE_TIME = timeUtil.timestamp2Time(list[k].CREATE_TIME);
+			list[k].REG_TIME = timeUtil.timestamp2Time(list[k].REG_TIME);
+			list[k].LAST_LOGIN_TIME = list[k].LAST_LOGIN_TIME ? timeUtil.timestamp2Time(list[k].LAST_LOGIN_TIME) : '未登录';
 		}
 		result.list = list;
 		return result;
@@ -84,20 +83,19 @@ class AdminUserController extends BaseProjectAdminController {
 
 		// 数据校验
 		let rules = {
-			name: 'must|string|min:2|max:20|name=姓名',
-			mobile: 'must|string|len:11|name=手机',
-			lessonCnt: 'must|int|name=课时数',
+			STUDENT_NAME: 'must|string|min:2|max:20|name=姓名',
+			PHONE_NUMBER: 'must|string|len:11|name=手机',
+			MEMBERSHIP_USAGE_TIMES: 'must|int|name=课时数',
+			STUDENT_TYPE: 'must|int|name=学员类型',
 		};
 
 		// 取得数据
 		let input = this.validateData(rules);
-
-
-		let service = new AdminUserService();
-		await service.insertUser(this._admin, input); 
-
-		this.logUser('添加了用户「' + input.name + '」');
-
+    console.log("insert user controller validate data pass.");
+    let service = new AdminUserService();
+    console.log("insert user controller input:", input);
+    await service.insertUser(input);
+		this.logUser('添加了用户:', input);
 	}
 
 
@@ -121,7 +119,32 @@ class AdminUserController extends BaseProjectAdminController {
 		// if (title)
 		// 	this.logUser('删除了用户「' + title + '」');
 
-	} 
+  }
+  
+	/** 修改管理员 */
+	async editUser() {
+		await this.isSuperAdmin();
+
+		// 数据校验
+		let rules = {
+			STUDENT_NAME: 'must|string|name=学员姓名',
+			PHONE_NUMBER: 'string|len:11|name=手机',
+			STUDENT_TYPE: 'must|int|name=学员类型',
+			AVATAR: 'must|string|name=头像',
+      STATUS: 'must|int|name=学员状态',
+      MEMBERSHIP_USAGE_TIMES: 'must|int|name=学员可用课程次数',
+      OPENID: 'must|string|name=用户ID',
+		};
+
+		// 取得数据
+		let input = this.validateData(rules);
+
+		// 内容审核
+		await contentCheck.checkTextMultiAdmin(input);
+
+		let service = new AdminUserService();
+		await service.editUser(input);
+	}
 
 
 	async statusUser() {

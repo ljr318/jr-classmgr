@@ -65,13 +65,13 @@ Page({
 		if (!id) return;
 
 		let params = {
-			id
+			_id: id
 		};
 		let opt = {
 			title: 'bar'
 		};
-		let mgr = await cloudHelper.callCloudData('admin/mgr_detail', params, opt);
-		if (!mgr) {
+		let car = await cloudHelper.callCloudData('car/car_detail', params, opt);
+		if (!car) {
 			this.setData({
 				isLoad: null
 			})
@@ -82,12 +82,7 @@ Page({
 			isLoad: true,
 
 			// 表单数据 
-			formName: mgr.ADMIN_NAME,
-			formDesc: mgr.ADMIN_DESC,
-			formPhone: mgr.ADMIN_PHONE,
- 
-			formPassword: ''
-
+			...car
 		});
 	},
 
@@ -100,25 +95,18 @@ Page({
 		let data = this.data;
 
 		// 数据校验 
-		data = validate.check(data, AdminBiz.CHECK_FORM_MGR_EDIT, this);
+		data = validate.check(data, AdminBiz.CHECK_FORM_CAR_EDIT, this);
 		if (!data) return; 
 
 		try {
-			let adminId = this.data.id;
-			data.id = adminId;
 
-			await cloudHelper.callCloudSumbit('admin/mgr_edit', data).then(res => {
+			await cloudHelper.callCloudSumbit('admin/car_edit', data).then(res => {
 
 				let callback = () => {
 					// 更新列表页面数据
-					let node = {
-						'ADMIN_NAME': data.name,
-						'ADMIN_DESC': data.desc,
-						'ADMIN_PHONE': data.phone,
-					}
-					pageHelper.modifyPrevPageListNodeObject(adminId, node);
-
-					wx.navigateBack();
+          wx.redirectTo({
+            url: '../list/admin_car_list'
+          });
 				}
 				pageHelper.showSuccToast('修改成功', 1500, callback);
 			});

@@ -86,7 +86,7 @@ async function app(event, context) {
 			openId = config.TEST_TOKEN_ID; 
 
 		if (!openId) {
-			console.error('OPENID is unfined');
+			console.error('OPENID is undefined');
 			return appUtil.handlerSvrErr();
 		}
 

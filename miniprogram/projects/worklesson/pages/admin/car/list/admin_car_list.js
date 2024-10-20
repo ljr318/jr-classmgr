@@ -4,7 +4,6 @@ const cacheHelper = require('../../../../../../helper/cache_helper.js');
 const cloudHelper = require('../../../../../../helper/cloud_helper.js');
 const projectSetting = require('../../../../public/project_setting.js');
 
-const CACHE_USER_CHECK_REASON = 'CACHE_USER_CHECK_REASON';
 
 Page({
 
@@ -77,19 +76,18 @@ Page({
 		if (!id) return;
 
 		let params = {
-			id,
+			_id: id,
 		}
 
 		let callback = async () => {
 			try {
-				await cloudHelper.callCloudSumbit('admin/teacher_del', params).then(res => {
+				await cloudHelper.callCloudSumbit('admin/car_del', params).then(res => {
 					pageHelper.delListNode(id, this.data.dataList.list, '_id');
 					this.data.dataList.total--;
 					this.setData({
 						dataList: this.data.dataList
 					});
 					pageHelper.showSuccToast('删除成功', 2000);
-
 				});
 
 			} catch (e) {
@@ -100,121 +98,18 @@ Page({
 	},
 
 
-
-	bindCheckCmpt: async function () {
-		let e = {
-			currentTarget: {
-				dataset: {
-					status: 8,
-					idx: this.data.curIdx
-				}
-			}
-		}
-		cacheHelper.set(CACHE_USER_CHECK_REASON, this.data.formReason, 86400 * 365);
-		await this.bindStatusTap(e);
-	},
-
-	bindStatusTap: async function (e) {
-		if (!AdminBiz.isAdmin(this, true)) return;
-
-		let id = pageHelper.dataset(e, 'id');
-		let status = pageHelper.dataset(e, 'status');
-		if (!id || !status) return;
-		status = Number(status);
-
-		let params = {
-			id,
-			status
-		}
-
-		let that = this;
-		try {
-			await cloudHelper.callCloudSumbit('admin/teacher_status', params).then(res => {
-				pageHelper.modifyListNode(id, that.data.dataList.list, 'STATUS', status, '_id');
-				that.setData({
-					dataList: that.data.dataList,
-				});
-				pageHelper.showSuccToast('设置成功');
-			});
-		} catch (e) {
-			console.log(e);
-		}
-	},
-
-
-	bindLessonTap: async function (e) {
-		let curIdx = pageHelper.dataset(e, 'idx');
-		let lessonType = pageHelper.dataset(e, 'type');
-
-		this.setData({
-			formLessonChangeCnt: '',
-			curIdx,
-			lessonModalShow: true,
-			lessonType,
-			formLessonDesc: '',
-		});
-
-	},
-
-
-	bindLessonCmpt: async function (e) {
-		if (!AdminBiz.isAdmin(this)) return;
-		let idx = this.data.curIdx;
-
-		let dataList = this.data.dataList;
-		let id = dataList.list[idx].USER_MINI_OPENID;
-
-		let lessonChangeCnt = Math.abs(Number(this.data.formLessonChangeCnt.trim()));
-		if (!lessonChangeCnt) return pageHelper.showModal('课时数不能为空或者小于等于0');
-
-
-		let params = {
-			id,
-			lessonChangeCnt,
-			lessonType: this.data.lessonType,
-			lessonDesc: this.data.formLessonDesc
-		}
-
-		try {
-			await cloudHelper.callCloudSumbit('admin/meet_user_lesson', params).then(res => {
-				let lessonType = this.data.lessonType;
-				let cnt = 0;
-				if (lessonType == '减少')
-					cnt = -Number(this.data.formLessonChangeCnt) + Number(this.data.dataList.list[idx].USER_LESSON_TOTAL_CNT);
-				else
-					cnt = Number(this.data.formLessonChangeCnt) + Number(this.data.dataList.list[idx].USER_LESSON_TOTAL_CNT);
-
-
-				this.setData({
-					['dataList.list[' + idx + '].USER_LESSON_TOTAL_CNT']: cnt,
-					lessonModalShow: false,
-					formLessonChangeCnt: '',
-					curIdx: -1,
-					lessonType: '增加',
-					formLessonDesc: ''
-				});
-				pageHelper.showSuccToast('课时' + lessonType + '成功');
-			});
-
-		}
-		catch (e) {
-			console.log(e);
-		}
-	},
-
 	_getSearchMenu: async function () {
 
 		let sortItems1 = [
 			{ label: '创建时间', type: '', value: '' },
-			{ label: '创建时间正序', type: 'sort', value: 'USER_ADD_TIME|asc' },
-			{ label: '创建时间倒序', type: 'sort', value: 'USER_ADD_TIME|desc' },
+			{ label: '创建时间正序', type: 'sort', value: 'CREATE_TIME|asc' },
+			{ label: '创建时间倒序', type: 'sort', value: 'CREATE_TIME|desc' },
 		];
 		let sortMenus = [
 			{ label: '全部', type: '', value: '' },
-			{ label: '在岗', type: 'status', value: 1 },
-			{ label: '离岗', type: 'status', value: 2 }
+			{ label: '正常', type: 'status', value: 0 },
+			{ label: '停用', type: 'status', value: 1 }
 		]
-
 
 		this.setData({
 			search: '',

@@ -11,7 +11,7 @@ const timeUtil = require('../../utils/time_util.js');
 class BaseService {
 	constructor() {
 		// 当前时间戳
-		this._timestamp = timeUtil.time();
+		this._timestamp = Math.floor(timeUtil.time()/1000);
 
 	}
 

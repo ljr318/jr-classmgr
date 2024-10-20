@@ -15,7 +15,7 @@ const md5Lib = require('../../../../framework/lib/md5_lib.js');
 class AdminMgrService extends BaseProjectAdminService {
 
 	//**管理员登录  */
-	async adminLogin(name, password) {
+	async adminLogin(name, password, openID) {
     console.log('password: ', password, ' after md5: ', md5Lib.md5(password));
 		// 判断是否存在
 		let where = {
@@ -37,7 +37,8 @@ class AdminMgrService extends BaseProjectAdminService {
 			ADMIN_TOKEN: token,
 			ADMIN_TOKEN_TIME: tokenTime,
 			ADMIN_LOGIN_TIME: timeUtil.time(),
-			ADMIN_LOGIN_CNT: cnt + 1
+      ADMIN_LOGIN_CNT: cnt + 1,
+      ADMIN_LAST_LOGIN_OPENID: openID,
 		}
 		await AdminModel.edit(where, data);
 
@@ -54,7 +55,46 @@ class AdminMgrService extends BaseProjectAdminService {
 			last,
 			cnt
 		}
+  }
+  
+  // 管理员自动登录
+  async adminAutoLogin(openID) {
+		// 判断是否存在
+		let where = {
+			ADMIN_LAST_LOGIN_OPENID: openID,
+		}
+		let fields = 'ADMIN_ID,ADMIN_NAME,ADMIN_DESC,ADMIN_TYPE,ADMIN_LOGIN_TIME,ADMIN_LOGIN_CNT,ADMIN_TOKEN,ADMIN_TOKEN_TIME';
+		let admin = await AdminModel.getOne(where, fields);
+		if (!admin || admin.ADMIN_TOKEN_TIME + 3600000 < timeUtil.time())
+			return {};
 
+		let cnt = admin.ADMIN_LOGIN_CNT;
+    let token = admin.ADMIN_TOKEN;
+		// 生成token
+		// let token = dataUtil.genRandomString(32);
+		// let tokenTime = timeUtil.time();
+		// let data = {
+		// 	ADMIN_TOKEN: token,
+		// 	ADMIN_TOKEN_TIME: tokenTime,
+		// 	ADMIN_LOGIN_TIME: timeUtil.time(),
+    //   ADMIN_LOGIN_CNT: cnt + 1,
+    //   ADMIN_LAST_LOGIN_OPENID: openID,
+		// }
+		// await AdminModel.edit(where, data);
+
+		let type = admin.ADMIN_TYPE;
+		let last = (!admin.ADMIN_LOGIN_TIME) ? '尚未登录' : timeUtil.timestamp2Time(admin.ADMIN_LOGIN_TIME);
+
+		// 写日志
+		this.insertLog('登录了系统', admin, LogModel.TYPE.SYS);
+
+		return {
+			token,
+			name: admin.ADMIN_NAME,
+			type,
+			last,
+			cnt
+		}
 	}
 
 	async clearLog() {

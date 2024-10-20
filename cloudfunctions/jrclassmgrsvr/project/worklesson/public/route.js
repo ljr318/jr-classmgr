@@ -50,6 +50,7 @@ module.exports = {
 	'admin/clear_vouch': 'admin/admin_home_controller@clearVouchData',
 
 	'admin/login': 'admin/admin_mgr_controller@adminLogin',
+	'admin/auto_login': 'admin/admin_mgr_controller@adminAutoLogin',
 	'admin/mgr_list': 'admin/admin_mgr_controller@getMgrList',
 	'admin/mgr_insert': 'admin/admin_mgr_controller@insertMgr#demo',
 	'admin/mgr_del': 'admin/admin_mgr_controller@delMgr#demo',
@@ -70,14 +71,16 @@ module.exports = {
   'admin/teacher_status': 'admin/admin_teacher_controller@statusTeacher',
   'admin/teacher_del': 'admin/admin_teacher_controller@delTeacher',
   'admin/teacher_detail': 'admin/admin_teacher_controller@getTeacherDetail',
+  'admin/teacher_edit': 'admin/admin_teacher_controller@editTeacher',
  
 	
 	// 用户
 	'admin/user_list': 'admin/admin_user_controller@getUserList',
 	'admin/user_detail': 'admin/admin_user_controller@getUserDetail',
-	'admin/user_del': 'admin/admin_user_controller@delUser#demo',
-	'admin/user_insert': 'admin/admin_user_controller@insertUser#demo',
+	'admin/user_del': 'admin/admin_user_controller@delUser',
+	'admin/user_insert': 'admin/admin_user_controller@insertUser',
 	'admin/user_status': 'admin/admin_user_controller@statusUser#demo',
+	'admin/user_edit': 'admin/admin_user_controller@editUser',
 
 	'admin/user_data_get': 'admin/admin_user_controller@userDataGet',
 	'admin/user_data_export': 'admin/admin_user_controller@userDataExport',
@@ -150,7 +153,9 @@ module.exports = {
   'admin/car_insert': 'admin/admin_car_controller@insertCar',
   'admin/car_edit': 'admin/admin_car_controller@editCar',
   'admin/car_del': 'admin/admin_car_controller@delCar',
-  'car/get_cars': 'car_controller@getCarList',
+  'car/get_cars': 'car_controller@getCars',
+  'car/car_detail': 'car_controller@getCarDetail',
+  'admin/car_list': 'admin/admin_car_controller@getCarList',
 
   // 安全检查
   'check/img': 'check_controller@checkImg',

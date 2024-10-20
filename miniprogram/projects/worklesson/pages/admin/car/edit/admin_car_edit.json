@@ -3,5 +3,5 @@
 	"navigationBarBackgroundColor": "#2499f2",
 	"navigationBarTextStyle": "white",
 	"enablePullDownRefresh": true, 
-	"navigationBarTitleText": "修改管理员"
+	"navigationBarTitleText": "车辆编辑"
 }

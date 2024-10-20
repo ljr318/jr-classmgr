@@ -10,23 +10,42 @@ const timeUtil = require('../../../framework/utils/time_util.js');
 
 class CarController extends BaseProjectController {
 
-	/** 车辆列表 */
-	async getCarList() {
-		// 数据校验
-		let rules = {
-      carID: 'string',
-			carNumber: 'string',
-			carStatus: 'int',
-		};
+  /** 车辆列表 */
+  async getCars() {
+    // 数据校验
+    let rules = {
+      carStatus: 'int',
+      occupyStartTime: 'int',
+      occupyEndTime: 'int',
+    };
 
-		// 取得数据
-		let input = this.validateData(rules);
+    // 取得数据
+    let input = this.validateData(rules);
     console.log("Got get car list input: ", input);
-		let service = new CarService();
-		let result = await service.getCarList(input);
+    let service = new CarService();
+    let result = await service.getCars(input.carStatus, {
+      startTime: input.occupyStartTime,
+      endTime: input.occupyEndTime
+    });
     console.log("Got car list: ", result);
-		return result;
-	}
+    return result;
+  }
+
+  /** 获取车辆详情 **/
+  async getCarDetail() {
+    // 数据校验
+    let rules = {
+      _id: 'must|id',
+    };
+
+    // 取得数据
+    let input = this.validateData(rules);
+
+    let service = new CarService();
+    let car = await service.getCarDetail(input);
+
+    return car;
+  }
 }
 
 module.exports = CarController;

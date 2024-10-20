@@ -7,10 +7,10 @@ const AdminMeetBiz = require('../../../../biz/admin_meet_biz.js');
 
 Page({
 
-	/**
-	 * 页面的初始数据
-	 */
-	data: {
+  /**
+   * 页面的初始数据
+   */
+  data: {
     isLoad: true,
     meetTitle: '',
     meetCateID: 0,
@@ -24,135 +24,169 @@ Page({
     meetReserveStudentCnt: 0,
     meetCancelSet: 0,
     meetCanReserveStudentType: 0,
-	},
+    availableCars: [{
+      label: '',
+      val: ''
+    }],
+  },
 
-	/**
-	 * 生命周期函数--监听页面加载
-	 */
-	onLoad: async function (options) {
-		if (!WorkBiz.isWork(this)) return;
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: async function (options) {
+    if (!WorkBiz.isWork(this)) return;
 
 
-		this.setData({
-			id: WorkBiz.getWorkId()
-		});
+    // this.setData(await AdminMeetBiz.initFormData()); // 初始化表单数据   
 
-		// this.setData(await AdminMeetBiz.initFormData()); // 初始化表单数据   
+    // await this._loadDetail();
+    const tmpCars = await cloudHelper.callCloudData('car/get_cars', {
+      carStatus: 0
+    });
+    console.log("tmp cars:", tmpCars);
+    const availableCars = [];
+    tmpCars.list.forEach((item) => {
+      console.log("car item:", item);
+      availableCars.push({
+        label: `${item.CAR_NAME}-${item.CAR_NUMBER}`,
+        val: item.CAR_NUMBER
+      });
+    });
 
-		// await this._loadDetail();
+    this.setData({
+      availableCars: availableCars,
+      id: WorkBiz.getWorkId(),
+      onStartEndTimeChange: this.onStartEndTimeChange.bind(this),
+    });
+    console.log("data:", this.data);
+  },
 
-	},
-
-	_loadDetail: async function () {
+  _loadDetail: async function () {
     let id = this.data.id;
     console.log('meet edit data:', this.data);
-		if (!id) return;
+    if (!id) return;
 
-		let params = {
-			id
-		};
-		let opt = {
-			title: 'bar'
-		};
-		// let meet = await cloudHelper.callCloudData('work/meet_detail', params, opt);
+    let params = {
+      id
+    };
+    let opt = {
+      title: 'bar'
+    };
+    // let meet = await cloudHelper.callCloudData('work/meet_detail', params, opt);
 
-		// if (!meet) {
-		// 	this.setData({
-		// 		isLoad: null
-		// 	})
-		// 	return;
-		// }
+    // if (!meet) {
+    // 	this.setData({
+    // 		isLoad: null
+    // 	})
+    // 	return;
+    // }
 
-		this.setData({
-			isLoad: true,
+    this.setData({
+      isLoad: true,
 
 
-			// 表单数据   
-			// formTitle: meet.MEET_TITLE,
-			// formCateId: meet.MEET_CATE_ID,
-			// formOrder: meet.MEET_ORDER,
-			// formCancelSet: meet.MEET_CANCEL_SET,
+      // 表单数据   
+      // formTitle: meet.MEET_TITLE,
+      // formCateId: meet.MEET_CATE_ID,
+      // formOrder: meet.MEET_ORDER,
+      // formCancelSet: meet.MEET_CANCEL_SET,
 
-			// formPhone: meet.MEET_PHONE,
+      // formPhone: meet.MEET_PHONE,
 
-			// formForms: meet.MEET_FORMS,
+      // formForms: meet.MEET_FORMS,
 
-			// formDaysSet: meet.MEET_DAYS_SET,
+      // formDaysSet: meet.MEET_DAYS_SET,
 
       // formJoinForms: meet.MEET_JOIN_FORMS,
-      
-			formTitle: 'test',
-			formCateId: '2',
-			formOrder: 9999,
-			formCancelSet: 1,
 
-			formPhone: '13319893318',
+      formTitle: 'test',
+      formCateId: '2',
+      formOrder: 9999,
+      formCancelSet: 1,
 
-			formForms: [{"must":"true", "title": "姓名", "type":"text"}, {"must":"true", "title": "手机", "type":"mobile"}],
+      formPhone: '13319893318',
 
-			formDaysSet: ['2024年9月21日'],
+      formForms: [{
+        "must": "true",
+        "title": "姓名",
+        "type": "text"
+      }, {
+        "must": "true",
+        "title": "手机",
+        "type": "mobile"
+      }],
 
-			formJoinForms: [{"must":"true", "title": "姓名", "type":"text"}, {"must":"true", "title": "手机", "type":"mobile"}],
-		});
-	},
+      formDaysSet: ['2024年9月21日'],
 
-
-	/**
-	 * 生命周期函数--监听页面初次渲染完成
-	 */
-	onReady: function () {
-
-	},
-
-	/**
-	 * 生命周期函数--监听页面显示
-	 */
-	onShow: function () { },
-
-	/**
-	 * 生命周期函数--监听页面隐藏
-	 */
-	onHide: function () {
-
-	},
-
-	/**
-	 * 生命周期函数--监听页面卸载
-	 */
-	onUnload: function () {
-
-	},
-
-	/**
-	 * 页面相关事件处理函数--监听用户下拉动作
-	 */
-	onPullDownRefresh: async function () {
-		await this._loadDetail();
-		wx.stopPullDownRefresh();
-	},
+      formJoinForms: [{
+        "must": "true",
+        "title": "姓名",
+        "type": "text"
+      }, {
+        "must": "true",
+        "title": "手机",
+        "type": "mobile"
+      }],
+    });
+  },
 
 
-	bindJoinFormsCmpt: function (e) {
-		this.setData({
-			formJoinForms: e.detail,
-		});
-	},
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {},
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
+
+  },
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: async function () {
+    await this._loadDetail();
+    wx.stopPullDownRefresh();
+  },
 
 
-	bindFormEditSubmit: async function () {
-		pageHelper.formClearFocus(this);
+  bindJoinFormsCmpt: function (e) {
+    this.setData({
+      formJoinForms: e.detail,
+    });
+  },
 
-		if (!WorkBiz.isWork(this)) return;
 
-		let data = this.data;
+  bindFormEditSubmit: async function () {
+    pageHelper.formClearFocus(this);
+
+    if (!WorkBiz.isWork(this)) return;
+
+    let data = this.data;
 
 
-		// if (data.formDaysSet.length <= 0) {
-		// 	pageHelper.anchor('formDaysSet', this);
-		// 	return pageHelper.formHint(this, 'formDaysSet', '请配置「可预约时段」');
-		// }
+    // if (data.formDaysSet.length <= 0) {
+    // 	pageHelper.anchor('formDaysSet', this);
+    // 	return pageHelper.formHint(this, 'formDaysSet', '请配置「可预约时段」');
+    // }
     // if (data.formJoinForms.length <= 0) return pageHelper.showModal('请至少设置一项「用户填写资料」');
-    
+
     // 先把开始时间和结束时间转成unix时间戳
     // console.log(data);
     if (data.formMeetStartTime == '' || data.formMeetEndTime == '') {
@@ -165,44 +199,76 @@ Page({
     } else if (data.meetReserveStudentCnt == 0) {
       return pageHelper.showModal('可预约人数上限不能为0');
     }
-    data.meetStartTime = startTimestamp/1000;
-    data.meetEndTime = endTimestamp/1000;
-		data = validate.check(data, AdminMeetBiz.CHECK_FORM, this);
-		if (!data) return;
+    data.meetStartTime = startTimestamp;
+    data.meetEndTime = endTimestamp;
+    data = validate.check(data, AdminMeetBiz.CHECK_FORM, this);
+    if (!data) return;
 
-		// let forms = this.selectComponent("#cmpt-form").getForms(true);
-		// if (!forms) return;
-		// data.forms = forms;
+    // let forms = this.selectComponent("#cmpt-form").getForms(true);
+    // if (!forms) return;
+    // data.forms = forms;
 
-		// data.cateName = AdminMeetBiz.getCateName(data.cateId);
+    // data.cateName = AdminMeetBiz.getCateName(data.cateId);
 
-		try {
-			// let meetId = this.data.id;
-			// data.id = meetId;
+    try {
+      // let meetId = this.data.id;
+      // data.id = meetId;
       console.log("about to submit data:", data);
-			// 先修改，再上传 
-			await cloudHelper.callCloudSumbit('work/meet_add', data);
+      // 先修改，再上传 
+      await cloudHelper.callCloudSumbit('work/meet_add', data);
 
-			// 图片
-			// await cloudHelper.transFormsTempPics(forms, 'meet/', meetId, 'work/meet_update_forms');
+      // 图片
+      // await cloudHelper.transFormsTempPics(forms, 'meet/', meetId, 'work/meet_update_forms');
 
-			let callback = async function () {
-				wx.navigateBack();
-			}
-			pageHelper.showSuccToast('发布成功', 2000, callback);
+      let callback = async function () {
+        wx.navigateBack();
+      }
+      pageHelper.showSuccToast('发布成功', 2000, callback);
 
-		} catch (err) {
-			console.log(err);
-		}
+    } catch (err) {
+      console.log(err);
+    }
 
-	},
+  },
 
+  url: function (e) {
+    pageHelper.url(e, this);
+  },
 
+  onStartEndTimeChange: async function () {
+    console.log("call onStartEndTimeChange:", this.data);
 
-	url: function (e) {
-		pageHelper.url(e, this);
-	},
-
+    if (this.data.formMeetStartTime && this.data.formMeetEndTime) {
+      const occupyStartTime = timeHelper.time2Timestamp(this.data.formMeetStartTime);
+      const occupyEndTime = timeHelper.time2Timestamp(this.data.formMeetEndTime);
+      if (occupyStartTime >= occupyEndTime) {
+        this.setData({
+          formMeetStartTime: '',
+          formMeetEndTime: ''
+        });
+        return pageHelper.showModal('课程开始时间不能晚于结束时间');
+      }
+      const tmpCars = await cloudHelper.callCloudData('car/get_cars', {
+        carStatus: 0,
+        occupyStartTime,
+        occupyEndTime
+      });
+      console.log("tmp cars:", tmpCars);
+      const tmpAvailableCars = [];
+      if (!tmpCars) return;
+      tmpCars.forEach((item) => {
+        console.log("car item:", item);
+        tmpAvailableCars.push({
+          label: `${item.CAR_NAME}-${item.CAR_NUMBER}`,
+          val: item.CAR_NUMBER
+        });
+      });
+      console.log("tmpAvailableCars:", tmpAvailableCars);
+      this.setData({
+        availableCars: tmpAvailableCars,
+      });
+    }
+  }
 
 
 })

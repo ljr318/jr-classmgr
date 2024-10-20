@@ -14,6 +14,7 @@ const StudentModel = require('../../model/student_model.js');
 const LessonLogModel = require('../../model/lesson_log_model.js');
 const AdminHomeService = require('./admin_home_service.js');
 const MeetService = require('../meet_service.js');
+const shortUUID = require('short-uuid');
 
 // 导出用户数据KEY
 const EXPORT_USER_DATA_KEY = 'EXPORT_USER_DATA';
@@ -67,6 +68,7 @@ class AdminUserService extends BaseProjectAdminService {
 
     } else if (sortType && util.isDefined(sortVal)) {
       // 搜索菜单
+      where.and = {};
       switch (sortType) {
         case 'status':
           where.and.STATUS = Number(sortVal);
@@ -74,10 +76,10 @@ class AdminUserService extends BaseProjectAdminService {
           break;
         case 'type':
           where.and.STUDENT_TYPE = Number(sortVal);
-          where.and.STATUS = 1;
+          // where.and.STATUS = 1;
           break;
         case 'sort': {
-          orderBy = this.fmtOrderBySort(sortVal, 'CREATE_TIME');
+          orderBy = this.fmtOrderBySort(sortVal);
           break;
         }
       }
@@ -91,6 +93,27 @@ class AdminUserService extends BaseProjectAdminService {
     return result;
   }
 
+  async editUser(user) {
+    const whereUser = {
+      OPENID: user.OPENID
+    }
+    const editData = {
+      STUDENT_NAME: user.STUDENT_NAME,
+      PHONE_NUMBER: user.PHONE_NUMBER,
+      STUDENT_TYPE: user.STUDENT_TYPE,
+      AVATAR: user.AVATAR,
+      STATUS: user.STATUS,
+      MEMBERSHIP_USAGE_TIMES: user.MEMBERSHIP_USAGE_TIMES,
+    }
+    // 编辑前先校验下手机号是不是重复了
+    const cnt = await StudentModel.count({
+      PHONE_NUMBER: user.PHONE_NUMBER
+    });
+    if (cnt > 0) {
+      this.AppError('该手机已注册，请更换');
+    }
+    return await StudentModel.edit(whereUser, editData);
+  }
 
   async statusUser(id, status, reason) {
     this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
@@ -98,12 +121,33 @@ class AdminUserService extends BaseProjectAdminService {
 
 
   /**添加用户 */
-  async insertUser(admin, {
-    name,
-    mobile,
-    lessonCnt
+  async insertUser({
+    STUDENT_NAME,
+    PHONE_NUMBER,
+    MEMBERSHIP_USAGE_TIMES,
+    STUDENT_TYPE,
   }) {
-    this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
+    console.log("DBG MARK.");
+    let user = {};
+    user.STUDENT_ID = shortUUID.generate();
+    user.STUDENT_NAME = STUDENT_NAME;
+    user.PHONE_NUMBER = PHONE_NUMBER;
+    user.STUDENT_TYPE = STUDENT_TYPE;
+    user.STATUS = 1;
+    // 用户还未注册时openid先用phonenum占用
+    user.OPENID = PHONE_NUMBER;
+    user.CREATE_TIME = timeUtil.time();
+    user.MEMBERSHIP_USAGE_TIMES = MEMBERSHIP_USAGE_TIMES;
+    user.AVATAR = '';
+    console.log('User about to insert: ', user);
+    // 插入前先校验下手机号是不是重复了
+    const cnt = await StudentModel.count({
+      PHONE_NUMBER
+    });
+    if (cnt > 0) {
+      this.AppError('该手机已注册，请更换');
+    }
+    return await StudentModel.insert(user);
   }
 
   /**删除用户 */

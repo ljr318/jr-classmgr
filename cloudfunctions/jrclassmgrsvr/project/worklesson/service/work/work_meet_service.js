@@ -16,6 +16,7 @@ class WorkMeetService extends BaseProjectWorkService {
   /**添加 */
   async insertMeet(openID, meet) {
     let teacher = await this.isWork(openID);
+
     console.log('Current login teacher info:', teacher);
     // let meet = {};
     meet.meetTeacherID = teacher._id;

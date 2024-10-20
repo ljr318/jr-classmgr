@@ -20,7 +20,8 @@ Page({
 		if (!AdminBiz.isAdmin(this)) return;
  
 		this.setData({
-			isLoad: true
+      isLoad: true,
+      STUDENT_TYPE: 1,
 		});
 
 	},
@@ -68,9 +69,10 @@ Page({
 		let data = this.data;
 
 		let rules = {
-			name: 'formName|must|string|min:2|max:20|name=姓名',
-			mobile: 'formMobile|must|string|len:11|name=手机',
-			lessonCnt: 'formLessonCnt|must|int|name=课时数',
+			STUDENT_NAME: 'STUDENT_NAME|must|string|min:2|max:20|name=姓名',
+			PHONE_NUMBER: 'PHONE_NUMBER|must|string|len:11|name=手机',
+			MEMBERSHIP_USAGE_TIMES: 'MEMBERSHIP_USAGE_TIMES|must|int|name=可用课时数',
+			STUDENT_TYPE: 'STUDENT_TYPE|must|int|name=学员类型',
 		}
 		data = validate.check(data, rules, this);
 
@@ -78,11 +80,10 @@ Page({
 
 		try {
 			await cloudHelper.callCloudSumbit('admin/user_insert', data).then(res => {
-
+        console.log('Insert data succ:', data);
 				let callback = async function () {
 					PublicBiz.removeCacheList('admin-user-list');
 					wx.navigateBack();
-
 				}
 				pageHelper.showSuccToast('添加成功', 2000, callback);
 			});

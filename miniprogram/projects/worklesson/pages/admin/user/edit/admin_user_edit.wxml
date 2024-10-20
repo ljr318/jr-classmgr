@@ -5,28 +5,40 @@
   <!-- edit form begin -->
   <view class="form-box shadow">
     <view class="form-group">
-      <view class="title must">上传头像</view>
+      <view class="title">上传头像</view>
       <button class="avatar-upload-button" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
         <image class="avatar" src="{{AVATAR ? AVATAR : '../../../../images/tabbar/my_cur.png'}}"></image>
       </button>
     </view>
     <view class="form-group">
-      <view class="title must">教练姓名</view>
-      <input maxlength="30" placeholder="请填写教练姓名" model:value="{{TEACHER_NAME}}" focus="{{TEACHER_NAMEFocus}}"></input>
+      <view class="title must">学员姓名</view>
+      <input maxlength="30" placeholder="请填写教练姓名" model:value="{{STUDENT_NAME}}" focus="{{STUDENT_NAMEFocus}}"></input>
     </view>
-    <view wx:if="{{TEACHER_NAMEFocus}}" class="hint-desc error">{{TEACHER_NAMEFocus}}</view>
+    <view wx:if="{{STUDENT_NAMEFocus}}" class="hint-desc error">{{STUDENT_NAMEFocus}}</view>
 
     <view class="form-group">
-      <view class="title">手机</view>
+      <view class="title must">手机</view>
       <input maxlength="11" placeholder="请填写手机号码" model:value="{{PHONE_NUMBER}}" focus="{{PHONE_NUMBERFocus}}"></input>
     </view>
-    <view wx:if="{{PHONE_NUMBERFocus}}" class="hint-desc error">{{formPhoneFocus}}</view>
+    <view wx:if="{{PHONE_NUMBERFocus}}" class="hint-desc error">{{PHONE_NUMBERFocus}}</view>
 
     <view class="form-group">
-      <view class="title must">登录密码</view>
-      <input maxlength="30" type="text" placeholder="请填写登录密码" model:value="{{LOGIN_PASSWORD}}" focus="{{LOGIN_PASSWORDFocus}}"></input>
+      <view class="title must">可用模拟课程次数</view>
+      <input placeholder="请输入学员可用的模拟课程次数" type="number" placeholder-class="phc" model:value="{{MEMBERSHIP_USAGE_TIMES}}" focus="{{MEMBERSHIP_USAGE_TIMESFocus}}"></input>
     </view>
-    <view wx:if="{{LOGIN_PASSWORDFocus}}" class="hint-desc error">{{LOGIN_PASSWORDFocus}}</view>
+    <view wx:if="{{MEMBERSHIP_USAGE_TIMESFocus}}" class="hint-desc error">{{MEMBERSHIP_USAGE_TIMESFocus}}</view>
+
+    <view class="form-group">
+      <view class="title must">学员类型</view>
+      <cmpt-picker mark="STUDENT_TYPE" style="flex:1" model:item="{{STUDENT_TYPE}}" sourceDataStr="1=本校学员,2=外校学员" />
+    </view>
+    <view wx:if="{{STUDENT_TYPEFocus}}" class="hint-desc error">{{STUDENT_TYPEFocus}}</view>
+
+    <view class="form-group">
+      <view class="title must">学员状态</view>
+      <cmpt-picker mark="STATUS" style="flex:1" model:item="{{STATUS}}" sourceDataStr="1=正常,2=禁用" />
+    </view>
+    <view wx:if="{{STATUSFocus}}" class="hint-desc error">{{STATUSFocus}}</view>
 
   </view>
 

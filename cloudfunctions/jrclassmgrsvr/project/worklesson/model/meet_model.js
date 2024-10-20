@@ -22,7 +22,7 @@ MeetModel.DB_STRUCTURE = {
   MEET_SUBJECT_TYPE: 'int|true|default=0|comment=科目 0：科目一 1：科目二 2：科目三 3：科目四',
   MEET_DRIVING_LICENSE_TYPE: 'string|true|default=C1|comment=驾照等级 C1 C2 B1 B2 A1 A2',
   MEET_DESC: 'string|true|comment=课程详情',
-  MEET_USING_CAR_ID: 'string|true|comment=课程使用的车辆ID',
+  MEET_USING_CAR_ID: 'string|true|comment=课程使用的车辆车牌号',
   MEET_START_TIME: 'int|false|comment=课程开始时间',
   MEET_END_TIME: 'int|false|comment=课程结束时间',
   MEET_LOCATION: 'string|true|comment=课程地点',

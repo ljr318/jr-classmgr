@@ -19,7 +19,6 @@ Page({
   onLoad: function (options) {
     if (!AdminBiz.isAdmin(this, true)) return;
     if (!pageHelper.getOptions(this, options)) return;
-
     this._loadDetail();
   },
 
@@ -71,17 +70,17 @@ Page({
     let opt = {
       title: 'bar'
     };
-    let teacher = await cloudHelper.callCloudData('admin/teacher_detail', params, opt);
-    if (!teacher) {
+    let user = await cloudHelper.callCloudData('admin/user_detail', params, opt);
+    if (!user) {
       this.setData({
         isLoad: null
       })
       return;
     };
-    console.log('Got teacher from backend:', teacher)
+    console.log('Got user from backend:', user)
     this.setData({
       isLoad: true,
-      ...teacher
+      ...user
     });
   },
 
@@ -91,20 +90,6 @@ Page({
     } = e.detail;
     console.log('avatar:', avatarUrl);
 
-    if (!contentCheckHelper.imgTypeCheck(path)) {
-      wx.hideLoading();
-      return pageHelper.showNoneToast('只能上传png、jpg、jpeg格式', 3000);
-    }
-
-    let maxSize = 20; //TODO setting
-    let imageMaxSize = 1024 * 1000 * maxSize;
-    console.log('IMGX SIZE=' + size + 'Byte,' + size / 1024 + 'K');
-    if (!contentCheckHelper.imgSizeCheck(size, imageMaxSize)) {
-      wx.hideLoading();
-      return pageHelper.showModal('图片大小不能超过 ' + maxSize + '兆');
-    }
-
-
     wx.showLoading({
       title: '上传中'
     });
@@ -112,7 +97,7 @@ Page({
     wx.hideLoading();
 
     this.setData({
-      avatarUrl: cdnLink,
+      AVATAR: cdnLink,
     })
   },
 
@@ -125,25 +110,28 @@ Page({
     let data = this.data;
 
     // 数据校验 
-    data = validate.check(data, AdminBiz.CHECK_FORM_MGR_EDIT, this);
+    data = validate.check(data, AdminBiz.CHECK_FORM_USER_EDIT, this);
     if (!data) return;
-
+    console.log("User data about to submit:", data);
     try {
-      let adminId = this.data.id;
-      data.id = adminId;
+      // let adminId = this.data.id;
+      // data.id = adminId;
 
-      await cloudHelper.callCloudSumbit('admin/mgr_edit', data).then(res => {
+      await cloudHelper.callCloudSumbit('admin/user_edit', data).then(res => {
 
         let callback = () => {
           // 更新列表页面数据
-          let node = {
-            'ADMIN_NAME': data.name,
-            'ADMIN_DESC': data.desc,
-            'ADMIN_PHONE': data.phone,
-          }
-          pageHelper.modifyPrevPageListNodeObject(adminId, node);
-
-          wx.navigateBack();
+          // let node = {
+          //   'ADMIN_NAME': data.name,
+          //   'ADMIN_DESC': data.desc,
+          //   'ADMIN_PHONE': data.phone,
+          // }
+          // pageHelper.modifyPrevPageListNodeObject(adminId, node);
+          // 返回列表页
+          wx.navigateTo({
+            url: '../list/admin_user_list'
+          });
+          // wx.navigateBack();
         }
         pageHelper.showSuccToast('修改成功', 1500, callback);
       });

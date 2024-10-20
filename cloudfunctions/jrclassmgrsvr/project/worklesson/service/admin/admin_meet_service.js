@@ -6,6 +6,7 @@
 
 const BaseProjectAdminService = require('./base_project_admin_service.js');
 const MeetService = require('../meet_service.js');
+const CarService = require('../car_service');
 const AdminHomeService = require('../admin/admin_home_service.js');
 const dataUtil = require('../../../../framework/utils/data_util.js');
 const timeUtil = require('../../../../framework/utils/time_util.js');
@@ -23,6 +24,7 @@ const DayModel = require('../../model/day_model.js');
 const TempModel = require('../../model/temp_model.js');
 
 const exportUtil = require('../../../../framework/utils/export_util.js');
+const dbUtil = require('../../../../framework/database/db_util.js');
 
 
 // 导出报名数据KEY
@@ -103,6 +105,43 @@ class AdminMeetService extends BaseProjectAdminService {
     meetCanReserveStudentType,
     meetStatus,
   }) {
+    // 先给carid加个锁
+    const lockRes = dbUtil.lock(`CARID_LOCK_${meetUsingCarID}`, 60, meetTeacherID);
+    if (lockRes !== 0) {
+      this.AppError('车辆已被占用请重试');
+    }
+    // 检查下车辆有没有被占用
+    const tmpCarService = new CarService();
+    const checkOccupiedRes = await tmpCarService.checkIfCarOccupied(meetUsingCarID, {
+      startTime: meetStartTime,
+      endTime: meetEndTime
+    });
+    if (checkOccupiedRes === 1) {
+      this.AppError('车辆已被占用请重试');
+    }
+    // 检查下同一时段当前教练有没有其他课程
+    const tmpFields = "_id";
+    const where = {
+      MEET_TEACHER_ID: meetTeacherID,
+      or: [{
+          MEET_START_TIME: [
+            ['>=', occupiedTimeSpan.startTime],
+            ['<', occupiedTimeSpan.endTime]
+          ]
+        },
+        {
+          MEET_END_TIME: [
+            ['>', occupiedTimeSpan.startTime],
+            ['<=', occupiedTimeSpan.endTime]
+          ]
+        }
+      ]
+    };
+    const res = await MeetModel.getOne(where, tmpFields);
+    console.log("res:", res);
+    if (res !== null) {
+      this.AppError('您在同一时段已发布过课程');
+    }
     let meet = {};
     meet.MEET_TEACHER_ID = meetTeacherID;
     meet.MEET_TITLE = meetTitle;
@@ -119,10 +158,12 @@ class AdminMeetService extends BaseProjectAdminService {
     meet.MEET_CANCEL_SET = meetCancelSet;
     meet.MEET_CAN_RESERVE_STUDENT_TYPE = meetCanReserveStudentType;
     meet.MEET_STATUS = meetStatus;
-    meet.MEET_ADD_TIME = timeUtil.time()/1000;
-    meet.MEET_EDIT_TIME = timeUtil.time()/1000;
+    meet.MEET_ADD_TIME = timeUtil.time();
+    meet.MEET_EDIT_TIME = timeUtil.time();
     console.log('Meet about to insert: ', meet);
-    return await MeetModel.insert(meet);
+    const insertRes = await MeetModel.insert(meet);
+    await dbUtil.unlock(`CARID_LOCK_${meetUsingCarID}`, meetTeacherID);
+    return insertRes;
   }
 
 

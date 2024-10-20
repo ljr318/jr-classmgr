@@ -72,20 +72,21 @@ Page({
 
 		let data = this.data;
 
-		// let rules = {
-		// 	name: 'formName|must|string|min:2|max:20|name=姓名',
-		// 	mobile: 'formMobile|must|string|len:11|name=手机',
-		// }
-		// data = validate.check(data, rules, this);
+		let rules = {
+			CAR_NAME: 'CAR_NAME|must|string|min:2|max:20|name=车辆名称',
+			CAR_NUMBER: 'CAR_NUMBER|must|string|min:7|max:8||name=车牌号',
+		}
+		data = validate.check(data, rules, this);
 
 		if (!data) return;
     console.log('teacher form data: ', data);
 		try {
-			await cloudHelper.callCloudSumbit('admin/teacher_insert', data).then(res => {
+			await cloudHelper.callCloudSumbit('admin/car_insert', data).then(res => {
 
 				let callback = async function () {
-					PublicBiz.removeCacheList('admin-teacher-list');
-					wx.navigateBack();
+          wx.navigateTo({
+            url: '../list/admin_car_list'
+          });
 				}
 				pageHelper.showSuccToast('添加成功', 2000, callback);
 			});

@@ -48,7 +48,7 @@ StudentModel.DB_STRUCTURE = {
 StudentModel.FIELD_PREFIX = "STUDENT_";
 
 /**
- * 状态 0=待审核,1=正常,8=审核未过,9=禁用
+ * 状态 0=待审核,1=正常,2=禁用
  */
 StudentModel.STATUS = {
   AT_SCHOOL: 1,

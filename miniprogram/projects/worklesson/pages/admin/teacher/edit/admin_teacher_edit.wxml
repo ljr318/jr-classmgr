@@ -23,6 +23,12 @@
     <view wx:if="{{PHONE_NUMBERFocus}}" class="hint-desc error">{{formPhoneFocus}}</view>
 
     <view class="form-group">
+      <view class="title must">教练状态</view>
+      <cmpt-picker mark="STATUS" style="flex:1" model:item="{{STATUS}}" sourceDataStr="1=在岗,2=离岗" />
+    </view>
+    <view wx:if="{{STATUSFocus}}" class="hint-desc error">{{STATUSFocus}}</view>
+
+    <view class="form-group">
       <view class="title must">登录密码</view>
       <input maxlength="30" type="text" placeholder="请填写登录密码" model:value="{{LOGIN_PASSWORD}}" focus="{{LOGIN_PASSWORDFocus}}"></input>
     </view>

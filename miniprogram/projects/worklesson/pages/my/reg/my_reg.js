@@ -54,12 +54,20 @@ Page({
       // formForms: []
     });
   },
-  onChooseAvatar(e) {
+  onChooseAvatar: async function (e) {
     const {
       avatarUrl
-    } = e.detail
+    } = e.detail;
+    console.log('avatar:', avatarUrl);
+
+    wx.showLoading({
+      title: '上传中'
+    });
+    const cdnLink = await cloudHelper.transTempPicOne(avatarUrl, 'student_avatar', '', true);
+    wx.hideLoading();
+
     this.setData({
-      avatarUrl,
+      avatarUrl: cdnLink,
     })
   },
   /**

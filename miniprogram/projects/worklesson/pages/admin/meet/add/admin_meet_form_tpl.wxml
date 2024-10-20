@@ -37,7 +37,7 @@
 
   <view class="form-group arrow">
     <view class="title must">开始时间</view>
-    <cmpt-picker-time mark="formMeetStartTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetStartTime" startYear="2021" endYear="2065" model:item="{{formMeetStartTime}}">
+    <cmpt-picker-time mark="formMeetStartTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetStartTime" startYear="2021" endYear="2065" model:item="{{formMeetStartTime}}" onSelected="{{onStartEndTimeChange}}">
       <view class="form-text">{{formMeetStartTime||'请选择'}}</view>
     </cmpt-picker-time>
   </view>
@@ -45,7 +45,7 @@
 
   <view class="form-group arrow">
     <view class="title must">结束时间</view>
-    <cmpt-picker-time mark="formMeetEndTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetEndTime" startYear="2021" endYear="2065" model:item="{{formMeetEndTime}}">
+    <cmpt-picker-time mark="formMeetEndTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetEndTime" startYear="2021" endYear="2065" model:item="{{formMeetEndTime}}" onSelected="{{onStartEndTimeChange}}">
       <view class="form-text">{{formMeetEndTime||'请选择'}}</view>
     </cmpt-picker-time>
   </view>
@@ -53,13 +53,14 @@
 
   <view class="form-group">
     <view class="title must">使用车辆</view>
-    <input placeholder="请选择要使用的训练车辆" placeholder-class="phc" model:value="{{meetUsingCarID}}" focus="{{meetUsingCarIDFocus}}" maxlength="100"></input>
+    <!--<input placeholder="请选择要使用的训练车辆" placeholder-class="phc" model:value="{{meetUsingCarID}}" focus="{{meetUsingCarIDFocus}}" maxlength="100"></input>-->
+    <cmpt-picker mark="meetUsingCarID" style="flex:1" model:item="{{meetUsingCarID}}" sourceData="{{availableCars}}" />
   </view>
   <view wx:if="{{meetUsingCarIDFocus}}" class="hint-desc error">{{meetUsingCarIDFocus}}</view>
 
   <view class="form-group">
     <view class="title must">课程地点</view>
-    <input placeholder="请选择要使用的训练车辆" placeholder-class="phc" model:value="{{meetLocation}}" focus="{{meetLocationFocus}}" maxlength="100"></input>
+    <input placeholder="请输入上课地点" placeholder-class="phc" model:value="{{meetLocation}}" focus="{{meetLocationFocus}}" maxlength="100"></input>
   </view>
   <view wx:if="{{meetLocationFocus}}" class="hint-desc error">{{meetLocationFocus}}</view>
 

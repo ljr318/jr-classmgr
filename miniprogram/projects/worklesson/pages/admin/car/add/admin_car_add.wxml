@@ -2,25 +2,25 @@
 <view class="main-admin" wx:if="{{isAdmin&&isLoad}}">
 	<view class="form-box shadow">
 		<view class="form-group text-orange" style="padding:30rpx">
-			※ 此处添加教练员：教练员无法自行注册，仅能够通过此处设置的手机号和相应的密码进行登录。
+			※ 此处添加训练车辆信息
 		</view>
-		<view class="form-group">
-			<view class="title must">教练员姓名</view>
-			<input placeholder="请填写教练员姓名" placeholder-class="phc" model:value="{{teacherName}}" focus="{{teacherNameFocus}}" maxlength="20"></input>
+    <view class="form-group">
+			<view class="title must">车牌号</view>
+			<input placeholder="请填写车牌号" type="number" placeholder-class="phc" model:value="{{CAR_NUMBER}}" focus="{{CAR_NUMBERFocus}}" maxlength="8"></input>
 		</view>
-		<view wx:if="{{teacherNameFocus}}" class="hint-desc error">{{teacherNameFocus}}</view>
+		<view wx:if="{{CAR_NUMBERFocus}}" class="hint-desc error">{{CAR_NUMBERFocus}}</view>
 
 		<view class="form-group">
-			<view class="title must">教练员手机号</view>
-			<input placeholder="请填写手机号" type="number" placeholder-class="phc" model:value="{{phoneNumber}}" focus="{{phoneNumberFocus}}" maxlength="11"></input>
+			<view class="title must">车辆名称</view>
+			<input placeholder="请填写车辆名称" placeholder-class="phc" model:value="{{CAR_NAME}}" focus="{{CAR_NAMEFocus}}" maxlength="20"></input>
 		</view>
-		<view wx:if="{{phoneNumberFocus}}" class="hint-desc error">{{phoneNumberFocus}}</view>
+		<view wx:if="{{CAR_NAMEFocus}}" class="hint-desc error">{{CAR_NAMEFocus}}</view>
 
-		<view class="form-group">
-			<view class="title must">登录密码</view>
-			<input placeholder="请填写登录密码" type="password" placeholder-class="phc" model:value="{{password}}" focus="{{passwordFocus}}" maxlength="20"></input>
-		</view>
-		<view wx:if="{{passwordFocus}}" class="hint-desc error">{{passwordFocus}}</view>
+    <!--<view class="form-group">
+      <view class="title must">车辆状态</view>
+      <cmpt-picker mark="CAR_STATUS" style="flex:1" model:item="{{CAR_STATUS}}" sourceDataStr="1=正常,2=禁用" />
+    </view>
+    <view wx:if="{{CAR_STATUSFocus}}" class="hint-desc error">{{CAR_STATUSFocus}}</view>-->
 
 	</view>
 	<button bindtap="bindFormSubmit" class="btn-admin margin-top-xs">提交</button>

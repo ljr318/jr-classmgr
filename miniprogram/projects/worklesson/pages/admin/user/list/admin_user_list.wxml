@@ -34,41 +34,43 @@
             <view class="content">{{item.PHONE_NUMBER||'未填写'}} <text wx:if="{{item.PHONE_NUMBER}}" class="icon-phone margin-left-s"></text></view>
           </view>
 
-          <view class="info-item" style="font-size: 32rpx;">
+          <view class="info-item">
             <view class="title">课时数</view>
             <view class="mao">：</view>
-            <view class="content">可使用{{item.MEMBERSHIP_USAGE_TIMES}}节，已使用{{item.MEMBERSHIP_USED_TIMES}}节 </view>
+            <view class="content">可预约<text style="font-weight: bold;">{{item.MEMBERSHIP_USAGE_TIMES}}</text>节模拟课程 </view>
           </view>
 
-          <view class="info-item" wx:if="{{item.USER_TYPE==0}}">
+          <view class="info-item">
             <view class="title">创建时间</view>
             <view class="mao">：</view>
             <view class="content">{{item.CREATE_TIME}}</view>
           </view>
-          <view class="info-item" wx:else>
+          <view class="info-item">
             <view class="title">注册时间</view>
             <view class="mao">：</view>
             <view class="content">{{item.REG_TIME}}</view>
           </view>
 
-          <view class="info-item" bindtap="url" data-url="../detail/admin_user_detail?id={{item.OPENID}}">
+          <!--<view class="info-item" bindtap="url" data-url="../edit/admin_user_edit?id={{item.OPENID}}">
             <view class="title">详情</view>
             <view class="mao">：</view>
             <view class="content text-blue">查看更多学员资料...</view>
-          </view>
+          </view>-->
+
           <view class="oprt">
 
-            <view wx:if="{{item.STATUS==2}}" bindtap="bindStatusTap" data-status="1" data-idx="{{index}}" class="btn  margin-right-s"><text class="icon-check margin-right-xxs text-green"></text>恢复正常</view>
+            <!--<view wx:if="{{item.STATUS==2}}" bindtap="bindStatusTap" data-status="1" data-idx="{{index}}" class="btn  margin-right-s"><text class="icon-check margin-right-xxs text-green"></text>恢复正常</view>
 
-            <view wx:if="{{item.STATUS==1}}" bindtap="bindStatusTap" data-status="9" data-idx="{{index}}" class="btn  margin-right-s"><text class="icon-close margin-right-xxs text-purple"></text>禁用</view>
+            <view wx:if="{{item.STATUS==1}}" bindtap="bindStatusTap" data-status="9" data-idx="{{index}}" class="btn  margin-right-s"><text class="icon-close margin-right-xxs text-purple"></text>禁用</view>-->
 
-
+            <view bindtap="url" data-url="../edit/admin_user_edit?id={{item.OPENID}}" class="btn  margin-right-s"><text class="icon-profile margin-right-xxs text-orange"></text>编辑/详情</view>
+            
             <view bindtap="bindDelTap" data-id="{{item.OPENID}}" class="btn  margin-right-s"><text class="icon-delete margin-right-xxs text-orange"></text>删除</view>
 
-            <block wx:if="{{item.STATUS==1}}">
+            <!--<block wx:if="{{item.STATUS==1}}">
               <view bindtap="bindLessonTap" data-idx="{{index}}" data-type="增加" class="btn  margin-right-s">增加课时</view>
               <view bindtap="bindLessonTap" data-idx="{{index}}" data-type="减少" class="btn  margin-right-s">减少课时</view>
-            </block>
+            </block>-->
 
             <!--<view bindtap="url" data-url="../../../meet/lesson_log/meet_lesson_log?id={{item.USER_MINI_OPENID}}" class="btn  margin-right-s">课时记录</view>-->
           </view>

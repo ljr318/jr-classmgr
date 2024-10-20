@@ -85,7 +85,7 @@ Page({
 				}
 				await cloudHelper.callCloudSumbit('admin/user_del', params, opts).then(res => {
 
-					pageHelper.delListNode(id, this.data.dataList.list, 'USER_MINI_OPENID');
+					pageHelper.delListNode(id, this.data.dataList.list, 'OPENID');
 					this.data.dataList.total--;
 					this.setData({
 						dataList: this.data.dataList
@@ -238,21 +238,19 @@ Page({
 
 		let sortItems1 = [
 			{ label: '创建时间', type: '', value: '' },
-			{ label: '创建时间正序', type: 'sort', value: 'USER_ADD_TIME|asc' },
-			{ label: '创建时间倒序', type: 'sort', value: 'USER_ADD_TIME|desc' },
+			{ label: '创建时间正序', type: 'sort', value: 'CREATE_TIME|asc' },
+			{ label: '创建时间倒序', type: 'sort', value: 'CREATE_TIME|desc' },
 		];
 		let sortItems2 = [
 			{ label: '课时数', type: '', value: '' },
-			{ label: '课时数正序', type: 'sort', value: 'USER_LESSON_TOTAL_CNT|asc' },
-			{ label: '课时数倒序', type: 'sort', value: 'USER_LESSON_TOTAL_CNT|desc' },
+			{ label: '课时数正序', type: 'sort', value: 'MEMBERSHIP_USAGE_TIMES|asc' },
+			{ label: '课时数倒序', type: 'sort', value: 'MEMBERSHIP_USAGE_TIMES|desc' },
 		];
 		let sortMenus = [
 			{ label: '全部', type: '', value: '' },
-			{ label: '正常', type: 'status', value: 1 },
-			{ label: '禁用', type: 'status', value: 9 },
-			{ label: '已注册', type: 'type', value: 1 },
-			{ label: '待注册', type: 'type', value: 0 }
-
+			{ label: '本校学员', type: 'type', value: 1 },
+			{ label: '外校学员', type: 'type', value: 2 },
+			{ label: '禁用', type: 'status', value: 2 },
 		]
 
 
