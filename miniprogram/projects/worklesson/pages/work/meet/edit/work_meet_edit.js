@@ -34,6 +34,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: async function (options) {
+    console.log("on load");
     if (!WorkBiz.isWork(this)) return;
 
 

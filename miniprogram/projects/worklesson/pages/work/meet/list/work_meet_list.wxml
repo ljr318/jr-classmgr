@@ -14,7 +14,7 @@
 				<view class="header">
 					<view class="left text-cut"><text wx:if="{{item.MEET_ORDER==0}}" class="text-black" style="font-weight:normal;font-size:24rpx">[置顶]</text><text wx:if="{{item.MEET_VOUCH==1}}" class="text-black margin-right-xxs" style="font-weight:normal;font-size:24rpx">[首页推荐]</text> {{item.MEET_TITLE}}
 					</view>
-					<view class="right" bindtap="bindScanTap" data-id="{{item._id}}" data-title="{{item.MEET_TITLE}}">
+					<view class="right" bindtap="bindScanTap" data-id="{{item._id}}">
 						<text class="icon-scan"></text>
 					</view>
 				</view>
@@ -24,7 +24,7 @@
 						<view class="title">状态</view>
 						<view class="mao">：</view>
 						<view class="content">
-							<text wx:if="{{item.MEET_STATUS==0}}" class="text-grey">未启用</text>
+							<text wx:if="{{item.MEET_STATUS==0}}" class="text-grey">开放预约/待开课</text>
 							<text wx:elif="{{item.MEET_STATUS==1}}" class="text-green">使用中</text>
 							<text wx:elif="{{item.MEET_STATUS==9}}" class="text-orange">停止 (用户可见)</text>
 							<text wx:elif="{{item.MEET_STATUS==10}}" class="text-red">已关闭 (用户不可见)</text>

@@ -16,7 +16,7 @@ Page({
    */
   onLoad: function (options) {
     if (WorkBiz.autoLogin(this)) {
-      wx.reLaunch({
+      wx.redirectTo({
         url: pageHelper.fmtURLByPID('/pages/work/index/home/work_home'),
       });
       return;

@@ -106,23 +106,30 @@ class AdminMeetService extends BaseProjectAdminService {
     meetStatus,
   }) {
     // 先给carid加个锁
-    const lockRes = dbUtil.lock(`CARID_LOCK_${meetUsingCarID}`, 60, meetTeacherID);
+    const lockRes = await dbUtil.lock(`CARID_LOCK_${meetUsingCarID}`, 60000, meetTeacherID);
+    console.log('lockRes', lockRes);
     if (lockRes !== 0) {
+      await dbUtil.unlock(`CARID_LOCK_${meetUsingCarID}`, meetTeacherID);
       this.AppError('车辆已被占用请重试');
     }
     // 检查下车辆有没有被占用
-    const tmpCarService = new CarService();
-    const checkOccupiedRes = await tmpCarService.checkIfCarOccupied(meetUsingCarID, {
+    const occupiedTimeSpan = {
       startTime: meetStartTime,
       endTime: meetEndTime
-    });
+    };
+    const tmpCarService = new CarService();
+    const checkOccupiedRes = await tmpCarService.checkIfCarOccupied(meetUsingCarID, occupiedTimeSpan);
+    console.log('checkOccupiedRes', checkOccupiedRes);
     if (checkOccupiedRes === 1) {
+      await dbUtil.unlock(`CARID_LOCK_${meetUsingCarID}`, meetTeacherID);
       this.AppError('车辆已被占用请重试');
     }
     // 检查下同一时段当前教练有没有其他课程
     const tmpFields = "_id";
     const where = {
-      MEET_TEACHER_ID: meetTeacherID,
+      and:[{
+        MEET_TEACHER_ID: meetTeacherID,
+      }],
       or: [{
           MEET_START_TIME: [
             ['>=', occupiedTimeSpan.startTime],
@@ -140,6 +147,7 @@ class AdminMeetService extends BaseProjectAdminService {
     const res = await MeetModel.getOne(where, tmpFields);
     console.log("res:", res);
     if (res !== null) {
+      await dbUtil.unlock(`CARID_LOCK_${meetUsingCarID}`, meetTeacherID);
       this.AppError('您在同一时段已发布过课程');
     }
     let meet = {};

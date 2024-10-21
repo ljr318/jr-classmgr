@@ -67,7 +67,7 @@ Page({
 		let meetId = pageHelper.dataset(e, 'id');
 		let title = encodeURIComponent(pageHelper.dataset(e, 'title'));
 		wx.navigateTo({
-			url: '../scan/admin_meet_scan?meetId=' + meetId + '&title=' + title,
+			url: '../scan/work_meet_scan?meetId=' + meetId + '&title=' + title,
 		});
 	},
 

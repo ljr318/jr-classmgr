@@ -59,7 +59,9 @@ class CarService extends BaseProjectService {
     console.log("carNumber:", carNumber);
     const tmpFields = "_id";
     const where = {
-      MEET_USING_CAR_ID: carNumber,
+      and: [{
+        MEET_USING_CAR_ID: carNumber,
+      }],
       or: [{
           MEET_START_TIME: [
             ['>=', occupiedTimeSpan.startTime],
@@ -110,7 +112,9 @@ class CarService extends BaseProjectService {
         console.log("Inner car:", item);
         const tmpFields = "_id";
         const where = {
-          MEET_USING_CAR_ID: item.CAR_NUMBER,
+          and: [{
+            MEET_USING_CAR_ID: item.CAR_NUMBER
+          }],
           or: [{
               MEET_START_TIME: [
                 ['>=', occupiedTimeSpan.startTime],
@@ -125,7 +129,7 @@ class CarService extends BaseProjectService {
             }
           ]
         };
-        console.log("where:", where, where.or[0], where.or[1]);
+        // console.log("where:", where, where.or[0], where.or[1], where.where.fieldName);
         const res = await MeetModel.getOne(where, tmpFields);
         console.log("res:", res);
         if (res === null) {

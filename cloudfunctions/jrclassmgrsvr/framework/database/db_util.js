@@ -44,18 +44,22 @@ async function insert(collectionName, data) {
   return query._id;
 }
 
-async function lock(lockedKey, expireTime = 60, lockedOwner = '') {
-  const now = Date.now()/1000;
+async function lock(lockedKey, expireTime = 60000, lockedOwner = '') {
+  const now = Date.now();
   // 每一次都需要获取锁之前都先清理一下过期的锁记录
   const where = {
-    EXPIRE_TIME: ['<=', now]
+    EXPIRE_TIME: ['<=', now],
+    LOCKED_OWNER: lockedOwner
   };
+  console.log('lock del where:');
   await del('bx_dist_lock', where);
   try {
     const result = await db.collection('bx_dist_lock').add({
-      LOCKED_KEY: lockedKey,
-      EXPIRE_TIME: now + expireTime,
-      LOCKED_OWNER: lockedOwner
+      data: {
+        LOCKED_KEY: lockedKey,
+        EXPIRE_TIME: now + expireTime,
+        LOCKED_OWNER: lockedOwner
+      }
     });
     console.log('获取锁成功:', result, lockedKey, lockedOwner, expireTime);
   } catch (error) {
@@ -64,7 +68,7 @@ async function lock(lockedKey, expireTime = 60, lockedOwner = '') {
       return 1;
     } else {
       console.error('获取锁记录插入失败:', error);
-      throw new AppError('获取锁记录插入失败！');
+      return 1;
     }
   }
   return 0;
@@ -700,7 +704,7 @@ async function getOne(collectionName, where, fields = '*', orderBy = {}) {
   let query = await db.collection(collectionName)
     .where(fmtWhere(where))
     .limit(1);
-  
+
   // 取出特定字段 
   if (fields != '*')
     query = await query.field(fmtFields(fields));
@@ -890,6 +894,8 @@ module.exports = {
   getOne,
   getAll,
   getAllBig,
+  lock,
+  unlock,
 
   getAllByArray,
   getList,
