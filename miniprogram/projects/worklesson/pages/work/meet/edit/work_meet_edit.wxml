@@ -5,7 +5,7 @@
 
 		<include src="../../../admin/meet/add/admin_meet_form_tpl.wxml" />
  
-		<button bindtap="bindFormEditSubmit" class="btn-work margin-top-l">发布</button>
+		<button bindtap="bindFormEditSubmit" class="btn-work margin-top-l">提交</button>
 
 	</view>
 

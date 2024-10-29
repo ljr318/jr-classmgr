@@ -27,8 +27,9 @@ module.exports = {
 	'work/login': 'work/work_home_controller@workLogin',
 	'work/pwd': 'work/work_home_controller@pwdWork#demo',
 	'work/meet_detail': 'work/work_meet_controller@getMeetDetail',
-	'work/meet_edit': 'work/work_meet_controller@editMeet#demo',
+	'work/meet_edit': 'work/work_meet_controller@editMeet',
 	'work/meet_add': 'work/work_meet_controller@insertMeet',
+	'work/meet_cancel': 'work/work_meet_controller@cancelMeet',
 	'work/meet_list': 'work/work_meet_controller@getMeetList',
 	'work/meet_update_forms': 'work/work_meet_controller@updateMeetForms#demo',
 

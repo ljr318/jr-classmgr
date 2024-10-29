@@ -10,22 +10,38 @@
 		<cmpt-picker id="cate-picker" sourceData="{{cateIdOptions}}" bind:select="bindCateIdSelect" data-type="picker" data-item="formCateId" item="{{formCateId}}"> </cmpt-picker>
 	</view>
 	<view wx:if="{{formCateIdFocus}}" class="hint-desc error">{{formCateIdFocus}}</view>-->
-
-  <view class="form-group" id="meetCateID">
+  <view class="form-group" wx-if="{{isEdit}}">
     <view class="title must">课程类型</view>
-    <cmpt-picker mark="meetCateID" style="flex:1" model:item="{{meetCateID}}" sourceDataStr="0=模拟,1=训练" />
+    <text wx-if="{{meetCateID === 0}}">模拟</text>
+    <text wx-if="{{meetCateID === 1}}">训练</text>
+  </view>
+
+  <view class="form-group" wx-if="{{isEdit}}">
+    <view class="title must">科目</view>
+    <text wx-if="{{meetSubjectType === 1}}">科目二</text>
+    <text wx-if="{{meetSubjectType === 2}}">科目三</text>
+  </view>
+
+  <view class="form-group" wx-if="{{isEdit}}">
+    <view class="title must">驾照等级</view>
+    <text>{{meetDrivingLicenseType}}</text>
+  </view>
+
+  <view class="form-group" id="meetCateID" wx-if="{{!isEdit}}">
+    <view class="title must">课程类型</view>
+    <cmpt-picker mark="meetCateID" disabled="{{isEdit}}" style="flex:1" model:item="{{meetCateID}}" sourceDataStr="0=模拟,1=训练" />
   </view>
   <view wx:if="{{meetCateIDFocus}}" class="hint-desc error">{{meetCateIDFocus}}</view>
 
-  <view class="form-group" id="meetSubjectType">
+  <view class="form-group" id="meetSubjectType" wx-if="{{!isEdit}}">
     <view class="title must">科目</view>
-    <cmpt-picker mark="meetSubjectType" style="flex:1" model:item="{{meetSubjectType}}" sourceDataStr="1=科目二,2=科目三" />
+    <cmpt-picker disabled="{{isEdit}}" mark="meetSubjectType" style="flex:1" model:item="{{meetSubjectType}}" sourceDataStr="1=科目二,2=科目三" />
   </view>
   <view wx:if="{{meetSubjectTypeFocus}}" class="hint-desc error">{{meetSubjectTypeFocus}}</view>
 
-  <view class="form-group" id="meetDrivingLicenseType">
+  <view class="form-group" id="meetDrivingLicenseType" wx-if="{{!isEdit}}">
     <view class="title must">驾照等级</view>
-    <cmpt-picker mark="meetDrivingLicenseType" style="flex:1" model:item="{{meetDrivingLicenseType}}" sourceDataStr="C1,C2,B1,B2,A1,A2" />
+    <cmpt-picker disabled="{{isEdit}}" mark="meetDrivingLicenseType" style="flex:1" model:item="{{meetDrivingLicenseType}}" sourceDataStr="C1,C2,B1,B2,A1,A2" />
   </view>
   <view wx:if="{{meetDrivingLicenseTypeFocus}}" class="hint-desc error">{{meetDrivingLicenseTypeFocus}}</view>
 
@@ -35,7 +51,17 @@
   </view>
   <view wx:if="{{meetDescFocus}}" class="hint-desc error">{{meetDescFocus}}</view>
 
-  <view class="form-group arrow">
+  <view class="form-group" wx-if="{{isEdit}}">
+    <view class="title must">开始时间</view>
+    <text>{{formMeetStartTime}}</text>
+  </view>
+
+  <view class="form-group" wx-if="{{isEdit}}">
+    <view class="title must">结束时间</view>
+    <text>{{formMeetEndTime}}</text>
+  </view>
+
+  <view class="form-group arrow" wx-if="{{!isEdit}}">
     <view class="title must">开始时间</view>
     <cmpt-picker-time mark="formMeetStartTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetStartTime" startYear="2021" endYear="2065" model:item="{{formMeetStartTime}}" onSelected="{{onStartEndTimeChange}}">
       <view class="form-text">{{formMeetStartTime||'请选择'}}</view>
@@ -43,18 +69,23 @@
   </view>
   <view wx:if="{{meetStartTimeFocus}}" class="hint-desc error">{{meetStartTimeFocus}}</view>
 
-  <view class="form-group arrow">
+  <view class="form-group arrow" wx-if="{{!isEdit}}">
     <view class="title must">结束时间</view>
-    <cmpt-picker-time mark="formMeetEndTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetEndTime" startYear="2021" endYear="2065" model:item="{{formMeetEndTime}}" onSelected="{{onStartEndTimeChange}}">
+    <cmpt-picker-time disabled="{{isEdit}}" mark="formMeetEndTime" mode="fullminute" bind:select="url" data-type="picker" data-item="formMeetEndTime" startYear="2021" endYear="2065" model:item="{{formMeetEndTime}}" onSelected="{{onStartEndTimeChange}}">
       <view class="form-text">{{formMeetEndTime||'请选择'}}</view>
     </cmpt-picker-time>
   </view>
   <view wx:if="{{meetEndTimeFocus}}" class="hint-desc error">{{meetEndTimeFocus}}</view>
 
-  <view class="form-group">
+  <view class="form-group" wx-if="{{isEdit}}">
+    <view class="title must">使用车辆</view>
+    <text>{{meetUsingCarID}}</text>
+  </view>
+
+  <view class="form-group" wx-if="{{!isEdit}}">
     <view class="title must">使用车辆</view>
     <!--<input placeholder="请选择要使用的训练车辆" placeholder-class="phc" model:value="{{meetUsingCarID}}" focus="{{meetUsingCarIDFocus}}" maxlength="100"></input>-->
-    <cmpt-picker mark="meetUsingCarID" style="flex:1" model:item="{{meetUsingCarID}}" sourceData="{{availableCars}}" />
+    <cmpt-picker disabled="{{isEdit}}" mark="meetUsingCarID" style="flex:1" model:item="{{meetUsingCarID}}" sourceData="{{availableCars}}" />
   </view>
   <view wx:if="{{meetUsingCarIDFocus}}" class="hint-desc error">{{meetUsingCarIDFocus}}</view>
 
@@ -64,7 +95,12 @@
   </view>
   <view wx:if="{{meetLocationFocus}}" class="hint-desc error">{{meetLocationFocus}}</view>
 
-  <view class="form-group">
+  <view class="form-group" wx-if="{{isEdit}}">
+    <view class="title must">可预约人数上限</view>
+    <text>{{meetReserveStudentCnt}}</text>
+  </view>
+
+  <view class="form-group" wx-if="{{!isEdit}}">
 		<view class="title must">可预约人数上限</view>
 		<input placeholder="课程最大可参加的人数" type="number" placeholder-class="phc" model:value="{{meetReserveStudentCnt}}" focus="{{meetReserveStudentCntFocus}}"></input>
 	</view>

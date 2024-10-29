@@ -17,14 +17,14 @@ class WorkMeetController extends BaseProjectWorkController {
 
     // 数据校验
     let rules = {
-      id: 'must|id',
+      _id: 'must|id',
     };
 
     // 取得数据
     let input = this.validateData(rules);
 
-    let service = new AdminMeetService();
-    let detail = await service.getMeetDetail(this._workId);
+    let service = new WorkMeetService();
+    let detail = await service.getMeetDetail(input, this._openId);
     return detail;
   }
 
@@ -63,28 +63,25 @@ class WorkMeetController extends BaseProjectWorkController {
     await this.isWork();
 
     let rules = {
-      id: 'must|id',
-      title: 'must|string|min:2|max:50|name=标题',
-      cateId: 'must|id|name=分类',
-      cateName: 'must|string|name=分类',
-      order: 'must|int|min:0|max:9999|name=排序号',
-      cancelSet: 'must|int|name=取消设置',
-      daysSet: 'must|array|name=预约时间设置',
-      phone: 'must|string|len:11|name=登陆手机',
-      password: 'string|min:6|max:30|name=登陆密码',
-      forms: 'array|name=表单',
-      joinForms: 'must|array|name=用户资料设置',
+      _id: 'must|id',
+      meetTitle: 'must|string|min:2|max:50|name=课程标题',
+      // meetCateID: 'must|int|name=课程类型',
+      // meetSubjectType: 'must|int|name=科目类型',
+      // meetDrivingLicenseType: 'must|string|name=驾照等级',
+      meetDesc: 'must|string|min:6|max:30|name=课程详情',
+      // meetUsingCarID: 'string|min:6|max:30|name=课程使用的车辆ID',
+      // meetStartTime: 'must|int|name=课程开始时间',
+      // meetEndTime: 'must|int|name=课程结束时间',
+      meetLocation: 'must|string|name=课程地点',
+      // meetReserveStudentCnt: 'must|int|name=课程可预约人数',
+      meetCancelSet: 'must|int|name=可取消时间',
+      meetCanReserveStudentType: 'must|int|name=可预约学员类型',
     };
 
     // 取得数据
     let input = this.validateData(rules);
-    input.id = this._workId;
-
-
-    let service = new AdminMeetService();
-    let result = service.editMeet(input);
-
-
+    let service = new WorkMeetService();
+    let result = service.editMeet(input, this._openId);
     return result;
   }
 
@@ -176,7 +173,22 @@ class WorkMeetController extends BaseProjectWorkController {
   }
 
 
-  // 删除某时段预约记录
+  // 取消课程
+  async cancelMeet() {
+    await this.isWork();
+
+    // 数据校验
+    let rules = {
+      _id: 'must|id',
+    };
+
+    // 取得数据
+    let input = this.validateData(rules);
+
+    let service = new WorkMeetService();
+    return await service.cancelMeet(input, this._openId);
+  }
+
   async cancelJoinByTimeMark() {
     await this.isWork();
 
@@ -258,7 +270,7 @@ class WorkMeetController extends BaseProjectWorkController {
     // input.meetId = this._workId;
 
     let service = new WorkMeetService();
-    let result = await service.getMeetList(input);
+    let result = await service.getMeetList(input, this._openId);
     console.log('Got meet list result:', result);
     // 数据格式化
     // let list = result.list;
@@ -274,6 +286,11 @@ class WorkMeetController extends BaseProjectWorkController {
 
     // }
     // result.list = list;
+
+    result.list.forEach((item)=>{
+      item.MEET_START_TIME_STR = timeUtil.timestamp2Time(item.MEET_START_TIME);
+      item.MEET_END_TIME_STR = timeUtil.timestamp2Time(item.MEET_END_TIME);
+    });
 
     return result;
 

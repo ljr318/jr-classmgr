@@ -11,9 +11,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    isLoad: true,
+    isLoad: false,
+    isEdit: false,
     meetTitle: '',
-    meetCateID: 0,
     meetSubjectType: 1,
     meetDrivingLicenseType: 'C1',
     meetDesc: '',
@@ -36,30 +36,57 @@ Page({
   onLoad: async function (options) {
     console.log("on load");
     if (!WorkBiz.isWork(this)) return;
-
-
-    // this.setData(await AdminMeetBiz.initFormData()); // 初始化表单数据   
-
-    // await this._loadDetail();
-    const tmpCars = await cloudHelper.callCloudData('car/get_cars', {
-      carStatus: 0
-    });
-    console.log("tmp cars:", tmpCars);
-    const availableCars = [];
-    tmpCars.list.forEach((item) => {
-      console.log("car item:", item);
-      availableCars.push({
-        label: `${item.CAR_NAME}-${item.CAR_NUMBER}`,
-        val: item.CAR_NUMBER
+    pageHelper.getOptions(this, options);
+    if (this.data.id) {
+      const tmpMeet = await cloudHelper.callCloudData('work/meet_detail', {
+        _id: this.data.id
       });
-    });
+      console.log('tmpMeet:', tmpMeet);
+      if (!tmpMeet) return;
+      const startTime = timeHelper.timestamp2Time(tmpMeet.MEET_START_TIME);
+      const endTime = timeHelper.timestamp2Time(tmpMeet.MEET_END_TIME);
+      this.setData({
+        isLoad: true,
+        isEdit: true,
+        meetCateID: tmpMeet.MEET_CATE_ID,
+        meetTitle: tmpMeet.MEET_TITLE,
+        meetSubjectType: tmpMeet.MEET_SUBJECT_TYPE,
+        meetDrivingLicenseType: tmpMeet.MEET_DRIVING_LICENSE_TYPE,
+        meetDesc: tmpMeet.MEET_DESC,
+        meetUsingCarID: tmpMeet.MEET_USING_CAR_ID,
+        formMeetStartTime: startTime,
+        formMeetEndTime: endTime,
+        meetLocation: tmpMeet.MEET_LOCATION,
+        meetReserveStudentCnt: tmpMeet.MEET_RESERVE_STUDENT_CNT,
+        meetCancelSet: tmpMeet.MEET_CANCEL_SET,
+        meetCanReserveStudentType: tmpMeet.MEET_CAN_RESERVE_STUDENT_TYPE,
+      });
+    } else {
+      // this.setData(await AdminMeetBiz.initFormData()); // 初始化表单数据   
 
-    this.setData({
-      availableCars: availableCars,
-      id: WorkBiz.getWorkId(),
-      onStartEndTimeChange: this.onStartEndTimeChange.bind(this),
-    });
-    console.log("data:", this.data);
+      // await this._loadDetail();
+      const tmpCars = await cloudHelper.callCloudData('car/get_cars', {
+        carStatus: 0
+      });
+      console.log("tmp cars:", tmpCars);
+      const availableCars = [];
+      tmpCars.list.forEach((item) => {
+        console.log("car item:", item);
+        availableCars.push({
+          label: `${item.CAR_NAME}-${item.CAR_NUMBER}`,
+          val: item.CAR_NUMBER
+        });
+      });
+
+      this.setData({
+        availableCars: availableCars,
+        id: WorkBiz.getWorkId(),
+        onStartEndTimeChange: this.onStartEndTimeChange.bind(this),
+        isLoad: true,
+      });
+      console.log("data:", this.data);
+    }
+
   },
 
   _loadDetail: async function () {
@@ -202,7 +229,7 @@ Page({
     }
     data.meetStartTime = startTimestamp;
     data.meetEndTime = endTimestamp;
-    data = validate.check(data, AdminMeetBiz.CHECK_FORM, this);
+    data = validate.check(data, this.data.isEdit ? AdminMeetBiz.EDIT_CHECK_FORM : AdminMeetBiz.CHECK_FORM, this);
     if (!data) return;
 
     // let forms = this.selectComponent("#cmpt-form").getForms(true);
@@ -215,16 +242,27 @@ Page({
       // let meetId = this.data.id;
       // data.id = meetId;
       console.log("about to submit data:", data);
-      // 先修改，再上传 
-      await cloudHelper.callCloudSumbit('work/meet_add', data);
+      if (this.data.isEdit) {
+        await cloudHelper.callCloudSumbit('work/meet_edit', data);
+      } else {
+        // 先修改，再上传 
+        await cloudHelper.callCloudSumbit('work/meet_add', data);
+      }
+
 
       // 图片
       // await cloudHelper.transFormsTempPics(forms, 'meet/', meetId, 'work/meet_update_forms');
 
       let callback = async function () {
-        wx.navigateBack();
+        if (isEdit) {
+          wx.redirectTo({
+            url: '../list/work_meet_list',
+          });
+        } else {
+          wx.navigateBack();
+        }
       }
-      pageHelper.showSuccToast('发布成功', 2000, callback);
+      pageHelper.showSuccToast(this.data.isEdit ? '编辑成功' : '发布成功', 2000, callback);
 
     } catch (err) {
       console.log(err);

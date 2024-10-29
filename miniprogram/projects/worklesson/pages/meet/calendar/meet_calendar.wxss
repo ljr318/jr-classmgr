@@ -69,7 +69,7 @@ page {
 }
 
 .list .item {
-	width: calc((100% - 30rpx)/2);
+	width: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
@@ -79,12 +79,11 @@ page {
 	flex-direction: column;
 	padding: 30rpx;
 	position: relative;
-	height: 220rpx;
 }
 
-.list .item:nth-child(2n+1) {
+/* .list .item:nth-child(2n+1) {
 	margin-right: 30rpx;
-}
+} */
 
 .list .item .title {
 	font-size: 28rpx;
@@ -98,7 +97,8 @@ page {
 	width: 100%;
 	text-align: left;
 	color: #bbb;
-	margin-top: 10rpx;
+  margin-top: 10rpx;
+  font-weight: bolder;
 }
 
 .list .item .img {
@@ -115,11 +115,41 @@ page {
 	border-radius: 50%;
 }
 
+.list .item .img text {
+	margin-top: 20rpx;
+  margin-left: 20rpx;
+  font-size: small;
+}
+
 .list .item .appt {
 	position: absolute;
 	right: 0;
 	bottom: 30rpx;
 	background-color: #E8EDF4;
+	font-size: 24rpx;
+	padding: 8rpx 20rpx;
+	border-top-left-radius: 20rpx;
+	border-bottom-left-radius: 20rpx;
+}
+
+.list .item .cancel {
+	position: absolute;
+	right: 0;
+	bottom: 30rpx;
+  background-color: #b10303;
+  color:#fff;
+	font-size: 24rpx;
+	padding: 8rpx 20rpx;
+	border-top-left-radius: 20rpx;
+	border-bottom-left-radius: 20rpx;
+}
+
+.list .item .doing {
+	position: absolute;
+	right: 0;
+	bottom: 30rpx;
+  background-color: #03b137;
+  color:#fff;
 	font-size: 24rpx;
 	padding: 8rpx 20rpx;
 	border-top-left-radius: 20rpx;

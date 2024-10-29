@@ -13,6 +13,11 @@ Component({
       value: ''
     },
 
+    disabled: {
+      type: Boolean,
+      value: false,
+    },
+
     onSelected: {
       type: Function,
       value: null

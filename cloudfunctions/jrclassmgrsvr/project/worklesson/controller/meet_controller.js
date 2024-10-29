@@ -44,8 +44,6 @@ class MeetController extends BaseProjectController {
 		let service = new MeetService();
 		let list = await service.getMeetListByDay(input.day);
 		return list;
-
-
 	}
 
 	/** 获取从某天开始可预约的日期 */

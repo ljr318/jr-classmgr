@@ -37,7 +37,15 @@ class AdminMeetService extends BaseProjectAdminService {
     this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
   }
 
-
+  convertStatus(meet) {
+    const now = timeUtil.time();
+    if (now > meet.MEET_START_TIME && now < meet.MEET_END_TIME && meet.MEET_STATUS === 0) {
+      meet.MEET_STATUS = 1;
+    } else if (now > meet.MEET_END_TIME && meet.MEET_STATUS === 0) {
+      meet.MEET_STATUS = 2;
+    }
+  };
+  
   /** 预约数据列表 */
   async getDayList(meetId, start, end) {
     let where = {
@@ -87,6 +95,60 @@ class AdminMeetService extends BaseProjectAdminService {
     this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
   }
 
+  async getMeetList({
+    search, // 搜索条件
+    sortType, // 搜索菜单
+    sortVal, // 搜索菜单
+    page,
+    size,
+    isTotal = true,
+    oldTotal
+  }, teacherID = undefined) {
+    const orderBy = {
+      'MEET_EDIT_TIME': 'desc'
+    };
+    let fields = '*';
+    const now = timeUtil.time();
+    let where = {};
+    if (util.isDefined(search) && search) {
+      const startEndTimeStrArr = dataUtil.splitTextByKey(search, '#');
+      console.log('startEndTimeStrArr:', startEndTimeStrArr);
+      const startTimestamp = timeUtil.time2Timestamp(startEndTimeStrArr[0]);
+      const endTimestamp = timeUtil.time2Timestamp(startEndTimeStrArr[2]);
+      where.MEET_START_TIME = ['between', startTimestamp, endTimestamp]
+    }
+    if (sortType && util.isDefined(sortVal)) {
+      // 搜索菜单
+      switch (sortType) {
+        case 'status':
+          // 按类型
+          if (Number(sortVal) === 1) {
+            where.MEET_STATUS = 0;
+            where.MEET_START_TIME = ['<=', now];
+            where.MEET_END_TIME = ['>=', now];
+          } else if (Number(sortVal) === 2) {
+            where.MEET_STATUS = 0;
+            where.MEET_END_TIME = ['<', now];
+          } else if (Number(sortVal) === 0) {
+            where.MEET_STATUS = 0;
+            where.MEET_START_TIME = ['>', now];
+          } else {
+            where.MEET_STATUS = Number(sortVal);
+          }
+          break;
+      }
+    }
+    if (teacherID) {
+      where.MEET_TEACHER_ID = teacherID;
+    }
+    console.log("get list where:", where);
+    const res = await MeetModel.getList(where, fields, orderBy, page, size, isTotal, oldTotal);
+    console.log("get list res:", res);
+    res.list?.forEach((item) => {
+      this.convertStatus(item);
+    });
+    return res;
+  }
 
   /**添加 */
   async insertMeet({
@@ -127,9 +189,8 @@ class AdminMeetService extends BaseProjectAdminService {
     // 检查下同一时段当前教练有没有其他课程
     const tmpFields = "_id";
     const where = {
-      and:[{
-        MEET_TEACHER_ID: meetTeacherID,
-      }],
+      MEET_TEACHER_ID: meetTeacherID,
+      MEET_STATUS: 0,
       or: [{
           MEET_START_TIME: [
             ['>=', occupiedTimeSpan.startTime],

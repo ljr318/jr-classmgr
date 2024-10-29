@@ -123,5 +123,14 @@ AdminMeetBiz.CHECK_FORM = {
   meetCanReserveStudentType: 'meetCanReserveStudentType|must|int|name=可预约学员类型',
 };
 
+AdminMeetBiz.EDIT_CHECK_FORM = {
+  _id: 'id|must|string',
+  meetTitle: 'meetTitle|must|string|min:2|max:50|name=课程标题',
+  meetDesc: 'meetDesc|must|string|min:6|max:30|name=课程详情',
+  meetLocation: 'meetLocation|must|string|name=课程地点',
+  meetCancelSet: 'meetCancelSet|must|int|name=可取消时间',
+  meetCanReserveStudentType: 'meetCanReserveStudentType|must|int|name=可预约学员类型',
+};
+
 
 module.exports = AdminMeetBiz;

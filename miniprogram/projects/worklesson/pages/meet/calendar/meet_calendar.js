@@ -32,7 +32,7 @@ Page({
 		this.setData({
 			day: timeHelper.time('Y-M-D')
 		}, async () => {
-			await this._loadHasList();
+			// await this._loadHasList();
 			await this._loadList();
 		});
 	},
@@ -47,8 +47,12 @@ Page({
 		try {
 			this.setData({
 				list: null
-			});
+      });
 			await cloudHelper.callCloudSumbit('meet/list_by_day', params, opts).then(res => {
+        res.data?.forEach((item)=> {
+          item.startTimeStr = timeHelper.timestamp2Time(item.MEET_START_TIME);
+          item.endTimeStr = timeHelper.timestamp2Time(item.MEET_END_TIME);
+        });
 				this.setData({
 					list: res.data,
 					isLoad: true
@@ -88,7 +92,7 @@ Page({
 	 * 生命周期函数--监听页面显示
 	 */
 	onShow: async function () {
-		await this._loadHasList();
+		// await this._loadHasList();
 		await this._loadList();
 	},
 
@@ -109,9 +113,9 @@ Page({
 	/**
 	 * 页面相关事件处理函数--监听用户下拉动作
 	 */
-	onPullDownRefresh: async function () {
-		await this._loadHasList();
-		await this._loadList();
+	onPullDownRefresh: function () {
+    // await this._loadHasList();
+    this._loadList();
 		wx.stopPullDownRefresh();
 	},
 
@@ -136,6 +140,8 @@ Page({
 	},
 
 	url: async function (e) {
-		pageHelper.url(e, this);
+    if (e.currentTarget.dataset.status === 0) {
+      pageHelper.url(e, this);
+    }
 	},
 })
