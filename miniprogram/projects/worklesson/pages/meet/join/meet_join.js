@@ -130,9 +130,7 @@ Page({
 					title: '提交中'
 				}
 				let params = {
-					meetId: this.data.id,
-					timeMark: this.data.timeMark,
-					formsList
+					meetId: this.data.id
 				}
 				await cloudHelper.callCloudSumbit('meet/join', params, opts).then(res => {
 					let content = '预约成功！'

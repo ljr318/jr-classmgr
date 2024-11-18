@@ -56,7 +56,7 @@ class BaseController {
 			return input[name];
 		else
 			return '';
-	}
+  }
 }
 
 module.exports = BaseController;

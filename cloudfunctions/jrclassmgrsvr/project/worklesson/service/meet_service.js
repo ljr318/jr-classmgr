@@ -6,6 +6,7 @@
 
 const BaseProjectService = require('./base_project_service.js');
 const util = require('../../../framework/utils/util.js');
+const dbUtil = require('../../../framework/database/db_util.js');
 const MeetModel = require('../model/meet_model.js');
 const JoinModel = require('../model/join_model.js');
 const DayModel = require('../model/day_model.js');
@@ -16,8 +17,13 @@ const projectConfig = require('../public/project_config.js');
 
 const StudentModel = require('../model/student_model.js');
 const LessonLogModel = require('../model/lesson_log_model.js');
+const cloudBase = require('../../../framework/cloud/cloud_base.js');
 
 const MEET_LOG_LEVEL = 'debug';
+
+const cloud = cloudBase.getCloud();
+const db = cloud.database();
+const dbCmd = db.command;
 
 class MeetService extends BaseProjectService {
 
@@ -42,14 +48,43 @@ class MeetService extends BaseProjectService {
     this._log.debug(str);
   }
 
-  convertStatus(meet) {
+  convertStatusAndClearSensitiveFields(meet) {
     const now = timeUtil.time();
     if (now > meet.MEET_START_TIME && now < meet.MEET_END_TIME && meet.MEET_STATUS === 0) {
       meet.MEET_STATUS = 1;
     } else if (now > meet.MEET_END_TIME && meet.MEET_STATUS === 0) {
       meet.MEET_STATUS = 2;
     }
+    meet.teacherInfo.LAST_LOGIN_OPENID = undefined;
+    meet.teacherInfo.LOGIN_PASSWORD = undefined;
+    meet.teacherInfo.TEACHER_LOGIN_TIME = undefined;
+    meet.teacherInfo.TEACHER_TOKEN = undefined;
+    meet.teacherInfo.TEACHER_TOKEN_TIME = undefined;
   };
+
+  async getMeetDetail({
+    _id
+  }) {
+    let fields = '*';
+    let where = {
+      _id,
+    }
+    let orderBy = {
+      'MEET_START_TIME': 'asc'
+    };
+    // let meet = await MeetModel.getOne(where, fields);
+    const joinParams = {
+      from: 'bx_teacher',
+      localField: 'MEET_TEACHER_ID',
+      foreignField: '_id',
+      as: 'teacherInfo',
+    };
+    let res = await MeetModel.getListJoin(joinParams, where, fields, orderBy, 1, 1, true, 0);
+    if (res.list.length === 0) return null;
+    const meet = res.list[0];
+    this.convertStatusAndClearSensitiveFields(meet);
+    return meet;
+  }
 
 
   // 修改用户课时数 同时进行统计  changeCnt可正负
@@ -196,64 +231,199 @@ class MeetService extends BaseProjectService {
   }
 
   // 用户预约逻辑
-  async join(userId, meetId, timeMark, formsList) {
+  async join(userId, meetId) {
+    const meetLockKey = `join_meet_${meetId}`;
+    const userLockKey = `join_user_${userId}`;
+    // 锁住meetId
+    let lockRet = await dbUtil.lock(meetLockKey);
+    console.log('DBG MARK lock ret:', lockRet);
+    if (lockRet !== 0) {
+      console.log('DBG MARK2 lock ret:', lockRet);
+      this.AppError('系统繁忙，请稍后再试！');
+    }
+    // 锁住userId
+    lockRet = await dbUtil.lock(userLockKey);
+    console.log('DBG MARK lock ret:', lockRet);
+    if (lockRet !== 0) {
+      await dbUtil.unlock(meetLockKey);
+      this.AppError('系统繁忙，请稍后再试！');
+    }
+    // 预约过程需要开启事务
+    try {
+      console.log("DBG MARK1");
+      const result = await db.runTransaction(async transaction => {
+        console.log("DBG MARK2");
+        const getMeetRes = await transaction.collection('bx_meet').doc(meetId).get();
+        const meet = getMeetRes.data;
+        console.log('meet:', meet);
+        const getUserRes = await transaction.collection('bx_student').doc(userId).get();
+        const user = getUserRes.data;
+        console.log('user:', user);
+        // 检查该用户是否可以预约该课程
+        if (meet.MEET_CAN_RESERVE_STUDENT_TYPE === 1 && user.STUDENT_TYPE !== 1) {
+          await transaction.rollback(1);
+          // this.AppError('该课程仅支持本校学员预约！');
+        } else if (meet.MEET_CATE_ID === 1 && user.STUDENT_TYPE !== 1) {
+          await transaction.rollback(2);
+          // this.AppError('训练课程仅支持本校学员预约！');
+        }
+        // 检查当前课程剩余人数
+        if (meet.MEET_RESERVED_STUDENT_CNT + 1 > meet.MEET_RESERVE_STUDENT_CNT) {
+          await transaction.rollback(3);
+          // this.AppError('当前课程预约人数已满');
+        } else if (meet.MEET_CATE_ID === 1 && user.MEMBERSHIP_USAGE_TIMES <= 0) {
+          // 如果是模拟课程 则检查下学生是否还有次数
+          await transaction.rollback(4);
+          // this.AppError('您的模拟课程可预约次数为0');
+        }
+
+        // 检查该用户在同一时段是否有别的预约记录
+        const tmpJoin = await JoinModel.getOne({
+          and: [{
+            JOIN_USER_ID: userId
+          }],
+          or: [{
+              JOIN_MEET_START_TIME: [
+                ['>=', meet.MEET_START_TIME],
+                ['<', meet.MEET_END_TIME]
+              ]
+            },
+            {
+              JOIN_MEET_END_TIME: [
+                ['>', meet.MEET_START_TIME],
+                ['<=', meet.MEET_END_TIME]
+              ]
+            }
+          ]
+        });
+        if (tmpJoin) {
+          // 学生在同一时段还有其他课程
+          await transaction.rollback(5);
+          // this.AppError('您在同一时段已有预约');
+        }
+
+        // 先插入一条预约记录
+        const addJoinRes = await transaction.collection('bx_join').add({
+          data: {
+            JOIN_CODE: dataUtil.genRandomIntString(15),
+            JOIN_IS_CHECKIN: 0,
+            JOIN_CHECKIN_TIME: 0,
+            JOIN_USER_ID: userId,
+            JOIN_MEET_START_TIME: meet.MEET_START_TIME,
+            JOIN_MEET_END_TIME: meet.MEET_END_TIME,
+            JOIN_MEET_TEACHER_ID: meet.MEET_TEACHER_ID,
+            JOIN_MEET_CATE_ID: meet.MEET_CATE_ID,
+            JOIN_MEET_SUBJECT_TYPE: meet.MEET_SUBJECT_TYPE,
+            JOIN_MEET_ID: meet._id,
+            JOIN_STATUS: 1,
+            JOIN_ADD_TIME: timeUtil.time(),
+            JOIN_EDIT_TIME: timeUtil.time(),
+          }
+        });
+        
+        // 如果是模拟课程的话 减少学生可预约次数
+        if (meet.MEET_CATE_ID === 0) {
+          const updateStudentRemainUsageRes = await transaction.collection('bx_student').doc(userId).update({
+            data: {
+              MEMBERSHIP_USAGE_TIMES: dbCmd.inc(-1),
+            }
+          });
+        }
+        // this.AppError('test excpt');
+        // 增加课程已预约人数
+        const updateMeetReservedCntRes = await transaction.collection('bx_meet').doc(meetId).update({
+          data: {
+            MEET_RESERVED_STUDENT_CNT: dbCmd.inc(1),
+          }
+        });
+
+        return {
+          joinId: addJoinRes._id,
+        }
+      });
+      console.log(`Join transaction succeeded`, result);
+      await dbUtil.unlock(meetLockKey);
+      await dbUtil.unlock(userLockKey);
+      return {
+        success: true,
+        joinId: result.joinId,
+      };
+    } catch (e) {
+      console.error(`transaction error`, e);
+      await dbUtil.unlock(meetLockKey);
+      await dbUtil.unlock(userLockKey);
+      if (e === 1) {
+        this.AppError('该课程仅支持本校学员预约！');
+      } else if (e === 2) {
+        this.AppError('训练课程仅支持本校学员预约！');
+      } else if (e === 3) {
+        this.AppError('当前课程预约人数已满');
+      } else if (e === 4) {
+        this.AppError('您的模拟课程可预约次数为0');
+      } else if (e === 5) {
+        this.AppError('您在同一时段已有预约');
+      } else {
+        this.AppError('系统错误，请稍后重试！');
+      }
+    }
+
     // 预约时段是否存在
-    let meetWhere = {
-      _id: meetId
-    };
-    let day = this.getDayByTimeMark(timeMark);
-    let meet = await this.getMeetOneDay(meetId, day, meetWhere);
+    // let meetWhere = {
+    //   _id: meetId
+    // };
+    // let day = this.getDayByTimeMark(timeMark);
+    // let meet = await this.getMeetOneDay(meetId, day, meetWhere);
 
-    if (!meet) {
-      this.AppError('预约时段选择错误1，请重新选择');
-    }
+    // if (!meet) {
+    //   this.AppError('预约时段选择错误1，请重新选择');
+    // }
 
-    let daySet = this.getDaySetByTimeMark(meet, timeMark);
-    if (!daySet)
-      this.AppError('预约时段选择错误2，请重新选择');
+    // let daySet = this.getDaySetByTimeMark(meet, timeMark);
+    // if (!daySet)
+    //   this.AppError('预约时段选择错误2，请重新选择');
 
-    let timeSet = this.getTimeSetByTimeMark(meet, timeMark);
-    if (!timeSet)
-      this.AppError('预约时段选择错误3，请重新选择');
+    // let timeSet = this.getTimeSetByTimeMark(meet, timeMark);
+    // if (!timeSet)
+    //   this.AppError('预约时段选择错误3，请重新选择');
 
-    // 规则校验
-    await this.checkMeetRules(userId, meetId, timeMark, formsList);
-
-
-    let data = {};
-
-    data.JOIN_USER_ID = userId;
-    data.JOIN_MEET_ID = meetId;
-    data.JOIN_MEET_CATE_ID = meet.MEET_CATE_ID;
-    data.JOIN_MEET_CATE_NAME = meet.MEET_CATE_NAME;
-    data.JOIN_MEET_TITLE = meet.MEET_TITLE;
-    data.JOIN_MEET_DAY = daySet.day;
-    data.JOIN_MEET_TIME_START = timeSet.start;
-    data.JOIN_MEET_TIME_END = timeSet.end;
-    data.JOIN_MEET_TIME_MARK = timeMark;
-    data.JOIN_START_TIME = timeUtil.time2Timestamp(daySet.day + ' ' + timeSet.start + ':00');
-    data.JOIN_STATUS = JoinModel.STATUS.SUCC;
-    data.JOIN_COMPLETE_END_TIME = daySet.day + ' ' + timeSet.end;
-
-    // 入库
-    for (let k = 0; k < formsList.length; k++) {
-      let forms = formsList[k];
-      data.JOIN_FORMS = forms;
-      data.JOIN_OBJ = dataUtil.dbForms2Obj(forms);
-      data.JOIN_CODE = dataUtil.genRandomIntString(15);
-      await JoinModel.insert(data);
-    }
+    // // 规则校验
+    // await this.checkMeetRules(userId, meetId, timeMark, formsList);
 
 
-    // 统计
-    await this.statJoinCnt(meetId, timeMark);
+    // let data = {};
 
-    // 课时统计
-    await this.editUserMeetLesson(null, userId, -1, LessonLogModel.TYPE.USER_APPT, meetId, '《' + meet.MEET_TITLE + '》')
+    // data.JOIN_USER_ID = userId;
+    // data.JOIN_MEET_ID = meetId;
+    // data.JOIN_MEET_CATE_ID = meet.MEET_CATE_ID;
+    // data.JOIN_MEET_CATE_NAME = meet.MEET_CATE_NAME;
+    // data.JOIN_MEET_TITLE = meet.MEET_TITLE;
+    // data.JOIN_MEET_DAY = daySet.day;
+    // data.JOIN_MEET_TIME_START = timeSet.start;
+    // data.JOIN_MEET_TIME_END = timeSet.end;
+    // data.JOIN_MEET_TIME_MARK = timeMark;
+    // data.JOIN_START_TIME = timeUtil.time2Timestamp(daySet.day + ' ' + timeSet.start + ':00');
+    // data.JOIN_STATUS = JoinModel.STATUS.SUCC;
+    // data.JOIN_COMPLETE_END_TIME = daySet.day + ' ' + timeSet.end;
 
-    return {
-      result: 'ok',
-    }
+    // // 入库
+    // for (let k = 0; k < formsList.length; k++) {
+    //   let forms = formsList[k];
+    //   data.JOIN_FORMS = forms;
+    //   data.JOIN_OBJ = dataUtil.dbForms2Obj(forms);
+    //   data.JOIN_CODE = dataUtil.genRandomIntString(15);
+    //   await JoinModel.insert(data);
+    // }
+
+
+    // // 统计
+    // await this.statJoinCnt(meetId, timeMark);
+
+    // // 课时统计
+    // await this.editUserMeetLesson(null, userId, -1, LessonLogModel.TYPE.USER_APPT, meetId, '《' + meet.MEET_TITLE + '》')
+
+    // return {
+    //   result: 'ok',
+    // }
   }
 
 
@@ -585,8 +755,8 @@ class MeetService extends BaseProjectService {
     // 	retList.push(node);
 
     // }
-    list.list.forEach((item)=>{
-      this.convertStatus(item);
+    list.list.forEach((item) => {
+      this.convertStatusAndClearSensitiveFields(item);
     });
     return list.list;
   }
@@ -736,7 +906,7 @@ class MeetService extends BaseProjectService {
     sortVal, // 搜索菜单
     orderBy, // 排序 
     page,
-    size,
+    size = 50,
     isTotal = true,
     oldTotal
   }) {
@@ -745,7 +915,7 @@ class MeetService extends BaseProjectService {
       //	'JOIN_MEET_TIME_START': 'desc',
       'JOIN_ADD_TIME': 'desc'
     };
-    let fields = 'JOIN_COMPLETE_END_TIME,JOIN_IS_CHECKIN,JOIN_REASON,JOIN_MEET_ID,JOIN_MEET_TITLE,JOIN_MEET_DAY,JOIN_MEET_TIME_START,JOIN_MEET_TIME_END,JOIN_STATUS,JOIN_ADD_TIME,JOIN_OBJ';
+    let fields = '*';
 
     let where = {
       JOIN_USER_ID: userId
@@ -753,14 +923,13 @@ class MeetService extends BaseProjectService {
     //where.MEET_STATUS = ['in', [MeetModel.STATUS.COMM, MeetModel.STATUS.OVER]]; // 状态  
 
     if (util.isDefined(search) && search) {
-      where['JOIN_MEET_TITLE'] = {
-        $regex: '.*' + search,
-        $options: 'i'
-      };
+      // where['JOIN_MEET_TITLE'] = {
+      //   $regex: '.*' + search,
+      //   $options: 'i'
+      // };
     } else if (sortType) {
       // 搜索菜单
       switch (sortType) {
-
         case 'cateId': {
           if (sortVal) where.JOIN_MEET_CATE_ID = String(sortVal);
           break;
@@ -793,6 +962,7 @@ class MeetService extends BaseProjectService {
         }
       }
     }
+    console.log("Get list:", where, fields, orderBy, page, size, isTotal, oldTotal);
     let result = await JoinModel.getList(where, fields, orderBy, page, size, isTotal, oldTotal);
 
     return result;

@@ -111,6 +111,7 @@ module.exports = {
 	'meet/list_by_day': 'meet_controller@getMeetListByDay',
 	'meet/list_has_day': 'meet_controller@getHasDaysFromDay',
 	'meet/view': 'meet_controller@viewMeet',
+	'meet/detail': 'meet_controller@getMeetDetail',
 	'meet/detail_for_join': 'meet_controller@detailForJoin',
 	'meet/before_join': 'meet_controller@beforeJoin',
 	'meet/join': 'meet_controller@join',

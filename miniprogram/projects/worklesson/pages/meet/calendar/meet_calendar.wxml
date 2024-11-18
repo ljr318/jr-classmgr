@@ -20,7 +20,7 @@
     <view class="item shadow-project" wx:for="{{list}}" wx:key="key" bindtap="url" data-url="../detail/meet_detail?id={{item._id}}" data-status="{{item.MEET_STATUS}}">
 
       <view class="title text-cut">{{item.MEET_TITLE}}</view>
-      <view class="desc">剩余<text style="	font-weight: bold; color: rgb(177, 2, 2);">{{item.MEET_RESERVE_STUDENT_REMAIN_CNT}}</text>个名额可约</view>
+      <view class="desc">剩余<text style="	font-weight: bold; color: rgb(177, 2, 2);">{{item.MEET_RESERVE_STUDENT_CNT - item.MEET_RESERVED_STUDENT_CNT}}</text>个名额可约</view>
       <view class="desc">{{item.startTimeStr}} ~ {{item.endTimeStr}}</view>
       <view class="desc">地点：{{item.MEET_LOCATION}}</view>
       <view class="desc">

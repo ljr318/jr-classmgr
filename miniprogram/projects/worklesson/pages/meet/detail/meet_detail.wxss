@@ -28,6 +28,11 @@ page {
 	font-weight: bold;
 }
 
+.meet-title .subtitle {
+	flex: 1;
+	font-size: 26rpx;
+}
+
 .meet-title image {
 	width: 100rpx;
 	height: 110rpx;
@@ -288,8 +293,8 @@ page {
 
 .bottom .inner .line2 .right {
 	width: 270rpx;
-	background-color: #E8EDF4;
-	color: #333;
+	background-color: #1f7704;
+	color: rgb(255, 255, 255);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -304,6 +309,15 @@ page {
 
 /*** 详情盒子 ***/
 .article-box .cancel {
+	width:100%;
+	padding: 25rpx 20rpx;
+	font-size: 28rpx; 
+	border-bottom: 1rpx dashed #eee;
+	background-color: #f8f8f8;
+	border-radius: 20rpx;
+}
+
+.article-box .meetItem {
 	width:100%;
 	padding: 25rpx 20rpx;
 	font-size: 28rpx; 

@@ -7,222 +7,264 @@ const ProjectBiz = require('../../../biz/project_biz.js');
 const PassportBiz = require('../../../../../comm/biz/passport_biz.js');
 
 Page({
-	/**
-	 * 页面的初始数据
-	 */
-	data: {
-		isLoad: false,
+  /**
+   * 页面的初始数据
+   */
+  data: {
+    isLoad: false,
 
 
-		tabCur: 0,
-		mainCur: 0,
-		verticalNavTop: 0,
+    tabCur: 0,
+    mainCur: 0,
+    verticalNavTop: 0,
 
-		cur: 'time',
+    cur: 'info',
 
-		dayIdx: 0,
-		timeIdx: -1,
-	},
+    dayIdx: 0,
+    timeIdx: -1,
+  },
 
-	/**
-	 * 生命周期函数--监听页面加载
-	 */
-	onLoad: function (options) {
-		ProjectBiz.initPage(this);
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    ProjectBiz.initPage(this);
 
-		if (!pageHelper.getOptions(this, options)) return;
+    if (!pageHelper.getOptions(this, options)) return;
 
-		this._loadDetail();
-	},
+    this._loadDetail();
+  },
 
-	_loadDetail: async function () {
-		this.setData({
-			dayIdx: 0,
-			timeIdx: -1,
-			isLoad: false
-		});
+  _loadDetail: async function () {
+    this.setData({
+      dayIdx: 0,
+      timeIdx: -1,
+      isLoad: false
+    });
 
-		let id = this.data.id;
-		if (!id) return;
+    let id = this.data.id;
+    if (!id) return;
 
-		let params = {
-			id,
-		};
-		let opt = {
-			title: 'bar'
-		};
-		let meet = await cloudHelper.callCloudData('meet/view', params, opt);
-		if (!meet) {
-			this.setData({
-				isLoad: null
-			})
-			return;
-		}
+    let params = {
+      _id: id,
+    };
+    let opt = {
+      title: 'bar'
+    };
+    let meet = await cloudHelper.callCloudData('meet/detail', params, opt);
+    if (!meet) {
+      this.setData({
+        isLoad: null
+      })
+      return;
+    }
 
-		let days = meet.MEET_DAYS_SET;
+    // let days = meet.MEET_DAYS_SET;
 
-		let dayNow1 = timeHelper.time('Y-M-D');
-		let dayNow2 = timeHelper.time('Y-M-D', 86400);
-		let dayNow3 = timeHelper.time('Y-M-D', 86400 * 2);
+    // let dayNow1 = timeHelper.time('Y-M-D');
+    // let dayNow2 = timeHelper.time('Y-M-D', 86400);
+    // let dayNow3 = timeHelper.time('Y-M-D', 86400 * 2);
 
-		for (let k = 0; k < days.length; k++) {
+    // for (let k = 0; k < days.length; k++) {
 
-			if (days[k].day == dayNow1) days[k].status = '今天';
-			if (days[k].day == dayNow2) days[k].status = '明天';
-			if (days[k].day == dayNow3) days[k].status = '后天';
+    // 	if (days[k].day == dayNow1) days[k].status = '今天';
+    // 	if (days[k].day == dayNow2) days[k].status = '明天';
+    // 	if (days[k].day == dayNow3) days[k].status = '后天';
 
-			days[k].week = timeHelper.week(days[k].day);
-			days[k].date = days[k].day.split('-')[1] + '-' + days[k].day.split('-')[2]
-		}
+    // 	days[k].week = timeHelper.week(days[k].day);
+    // 	days[k].date = days[k].day.split('-')[1] + '-' + days[k].day.split('-')[2]
+    // }
+    meet.startTimeStr = timeHelper.timestamp2Time(meet.MEET_START_TIME);
+    meet.endTimeStr = timeHelper.timestamp2Time(meet.MEET_END_TIME);
 
+    this.setData({
+      isLoad: true,
+      meet,
+      // days,
+      canNullTime: projectSetting.MEET_CAN_NULL_TIME
+    });
 
-		this.setData({
-			isLoad: true,
-			meet,
-			days,
-			canNullTime: projectSetting.MEET_CAN_NULL_TIME
-		});
+  },
 
-	},
+  bindDayTap: function (e) {
+    let dayIdx = pageHelper.dataset(e, 'idx');
+    this.setData({
+      dayIdx,
+      timeIdx: -1,
+    });
+  },
 
-	bindDayTap: function (e) {
-		let dayIdx = pageHelper.dataset(e, 'idx');
-		this.setData({
-			dayIdx,
-			timeIdx: -1,
-		});
-	},
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady: function () {
 
-	/**
-	 * 生命周期函数--监听页面初次渲染完成
-	 */
-	onReady: function () {
+  },
 
-	},
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
 
-	/**
-	 * 生命周期函数--监听页面显示
-	 */
-	onShow: function () {
+  },
 
-	},
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide: function () {
 
-	/**
-	 * 生命周期函数--监听页面隐藏
-	 */
-	onHide: function () {
+  },
 
-	},
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
 
-	/**
-	 * 生命周期函数--监听页面卸载
-	 */
-	onUnload: function () {
+  },
 
-	},
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: async function () {
+    await this._loadDetail();
+    wx.stopPullDownRefresh();
+  },
 
-	/**
-	 * 页面相关事件处理函数--监听用户下拉动作
-	 */
-	onPullDownRefresh: async function () {
-		await this._loadDetail();
-		wx.stopPullDownRefresh();
-	},
+  /**
+   * 页面上拉触底事件的处理函数
+   */
+  onReachBottom: function () {
 
-	/**
-	 * 页面上拉触底事件的处理函数
-	 */
-	onReachBottom: function () {
+  },
 
-	},
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage: function () {
 
-	/**
-	 * 用户点击右上角分享
-	 */
-	onShareAppMessage: function () {
+  },
 
-	},
+  bindTimeTap: function (e) {
+    let timeIdx = pageHelper.dataset(e, 'timeidx');
 
-	bindTimeTap: function (e) {
-		let timeIdx = pageHelper.dataset(e, 'timeidx');
+    let node = this.data.days[this.data.dayIdx].times[timeIdx];
+    if (node.error) return;
 
-		let node = this.data.days[this.data.dayIdx].times[timeIdx];
-		if (node.error) return;
+    this.setData({
+      timeIdx
+    });
+  },
 
-		this.setData({
-			timeIdx
-		});
-	},
+  // bindSubmitCmpt: async function (e) {
+  // 	let formsList = [];
 
-	bindJoinTap: async function (e) {
-		if (!await PassportBiz.loginMustCancelWin(this)) return;
-
-		this.setData({
-			cur: 'time'
-		});
-
-		let dayIdx = this.data.dayIdx;
-		let timeIdx = this.data.timeIdx;
-		if (timeIdx < 0) return pageHelper.showNoneToast('请先选择预约时段');
-
-		let time = this.data.meet.MEET_DAYS_SET[dayIdx].times[timeIdx];
+  // 		formsList = [e.detail];
+  // 		if (formsList.length == 0) return pageHelper.showModal('请先填写资料');
 
 
-		if (time.error) {
-			if (time.error.includes('预约'))
-				return pageHelper.showModal('该时段' + time.error + '，换一个时段试试吧！');
-			else
-				return pageHelper.showModal('该时段预约' + time.error + '，换一个时段试试吧！');
-		}
+  // 	let callback = async () => {
+  // 		try {
+  // 			let opts = {
+  // 				title: '提交中'
+  // 			}
+  // 			let params = {
+  // 				meetId: this.data.id,
+  // 				timeMark: this.data.timeMark,
+  // 				formsList
+  // 			}
+  // 			await cloudHelper.callCloudSumbit('meet/join', params, opts).then(res => {
+  // 				let content = '预约成功！'
 
-		let meetId = this.data.id;
-		let timeMark = time.mark;
+  // 				wx.showModal({
+  // 					title: '温馨提示',
+  // 					showCancel: false,
+  // 					content,
+  // 					success() {
+  // 						let ck = () => {
+  // 							if (setting.IS_SUB)
+  // 								wx.redirectTo({
+  // 									url: pageHelper.fmtURLByPID('/pages/meet/my_join_list/meet_my_join_list')
+  // 								});
+  // 							else
+  // 								wx.reLaunch({
+  // 									url: pageHelper.fmtURLByPID('/pages/meet/my_join_list/meet_my_join_list')
+  // 								});
+  // 						}
+  // 						ck();
+  // 					}
+  // 				})
+  // 			})
+  // 		} catch (err) {
+  // 			console.log(err);
+  // 		};
+  // 	}
 
-		let callback = async () => {
-			try {
-				let opts = {
-					title: '请稍候',
-				}
-				let params = {
-					meetId,
-					timeMark
-				}
-				await cloudHelper.callCloudSumbit('meet/before_join', params, opts).then(res => {
-					wx.navigateTo({
-						url: `../join/meet_join?id=${meetId}&timeMark=${timeMark}`,
-					})
-				});
-			} catch (ex) {
-				console.log(ex);
-			}
-		}
-		callback();
+  // 	callback();
 
-	},
+  // },
 
-	url: function (e) {
-		pageHelper.url(e, this);
-	},
+  bindJoinTap: async function (e) {
+    if (!await PassportBiz.loginMustCancelWin(this)) return;
 
-	bindTabTap: function (e) {
-		let cur = pageHelper.dataset(e, 'cur');
-		this.setData({
-			cur
-		});
-	},
+    this.setData({
+      cur: 'info'
+    });
+    let meetId = this.data.id;
 
-	onPageScroll: function (e) {
-		if (e.scrollTop > 100) {
-			this.setData({
-				topBtnShow: true
-			});
-		} else {
-			this.setData({
-				topBtnShow: false
-			});
-		}
-	},
+    let callback = async () => {
+      try {
+        let opts = {
+          title: '提交中'
+        }
+        let params = {
+          meetId: this.data.id,
+        }
+        await cloudHelper.callCloudSumbit('meet/join', params, opts).then(res => {
+          let content = '预约成功！'
+          wx.showModal({
+            title: '温馨提示',
+            showCancel: false,
+            content,
+            success() {
+              let ck = () => {
+                wx.redirectTo({
+                  url: pageHelper.fmtURLByPID('/pages/meet/my_join_list/meet_my_join_list')
+                });
+              }
+              ck();
+            }
+          })
+        })
+      } catch (err) {
+        console.log(err);
+      };
+    }
+    pageHelper.showConfirm('确定要预约该节课程吗？', callback);
+  },
 
- 
+  url: function (e) {
+    pageHelper.url(e, this);
+  },
+
+  bindTabTap: function (e) {
+    let cur = pageHelper.dataset(e, 'cur');
+    this.setData({
+      cur
+    });
+  },
+
+  onPageScroll: function (e) {
+    if (e.scrollTop > 100) {
+      this.setData({
+        topBtnShow: true
+      });
+    } else {
+      this.setData({
+        topBtnShow: false
+      });
+    }
+  },
+
+
 
 })

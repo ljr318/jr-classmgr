@@ -75,7 +75,7 @@ class PassportBiz extends BaseBiz {
 		let content = '';
 		if (status == 0) content = '您的注册正在审核中，暂时无法使用此功能！';
 		else if (status == 8) content = '您的注册审核未通过，暂时无法使用此功能；请在个人中心修改资料，再次提交审核！';
-		else if (status == 9) content = '您的账号已经禁用, 无法使用此功能！';
+		else if (status == 2) content = '您的账号已经禁用, 无法使用此功能！';
 		if (method == 'cancel') {
 			wx.showModal({
 				title: '温馨提示',
@@ -128,7 +128,7 @@ class PassportBiz extends BaseBiz {
 
 				return true;
 			}
-			else if (mustLogin && result && helper.isDefined(result.data.token) && result.data.token && (result.data.token.status == 0 || result.data.token.status == 8 || result.data.token.status == 9)) {
+			else if (mustLogin && result && helper.isDefined(result.data.token) && result.data.token && result.data.token.status == 2) {
 				let status = result.data.token.status;
 				return PassportBiz.loginStatusHandler(method, status);
 			}

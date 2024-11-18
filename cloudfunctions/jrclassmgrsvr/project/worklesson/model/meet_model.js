@@ -28,10 +28,10 @@ MeetModel.DB_STRUCTURE = {
   MEET_LOCATION: 'string|true|comment=课程地点',
   MEET_RESERVE_STUDENT_CNT: 'int|true|default=0|comment=课程可预约人数',
   MEET_CANCEL_SET: 'int|true|default=1|comment=可取消时间 0=不允许取消,1=开始前1小时可取消,2=开始前2小时可取消,3=开始前3小时可取消,4=开课前均可取消',
-  MEET_CAN_RESERVE_STUDENT_TYPE: 'int|true|default=0|comment=可预约学员类型 0=本校外校均可,1=本校学员,2=外校学员',
+  MEET_CAN_RESERVE_STUDENT_TYPE: 'int|true|default=0|comment=可预约学员类型 0=本校外校均可,1=本校学员',
   MEET_STATUS: 'int|true|default=0|comment=课程状态 0=开放预约/待开课,1=已开课,2=课程已结束,3=课程以取消',
   MEET_QR: 'string|false',
-  MEET_RESERVE_STUDENT_REMAIN_CNT: 'int|true|default=0|comment=剩余课程可预约人数',
+  MEET_RESERVED_STUDENT_CNT: 'int|true|default=0|comment=课程已预约人数',
   MEET_ADD_TIME: 'int|true',
   MEET_EDIT_TIME: 'int|true',
 };

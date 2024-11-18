@@ -252,8 +252,11 @@ Page({
 
       // 图片
       // await cloudHelper.transFormsTempPics(forms, 'meet/', meetId, 'work/meet_update_forms');
-
+      const isEdit = this.data.isEdit;
       let callback = async function () {
+
+      }
+      pageHelper.showSuccToast(this.data.isEdit ? '编辑成功' : '发布成功', 2000, () => {
         if (isEdit) {
           wx.redirectTo({
             url: '../list/work_meet_list',
@@ -261,8 +264,7 @@ Page({
         } else {
           wx.navigateBack();
         }
-      }
-      pageHelper.showSuccToast(this.data.isEdit ? '编辑成功' : '发布成功', 2000, callback);
+      });
 
     } catch (err) {
       console.log(err);

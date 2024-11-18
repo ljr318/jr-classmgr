@@ -193,10 +193,10 @@ class PassportService extends BaseProjectService {
   }
 
   /** 登录 */
-  async login(userId) {
-    console.log('login openid:', userId);
+  async login(openId) {
+    console.log('login openid:', openId);
     let where = {
-      OPENID: userId
+      OPENID: openId
     };
     console.log('login where condition: ', where);
     let fields = 'STUDENT_ID,OPENID,STUDENT_NAME,AVATAR,STATUS';
@@ -204,8 +204,8 @@ class PassportService extends BaseProjectService {
     let token = {};
     if (user) {
       // 正常用户
-      token.id = user.STUDENT_ID;
-      token.openid = user.OPENID;
+      token.id = user._id;
+      // token.openid = user.OPENID;
       token.name = user.STUDENT_NAME;
       token.avatarUrl = user.AVATAR;
       token.status = user.STATUS;
@@ -217,9 +217,9 @@ class PassportService extends BaseProjectService {
       StudentModel.edit(where, dataUpdate);
       // StudentModel.inc(where, 'USER_LOGIN_CNT', 1);
 
-    } else
+    } else {
       token = null;
-
+    }
     return {
       token
     };

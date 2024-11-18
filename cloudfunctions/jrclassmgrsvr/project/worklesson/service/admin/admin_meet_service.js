@@ -223,7 +223,7 @@ class AdminMeetService extends BaseProjectAdminService {
     meet.MEET_END_TIME = meetEndTime;
     meet.MEET_LOCATION = meetLocation;
     meet.MEET_RESERVE_STUDENT_CNT = meetReserveStudentCnt;
-    meet.MEET_RESERVE_STUDENT_REMAIN_CNT = meetReserveStudentCnt;
+    meet.MEET_RESERVED_STUDENT_CNT = 0;
     meet.MEET_CANCEL_SET = meetCancelSet;
     meet.MEET_CAN_RESERVE_STUDENT_TYPE = meetCanReserveStudentType;
     meet.MEET_STATUS = meetStatus;

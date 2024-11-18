@@ -6,6 +6,8 @@
 
 const BaseController = require('../../../framework/platform/controller/base_controller.js');
 const BaseProjectService = require('../service/base_project_service.js');
+const PassportService = require('../service/passport_service.js');
+const appCode = require('../../../framework/core/app_code.js');
 
 class BaseProjectController extends BaseController {
 
@@ -13,6 +15,16 @@ class BaseProjectController extends BaseController {
 	async initSetup() {
 		let service = new BaseProjectService();
 		await service.initSetup();
+  }
+  
+	/** 是否登陆  */
+	async isUserLogin() {
+		let service = new PassportService();
+		let res = await service.login(this._openId);
+		if (res.token === null) {
+      this.AppError('登录已过期/未注册，请重新登录/注册', appCode.USER_LOGIN_ERROR);
+    }
+    return res.token;
 	}
 }
 

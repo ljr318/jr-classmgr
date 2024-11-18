@@ -14,5 +14,6 @@ module.exports = {
 	//2000开始为业务错误代码，
 
 	ADMIN_ERROR: 2401, //管理员错误
-	WORK_ERROR: 2501 //服务者错误
+  WORK_ERROR: 2501, //服务者错误
+  USER_LOGIN_ERROR: 2502,
 }
