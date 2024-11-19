@@ -146,6 +146,7 @@ function callCloud(route, params = {}, options) {
           wx.reLaunch({
             url: pageHelper.fmtURLByPID('/pages/work/index/login/work_login'),
           });
+          cacheHelper.remove(constants.CACHE_WORK);
           //reject(res.result);
           return;
         } else if (res.result.code != CODE.SUCC) {

@@ -107,7 +107,8 @@ class AdminUserService extends BaseProjectAdminService {
     }
     // 编辑前先校验下手机号是不是重复了
     const cnt = await StudentModel.count({
-      PHONE_NUMBER: user.PHONE_NUMBER
+      PHONE_NUMBER: user.PHONE_NUMBER,
+      OPENID: ['!=', user.OPENID]
     });
     if (cnt > 0) {
       this.AppError('该手机已注册，请更换');

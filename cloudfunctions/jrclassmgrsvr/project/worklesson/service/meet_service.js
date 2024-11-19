@@ -271,7 +271,7 @@ class MeetService extends BaseProjectService {
         if (meet.MEET_RESERVED_STUDENT_CNT + 1 > meet.MEET_RESERVE_STUDENT_CNT) {
           await transaction.rollback(3);
           // this.AppError('当前课程预约人数已满');
-        } else if (meet.MEET_CATE_ID === 1 && user.MEMBERSHIP_USAGE_TIMES <= 0) {
+        } else if (meet.MEET_CATE_ID === 0 && user.MEMBERSHIP_USAGE_TIMES <= 0) {
           // 如果是模拟课程 则检查下学生是否还有次数
           await transaction.rollback(4);
           // this.AppError('您的模拟课程可预约次数为0');
@@ -1047,8 +1047,8 @@ class MeetService extends BaseProjectService {
           break;
         }
         case 'use': { //可用未过期
-          where.JOIN_STATUS = JoinModel.STATUS.SUCC;
-          where.JOIN_COMPLETE_END_TIME = ['>=', timeUtil.time('Y-M-D h:m')];
+          where.JOIN_STATUS = 1;
+          where.JOIN_MEET_END_TIME = ['>=', timeUtil.time()];
           break;
         }
         case 'check': { //已核销
@@ -1057,19 +1057,19 @@ class MeetService extends BaseProjectService {
           break;
         }
         case 'timeout': { //已过期未核销
-          where.JOIN_STATUS = JoinModel.STATUS.SUCC;
+          where.JOIN_STATUS = 1;
           where.JOIN_IS_CHECKIN = 0;
-          where.JOIN_COMPLETE_END_TIME = ['<', timeUtil.time('Y-M-D h:m')];
+          where.JOIN_MEET_END_TIME = ['<', timeUtil.time()];
           break;
         }
         case 'succ': { //预约成功
-          where.JOIN_STATUS = JoinModel.STATUS.SUCC;
+          where.JOIN_STATUS = 1;
           //where.JOIN_MEET_DAY = ['>=', timeUtil.time('Y-M-D h:m')];
           //where.JOIN_MEET_TIME_START = ['>=', timeUtil.time('h:m')];
           break;
         }
         case 'cancel': { //已取消
-          where.JOIN_STATUS = ['in', [JoinModel.STATUS.CANCEL, JoinModel.STATUS.ADMIN_CANCEL]];
+          where.JOIN_STATUS = 3;
           break;
         }
       }
