@@ -320,7 +320,7 @@ class MeetService extends BaseProjectService {
             JOIN_EDIT_TIME: timeUtil.time(),
           }
         });
-        
+
         // 如果是模拟课程的话 减少学生可预约次数
         if (meet.MEET_CATE_ID === 0) {
           const updateStudentRemainUsageRes = await transaction.collection('bx_student').doc(userId).update({
@@ -834,69 +834,181 @@ class MeetService extends BaseProjectService {
 
   /** 取消我的预约 只有成功可以取消 */
   async cancelMyJoin(userId, joinId) {
-    let where = {
-      JOIN_USER_ID: userId,
-      _id: joinId,
-      JOIN_IS_CHECKIN: 0, // 核销不能取消
-      JOIN_STATUS: JoinModel.STATUS.SUCC
-    };
-    let join = await JoinModel.getOne(where);
-
-    if (!join) {
-      this.AppError('未找到可取消的预约记录');
+    // 先获取下join info
+    const join = await JoinModel.getOne({
+      _id: joinId
+    });
+    const meetId = join.JOIN_MEET_ID;
+    const meetLockKey = `join_meet_${meetId}`;
+    const userLockKey = `join_user_${userId}`;
+    // 锁住meetId
+    let lockRet = await dbUtil.lock(meetLockKey);
+    console.log('DBG MARK lock ret:', lockRet);
+    if (lockRet !== 0) {
+      console.log('DBG MARK2 lock ret:', lockRet);
+      this.AppError('系统繁忙，请稍后再试！');
     }
-
-    // 取消规则判定
-    let whereMeet = {
-      _id: join.JOIN_MEET_ID,
-      MEET_STATUS: ['in', [MeetModel.STATUS.COMM, MeetModel.STATUS.OVER]]
+    // 锁住userId
+    lockRet = await dbUtil.lock(userLockKey);
+    console.log('DBG MARK lock ret:', lockRet);
+    if (lockRet !== 0) {
+      await dbUtil.unlock(meetLockKey);
+      this.AppError('系统繁忙，请稍后再试！');
     }
-    let meet = await this.getMeetOneDay(join.JOIN_MEET_ID, join.JOIN_MEET_DAY, whereMeet);
-    if (!meet) this.AppError('预约项目不存在或者已关闭');
+    // 预约过程需要开启事务
+    try {
+      console.log("DBG MARK1");
+      const result = await db.runTransaction(async transaction => {
+        console.log("DBG MARK2");
+        const getMeetRes = await transaction.collection('bx_meet').doc(meetId).get();
+        const meet = getMeetRes.data;
+        console.log('meet:', meet);
+        const getUserRes = await transaction.collection('bx_student').doc(userId).get();
+        const user = getUserRes.data;
+        console.log('user:', user);
+        // 已经开始的课程不得取消
+        const now = timeUtil.time();
+        if (now >= meet.MEET_START_TIME) {
+          await transaction.rollback(1);
+        }
+        // 检查当前时间是否满足取消规则
+        if (meet.MEET_CANCEL_SET === 0) {
+          // 该课程不允许取消
+          await transaction.rollback(2);
+        } else if (meet.MEET_CANCEL_SET === 1 && now + 3600000 >= meet.MEET_START_TIME) {
+          // 该课程仅允许在开课前一小时取消
+          await transaction.rollback(3);
+        } else if (meet.MEET_CANCEL_SET === 2 && now + 7200000 >= meet.MEET_START_TIME) {
+          // 该课程仅允许在开课前两小时取消
+          await transaction.rollback(4);
+        } else if (meet.MEET_CANCEL_SET === 3 && now + 10800000 >= meet.MEET_START_TIME) {
+          // 该课程仅允许在开课前两小时取消
+          await transaction.rollback(5);
+        }
 
-    let daySet = this.getDaySetByTimeMark(meet, join.JOIN_MEET_TIME_MARK);
-    let timeSet = this.getTimeSetByTimeMark(meet, join.JOIN_MEET_TIME_MARK);
-    if (!timeSet) this.AppError('被取消的时段不存在');
+        // 把预约记录更新为已取消
+        const updateJoinRes = await transaction.collection('bx_join').doc(joinId).update({
+          data: {
+            JOIN_STATUS: 3,
+            JOIN_EDIT_TIME: now,
+          }
+        });
 
+        // 如果是模拟课程的话 增加学生可预约次数
+        if (meet.MEET_CATE_ID === 0) {
+          const updateStudentRemainUsageRes = await transaction.collection('bx_student').doc(userId).update({
+            data: {
+              MEMBERSHIP_USAGE_TIMES: dbCmd.inc(1),
+            }
+          });
+        }
+        // this.AppError('test excpt');
+        // 减少课程已预约人数
+        const updateMeetReservedCntRes = await transaction.collection('bx_meet').doc(meetId).update({
+          data: {
+            MEET_RESERVED_STUDENT_CNT: dbCmd.inc(-1),
+          }
+        });
 
-    if (meet.MEET_CANCEL_SET == 0)
-      this.AppError('该预约不能取消');
-
-
-    let startT = daySet.day + ' ' + timeSet.start + ':00';
-    let startTime = timeUtil.time2Timestamp(startT);
-    let now = timeUtil.time();
-    if (meet.MEET_CANCEL_SET == 10 && now > startTime)
-      this.AppError('该预约已经开始，无法取消');
-    else if (meet.MEET_CANCEL_SET > 10 && now > startTime - (meet.MEET_CANCEL_SET - 10) * 3600 * 1000) {
-      let before = timeUtil.timestamp2Time(startTime - (meet.MEET_CANCEL_SET - 10) * 3600 * 1000, 'Y-M-D h:m');
-      this.AppError('该预约仅在开始前' + (meet.MEET_CANCEL_SET - 10) + '小时 (' + before + '前) 可取消');
+        return {};
+      });
+      console.log(`Cancel join transaction succeeded`, result);
+      await dbUtil.unlock(meetLockKey);
+      await dbUtil.unlock(userLockKey);
+      return {
+        success: true
+      };
+    } catch (e) {
+      console.error(`transaction error`, e);
+      await dbUtil.unlock(meetLockKey);
+      await dbUtil.unlock(userLockKey);
+      if (e === 1) {
+        this.AppError('已经开始的课程不得取消');
+      } else if (e === 2) {
+        this.AppError('该课程不允许取消！');
+      } else if (e === 3) {
+        this.AppError('该课程仅允许在开课前一小时取消！');
+      } else if (e === 4) {
+        this.AppError('该课程仅允许在开课前两小时取消！');
+      } else if (e === 5) {
+        this.AppError('该课程仅允许在开课前三小时取消！');
+      } else {
+        this.AppError('系统错误，请稍后重试！');
+      }
     }
+    // let where = {
+    //   JOIN_USER_ID: userId,
+    //   _id: joinId,
+    //   JOIN_IS_CHECKIN: 0, // 核销不能取消
+    //   JOIN_STATUS: JoinModel.STATUS.SUCC
+    // };
+    // let join = await JoinModel.getOne(where);
+
+    // if (!join) {
+    //   this.AppError('未找到可取消的预约记录');
+    // }
+
+    // // 取消规则判定
+    // let whereMeet = {
+    //   _id: join.JOIN_MEET_ID,
+    //   MEET_STATUS: ['in', [MeetModel.STATUS.COMM, MeetModel.STATUS.OVER]]
+    // }
+    // let meet = await this.getMeetOneDay(join.JOIN_MEET_ID, join.JOIN_MEET_DAY, whereMeet);
+    // if (!meet) this.AppError('预约项目不存在或者已关闭');
+
+    // let daySet = this.getDaySetByTimeMark(meet, join.JOIN_MEET_TIME_MARK);
+    // let timeSet = this.getTimeSetByTimeMark(meet, join.JOIN_MEET_TIME_MARK);
+    // if (!timeSet) this.AppError('被取消的时段不存在');
+
+
+    // if (meet.MEET_CANCEL_SET == 0)
+    //   this.AppError('该预约不能取消');
+
+
+    // let startT = daySet.day + ' ' + timeSet.start + ':00';
+    // let startTime = timeUtil.time2Timestamp(startT);
+    // let now = timeUtil.time();
+    // if (meet.MEET_CANCEL_SET == 10 && now > startTime)
+    //   this.AppError('该预约已经开始，无法取消');
+    // else if (meet.MEET_CANCEL_SET > 10 && now > startTime - (meet.MEET_CANCEL_SET - 10) * 3600 * 1000) {
+    //   let before = timeUtil.timestamp2Time(startTime - (meet.MEET_CANCEL_SET - 10) * 3600 * 1000, 'Y-M-D h:m');
+    //   this.AppError('该预约仅在开始前' + (meet.MEET_CANCEL_SET - 10) + '小时 (' + before + '前) 可取消');
+    // }
 
 
 
 
-    await JoinModel.del(where);
+    // await JoinModel.del(where);
 
 
-    // 统计
-    await this.statJoinCnt(join.JOIN_MEET_ID, join.JOIN_MEET_TIME_MARK);
+    // // 统计
+    // await this.statJoinCnt(join.JOIN_MEET_ID, join.JOIN_MEET_TIME_MARK);
 
-    // 课时统计
-    await this.editUserMeetLesson(null, userId, 1, LessonLogModel.TYPE.USER_CANCEL, join.JOIN_MEET_ID, '《' + meet.MEET_TITLE + '》')
+    // // 课时统计
+    // await this.editUserMeetLesson(null, userId, 1, LessonLogModel.TYPE.USER_CANCEL, join.JOIN_MEET_ID, '《' + meet.MEET_TITLE + '》')
 
   }
 
   /** 取得我的预约详情 */
   async getMyJoinDetail(userId, joinId) {
 
-    let fields = 'JOIN_COMPLETE_END_TIME,JOIN_IS_CHECKIN,JOIN_CHECKIN_TIME,JOIN_REASON,JOIN_MEET_ID,JOIN_MEET_TITLE,JOIN_MEET_DAY,JOIN_MEET_TIME_START,JOIN_MEET_TIME_END,JOIN_STATUS,JOIN_ADD_TIME,JOIN_CODE,JOIN_FORMS';
-
+    let fields = '*';
+    let orderBy = {
+      'JOIN_MEET_START_TIME': 'asc'
+    }
     let where = {
       _id: joinId,
-      JOIN_USER_ID: userId
+      // JOIN_USER_ID: userId
     };
-    return await JoinModel.getOne(where, fields);
+    const joinParams = {
+      from: 'bx_meet',
+      localField: 'JOIN_MEET_ID',
+      foreignField: '_id',
+      as: 'meetInfo',
+    };
+    const res = await JoinModel.getListJoin(joinParams, where, fields, orderBy, 1, 1, true, 0);
+    if (res.list.length === 0) return null;
+    else return res.list[0];
   }
 
   /** 取得我的预约分页列表 */
@@ -963,8 +1075,17 @@ class MeetService extends BaseProjectService {
       }
     }
     console.log("Get list:", where, fields, orderBy, page, size, isTotal, oldTotal);
-    let result = await JoinModel.getList(where, fields, orderBy, page, size, isTotal, oldTotal);
-
+    const joinParams = {
+      from: 'bx_meet',
+      localField: 'JOIN_MEET_ID',
+      foreignField: '_id',
+      as: 'meetInfo',
+    };
+    let result = await JoinModel.getListJoin(joinParams, where, fields, orderBy, page, size, isTotal, oldTotal);
+    result.list?.forEach((item) => {
+      item.startTimeStr = timeUtil.timestamp2Time(item.JOIN_MEET_START_TIME, 'Y-M-D h:m');
+      item.endTimeStr = timeUtil.timestamp2Time(item.JOIN_MEET_END_TIME, 'Y-M-D h:m');
+    });
     return result;
   }
 

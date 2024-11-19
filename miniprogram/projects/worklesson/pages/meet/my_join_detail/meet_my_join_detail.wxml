@@ -6,23 +6,23 @@
 		<view class="text-pic-list-box margin-top-xs">
 			<view class="item card-project shadow-project">
 				<view class="title-line" bindtap="url" data-url="../detail/meet_detail?id={{join.JOIN_MEET_ID}}">
-					<view class="title content-cut-two">{{join.JOIN_MEET_TITLE}} </view>
+					<view class="title content-cut-two">{{join.meetInfo.MEET_TITLE}} </view>
 					<view class="arrow"><text class="icon-right"></text></view>
 				</view>
 
 				<view class="author">
-					<text class="icon-remind margin-right-xs text-s"></text><text class="text-cut">{{join.JOIN_MEET_DAY}} {{join.JOIN_MEET_TIME_START}}～{{join.JOIN_MEET_TIME_END}}</text>
+					<text class="icon-remind margin-right-xs text-s"></text><text class="text-cut">{{join.startTimeStr}}～{{join.endTimeStr}}</text>
 				</view>
 			 
 				<view class="data">
 
 					<text wx:if="{{join.isTimeout}}" class="text-grey"><text class="icon-bad margin-right-xxs"></text>已过期</text>
 
-					<text wx:elif="{{join.JOIN_STATUS==1&&join.JOIN_IS_CHECKIN==0}}" class="text-green"><text class="icon-newshot margin-right-xxs"></text>可使用</text>
+					<text wx:elif="{{join.JOIN_STATUS==1&&join.JOIN_IS_CHECKIN==0}}" class="text-green"><text class="icon-newshot margin-right-xxs"></text>待使用</text>
 
 					<text wx:elif="{{join.JOIN_STATUS==1&&join.JOIN_IS_CHECKIN==1}}" class="text-blue"><text class="icon-roundcheckfill margin-right-xxs"></text>已核销</text> 
 
-					<text wx:elif="{{join.JOIN_STATUS==10}}" class="text-grey"><text class="icon-bad margin-right-xxs"></text>已取消</text>
+					<text wx:elif="{{join.JOIN_STATUS==3}}" class="text-grey"><text class="icon-bad margin-right-xxs"></text>已取消</text>
 
 					<block wx:elif="{{join.JOIN_STATUS==99}}">
 						<text class="text-red"><text class="icon-bad margin-right-xxs"></text>系统取消<text class="text-grey" wx:if="{{join.JOIN_REASON}}">：{{join.JOIN_REASON}}</text></text>

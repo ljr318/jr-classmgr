@@ -100,10 +100,10 @@ Page({
  
 
 		sortMenus = sortMenus.concat([
-			{ label: '可使用', type: 'use', value: '' },
+			{ label: '待使用', type: 'use', value: '' },
 			{ label: '已核销', type: 'check', value: '' },
 			{ label: '已过期', type: 'timeout', value: '' },
-			{ label: '系统取消', type: 'cancel', value: '' }
+			{ label: '已取消', type: 'cancel', value: '' }
 		]);
 
 
@@ -121,7 +121,8 @@ Page({
 			let joinId = pageHelper.dataset(e, 'id');
 			try {
 				let params = {
-					joinId
+          joinId,
+          
 				}
 				let opts = {
 					title: '取消中'

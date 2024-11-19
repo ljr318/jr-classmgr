@@ -211,7 +211,7 @@ class MeetController extends BaseProjectController {
     let input = this.validateData(rules);
 
     let service = new MeetService();
-    let join = await service.getMyJoinDetail(this._userId, input.joinId);
+    let join = await service.getMyJoinDetail(loginToken.id, input.joinId);
     if (join) {
 
       let now = timeUtil.time('Y-M-D h:m');
@@ -243,7 +243,7 @@ class MeetController extends BaseProjectController {
     let input = this.validateData(rules);
 
     let service = new MeetService();
-    return await service.cancelMyJoin(this._userId, input.joinId);
+    return await service.cancelMyJoin(loginToken.id, input.joinId);
   }
 
 

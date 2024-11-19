@@ -50,11 +50,13 @@ Page({
 			if (!join) {
 				this.setData({
 					isLoad: null
-				})
+				})``
 				return;
 			}
-
-			let qrImageData = qrcodeLib.drawImg('meet=' + join.JOIN_CODE, {
+      join.startTimeStr = timeHelper.timestamp2Time(join.JOIN_MEET_START_TIME);
+      join.endTimeStr = timeHelper.timestamp2Time(join.JOIN_MEET_END_TIME);
+      console.log("join time:", join);
+			let qrImageData = qrcodeLib.drawImg(join.JOIN_CODE, {
 				typeNumber: 1,
 				errorCorrectLevel: 'L',
 				size: 100

@@ -1,57 +1,66 @@
 <block wx:if="{{isLoad}}">
-	<cmpt-comm-list type="my_join"  _params="{{_params}}" search="{{search||''}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="meet/my_join_list" isTotalMenu="{{true}}" sortMenusDefaultIndex="0" topBottom="120" placeholder="搜索" bind:list="bindCommListCmpt">
+  <cmpt-comm-list type="my_join" _params="{{_params}}" search="{{search||''}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="meet/my_join_list" isTotalMenu="{{true}}" sortMenusDefaultIndex="0" topBottom="120" placeholder="搜索" bind:list="bindCommListCmpt">
 
-		<view slot="searchEnd">
+    <view slot="searchEnd">
 
-		</view>
+    </view>
 
-		<!-- List Begin -->
-		<view class="text-pic-list-box padding-project">
+    <!-- List Begin -->
+    <view class="text-pic-list-box padding-project">
 
-			<view class="item card-project shadow-project" wx:for="{{dataList.list}}" wx:key="index">
+      <view class="item card-project shadow-project" wx:for="{{dataList.list}}" wx:key="index">
 
-				<view class="status bg-grey light" wx:if="{{item.isTimeout}}">已过期</view>
-				<view class="status bg-green light" wx:elif="{{item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==0}}">可使用</view> 
-				<view class="status bg-blue light" wx:elif="{{item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==1}}">已核销</view> 
-				<view class="status bg-orange light" wx:elif="{{item.JOIN_STATUS==10}}">已取消</view>
-				<view class="status bg-red light" wx:elif="{{item.JOIN_STATUS==99}}">系统取消</view>
+        <view class="status bg-grey light" wx:if="{{item.isTimeout}}">已过期</view>
+        <view class="status bg-green light" wx:elif="{{item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==0}}">待使用</view>
+        <view class="status bg-blue light" wx:elif="{{item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==1 || item.JOIN_STATUS==2}}">已核销</view>
+        <view class="status bg-orange light" wx:elif="{{item.JOIN_STATUS==3}}">已取消</view>
+        <view class="status bg-red light" wx:elif="{{item.JOIN_STATUS==4}}">已过期</view>
 
 
 
-				<view bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" wx:if="{{!item.isTimeout&&item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==0}}" class="qr"><text class="icon-qrcode"></text></view>
+        <view bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" wx:if="{{!item.isTimeout&&item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==0}}" class="qr"><text class="icon-qrcode"></text></view>
 
-				<view class="title">{{item.JOIN_MEET_TITLE}}</view>
+        <view class="title">{{item.JOIN_MEET_TITLE}}</view>
 
-				<view class="author content-cut-two">姓名：{{item.JOIN_OBJ.name}}</view>
-				<view class="author">时间：{{item.JOIN_MEET_DAY}} {{item.JOIN_MEET_TIME_START}}～{{item.JOIN_MEET_TIME_END}}
-				</view>
+        <view class="author content-cut-two">名称：{{item.meetInfo.MEET_TITLE}}</view>
+        <view class="author">时间：{{item.startTimeStr}} ~ {{item.endTimeStr}}
+        </view>
+        <view class="author content-cut-two">地点：{{item.meetInfo.MEET_LOCATION}}</view>
+        <view class="author content-cut-two">车辆：{{item.meetInfo.MEET_USING_CAR_ID}}
+        </view>
+        <view class="author content-cut-two">科目：<text wx-if="{{item.meetInfo.MEET_SUBJECT_TYPE === 1}}">科目二</text>
+          <text wx-if="{{item.meetInfo.MEET_SUBJECT_TYPE === 2}}">科目三</text>
+        </view>
+        <view class="author content-cut-two">类型：<text wx-if="{{item.meetInfo.MEET_CATE_ID === 0}}">模拟</text>
+          <text wx-if="{{item.meetInfo.MEET_CATE_ID === 1}}">训练</text>
+        </view>
+        
+        <view class="data">
 
-				<view class="data">
+          <block wx:if="{{item.JOIN_STATUS==99}}">
+            <text class="text-red"><text class="icon-bad margin-right-xxs"></text>系统取消<text class="text-grey" wx:if="{{item.JOIN_REASON}}">：{{item.JOIN_REASON}}</text></text>
+          </block>
 
-					<block wx:if="{{item.JOIN_STATUS==99}}">
-						<text class="text-red"><text class="icon-bad margin-right-xxs"></text>系统取消<text class="text-grey" wx:if="{{item.JOIN_REASON}}">：{{item.JOIN_REASON}}</text></text>
-					</block>
+        </view>
 
-				</view>
+        <view class="data data-button">
+          <button bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" class="btn mid bg-gray text-black">查看详情</button>
+          <button wx:if="{{(!item.isTimeout&&item.JOIN_STATUS==1||item.JOIN_STATUS==0) && item.JOIN_IS_CHECKIN==0}}" bindtap="bindCancelTap" data-id="{{item._id}}" class="btn mid bg-grey light"><text class="icon-close"></text>取消</button>
+        </view>
 
-				<view class="data data-button">
-					<button bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" class="btn mid bg-gray text-black">查看详情</button>
-					<button wx:if="{{(!item.isTimeout&&item.JOIN_STATUS==1||item.JOIN_STATUS==0) && item.JOIN_IS_CHECKIN==0}}" bindtap="bindCancelTap" data-id="{{item._id}}" class="btn mid bg-grey light"><text class="icon-close"></text>取消</button>
-				</view>
+      </view>
 
-			</view>
+      <!--load begin-->
+      <import src="../../../../../tpls/public/list_load_tpl.wxml" />
+      <template is="listLoadTpl" data="{{skin:'load-project',dataList}}" />
+      <!--load end-->
 
-			<!--load begin-->
-			<import src="../../../../../tpls/public/list_load_tpl.wxml" />
-			<template is="listLoadTpl" data="{{skin:'load-project',dataList}}" />
-			<!--load end-->
+    </view>
+    <!-- List END -->
 
-		</view>
-		<!-- List END -->
+  </cmpt-comm-list>
 
-	</cmpt-comm-list>
-
-	<!--  button Begin -->
-	<!--  button END -->
+  <!--  button Begin -->
+  <!--  button END -->
 
 </block>
