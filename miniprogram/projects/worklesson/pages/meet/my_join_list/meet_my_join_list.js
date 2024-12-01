@@ -96,7 +96,7 @@ Page({
 
 		let sortItems = [];
 
-		let sortMenus = [{ label: '全部', type: '', value: '' }];
+		let sortMenus = [{ label: '全部', type: 'all', value: '' }];
  
 
 		sortMenus = sortMenus.concat([

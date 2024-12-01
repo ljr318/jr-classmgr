@@ -49,12 +49,12 @@
         </view>
         <view class="desc">修改登陆密码</view>
       </view>
-      <view class="item" bindtap="url" data-url="../../../meet/detail/meet_detail?id={{id}}">
+      <!--<view class="item" bindtap="url" data-url="../../../meet/detail/meet_detail?id={{id}}">
         <view class="ico">
           <text class="icon-attention"></text>
         </view>
         <view class="desc">预览预约页面</view>
-      </view>
+      </view>-->
 
     </view>
 

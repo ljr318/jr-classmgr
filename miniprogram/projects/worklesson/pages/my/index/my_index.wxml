@@ -57,7 +57,7 @@
 				<view class="img">
 					<image src="../../../images/my/cancel.png" />
 				</view>
-				<text>系统取消</text>
+				<text>已取消</text>
 			</view>
 			<view class="item" bindtap="url" data-url="../../meet/my_join_list/meet_my_join_list">
 				<view class="img">

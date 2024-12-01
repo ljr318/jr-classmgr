@@ -11,14 +11,14 @@
       <view class="item card-project shadow-project" wx:for="{{dataList.list}}" wx:key="index">
 
         <view class="status bg-grey light" wx:if="{{item.isTimeout}}">已过期</view>
-        <view class="status bg-green light" wx:elif="{{item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==0}}">待使用</view>
-        <view class="status bg-blue light" wx:elif="{{item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==1 || item.JOIN_STATUS==2}}">已核销</view>
+        <view class="status bg-green light" wx:elif="{{item.JOIN_STATUS==1}}">待使用</view>
+        <view class="status bg-blue light" wx:elif="{{item.JOIN_STATUS==2}}">已核销</view>
         <view class="status bg-orange light" wx:elif="{{item.JOIN_STATUS==3}}">已取消</view>
         <view class="status bg-red light" wx:elif="{{item.JOIN_STATUS==4}}">已过期</view>
 
 
 
-        <view bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" wx:if="{{!item.isTimeout&&item.JOIN_STATUS==1&&item.JOIN_IS_CHECKIN==0}}" class="qr"><text class="icon-qrcode"></text></view>
+        <view bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" wx:if="{{item.JOIN_STATUS==1}}" class="qr"><text class="icon-qrcode"></text></view>
 
         <view class="title">{{item.JOIN_MEET_TITLE}}</view>
 
@@ -37,15 +37,14 @@
         
         <view class="data">
 
-          <block wx:if="{{item.JOIN_STATUS==99}}">
-            <text class="text-red"><text class="icon-bad margin-right-xxs"></text>系统取消<text class="text-grey" wx:if="{{item.JOIN_REASON}}">：{{item.JOIN_REASON}}</text></text>
+          <block wx:if="{{item.JOIN_STATUS==3}}">
+            <text class="text-red"><text class="icon-bad margin-right-xxs"></text>取消类型：{{item.JOIN_CANCEL_TYPE === 0 ? '用户自主取消' : '系统取消'}}</text>
           </block>
-
         </view>
 
         <view class="data data-button">
           <button bindtap="url" data-url="../my_join_detail/meet_my_join_detail?id={{item._id}}" class="btn mid bg-gray text-black">查看详情</button>
-          <button wx:if="{{(!item.isTimeout&&item.JOIN_STATUS==1||item.JOIN_STATUS==0) && item.JOIN_IS_CHECKIN==0}}" bindtap="bindCancelTap" data-id="{{item._id}}" class="btn mid bg-grey light"><text class="icon-close"></text>取消</button>
+          <button wx:if="{{item.JOIN_STATUS==1}}" bindtap="bindCancelTap" data-id="{{item._id}}" class="btn mid bg-grey light"><text class="icon-close"></text>取消</button>
         </view>
 
       </view>

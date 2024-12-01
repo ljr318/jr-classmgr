@@ -38,7 +38,9 @@ JoinModel.DB_STRUCTURE = {
 	JOIN_MEET_ID: 'string|true|comment=预约的课程ID',
 	JOIN_STATUS: 'int|true|default=1|comment=状态 1=待使用,2=已核销,3=已取消,4=已过期',
 	JOIN_ADD_TIME: 'int|true',
-	JOIN_EDIT_TIME: 'int|true',
+  JOIN_EDIT_TIME: 'int|true',
+  JOIN_CANCEL_TYPE: 'int|true|comment=取消类型 0=用户自主取消 1=系统取消',
+  JOIN_CANCEL_REASON: 'string|false|comment=课程取消原因',
 	// JOIN_ADD_IP: 'string|false',
 	// JOIN_EDIT_IP: 'string|false',
 };
@@ -51,8 +53,8 @@ JoinModel.FIELD_PREFIX = "JOIN_";
  */
 JoinModel.STATUS = {
 	SUCC: 1,
-	CANCEL: 10,
-	ADMIN_CANCEL: 99
+	CHECKED_IN: 2,
+	CANCELED: 3
 };
 
 JoinModel.STATUS_DESC = {

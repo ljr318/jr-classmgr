@@ -291,7 +291,7 @@ Page({
         console.log(e);
       }
     }
-    pageHelper.showConfirm('确认取消？取消后不可恢复', callback);
+    pageHelper.showEditableConfirm('确认取消？取消后不可恢复', '请输入取消的原因', callback);
   },
 
   _getSearchMenu: async function () {

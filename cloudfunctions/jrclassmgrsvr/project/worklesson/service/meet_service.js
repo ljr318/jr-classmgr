@@ -232,6 +232,7 @@ class MeetService extends BaseProjectService {
 
   // 用户预约逻辑
   async join(userId, meetId) {
+    const now = timeUtil.time();
     const meetLockKey = `join_meet_${meetId}`;
     const userLockKey = `join_user_${userId}`;
     // 锁住meetId
@@ -277,49 +278,77 @@ class MeetService extends BaseProjectService {
           // this.AppError('您的模拟课程可预约次数为0');
         }
 
-        // 检查该用户在同一时段是否有别的预约记录
-        const tmpJoin = await JoinModel.getOne({
-          and: [{
-            JOIN_USER_ID: userId
-          }],
-          or: [{
-              JOIN_MEET_START_TIME: [
-                ['>=', meet.MEET_START_TIME],
-                ['<', meet.MEET_END_TIME]
-              ]
-            },
-            {
-              JOIN_MEET_END_TIME: [
-                ['>', meet.MEET_START_TIME],
-                ['<=', meet.MEET_END_TIME]
-              ]
-            }
-          ]
-        });
-        if (tmpJoin) {
-          // 学生在同一时段还有其他课程
-          await transaction.rollback(5);
-          // this.AppError('您在同一时段已有预约');
+        // 检查课程是不是已经开始了
+        if (now >= meet.MEET_START_TIME) {
+          await transaction.rollback(6);
         }
 
-        // 先插入一条预约记录
-        const addJoinRes = await transaction.collection('bx_join').add({
-          data: {
-            JOIN_CODE: dataUtil.genRandomIntString(15),
-            JOIN_IS_CHECKIN: 0,
-            JOIN_CHECKIN_TIME: 0,
-            JOIN_USER_ID: userId,
-            JOIN_MEET_START_TIME: meet.MEET_START_TIME,
-            JOIN_MEET_END_TIME: meet.MEET_END_TIME,
-            JOIN_MEET_TEACHER_ID: meet.MEET_TEACHER_ID,
-            JOIN_MEET_CATE_ID: meet.MEET_CATE_ID,
-            JOIN_MEET_SUBJECT_TYPE: meet.MEET_SUBJECT_TYPE,
-            JOIN_MEET_ID: meet._id,
-            JOIN_STATUS: 1,
-            JOIN_ADD_TIME: timeUtil.time(),
-            JOIN_EDIT_TIME: timeUtil.time(),
-          }
+        let retId = undefined;
+        // 检查该用户有没有已经预约过该课程的记录
+        const prevJoin = await JoinModel.getOne({
+          JOIN_USER_ID: userId,
+          JOIN_MEET_ID: meet._id,
         });
+        if (prevJoin) {
+          if (prevJoin.JOIN_STATUS !== 3) {
+            await transaction.rollback(7);
+          }
+          // 取消的课程重新预约
+          const updateJoinRes = await transaction.collection('bx_join').doc(prevJoin._id).update({
+            data: {
+              JOIN_CODE: dataUtil.genRandomIntString(15),
+              JOIN_IS_CHECKIN: 0,
+              JOIN_CHECKIN_TIME: 0,
+              JOIN_STATUS: 1,
+              JOIN_EDIT_TIME: timeUtil.time(),
+            }
+          });
+          retId = prevJoin._id;
+        } else {
+          // 检查该用户在同一时段是否有别的预约记录
+          const tmpJoin = await JoinModel.getOne({
+            and: [{
+              JOIN_USER_ID: userId
+            }],
+            or: [{
+                JOIN_MEET_START_TIME: [
+                  ['>=', meet.MEET_START_TIME],
+                  ['<', meet.MEET_END_TIME]
+                ]
+              },
+              {
+                JOIN_MEET_END_TIME: [
+                  ['>', meet.MEET_START_TIME],
+                  ['<=', meet.MEET_END_TIME]
+                ]
+              }
+            ]
+          });
+          if (tmpJoin) {
+            // 学生在同一时段还有其他课程
+            await transaction.rollback(5);
+            // this.AppError('您在同一时段已有预约');
+          }
+          // 先插入一条预约记录
+          const addJoinRes = await transaction.collection('bx_join').add({
+            data: {
+              JOIN_CODE: dataUtil.genRandomIntString(15),
+              JOIN_IS_CHECKIN: 0,
+              JOIN_CHECKIN_TIME: 0,
+              JOIN_USER_ID: userId,
+              JOIN_MEET_START_TIME: meet.MEET_START_TIME,
+              JOIN_MEET_END_TIME: meet.MEET_END_TIME,
+              JOIN_MEET_TEACHER_ID: meet.MEET_TEACHER_ID,
+              JOIN_MEET_CATE_ID: meet.MEET_CATE_ID,
+              JOIN_MEET_SUBJECT_TYPE: meet.MEET_SUBJECT_TYPE,
+              JOIN_MEET_ID: meet._id,
+              JOIN_STATUS: 1,
+              JOIN_ADD_TIME: timeUtil.time(),
+              JOIN_EDIT_TIME: timeUtil.time(),
+            }
+          });
+          retId = addJoinRes._id;
+        }
 
         // 如果是模拟课程的话 减少学生可预约次数
         if (meet.MEET_CATE_ID === 0) {
@@ -338,7 +367,7 @@ class MeetService extends BaseProjectService {
         });
 
         return {
-          joinId: addJoinRes._id,
+          joinId: retId,
         }
       });
       console.log(`Join transaction succeeded`, result);
@@ -362,6 +391,10 @@ class MeetService extends BaseProjectService {
         this.AppError('您的模拟课程可预约次数为0');
       } else if (e === 5) {
         this.AppError('您在同一时段已有预约');
+      } else if (e === 6) {
+        this.AppError('该课程已经开始，无法预约！');
+      } else if (e === 7) {
+        this.AppError('您已经预约过该课程！');
       } else {
         this.AppError('系统错误，请稍后重试！');
       }
@@ -891,6 +924,7 @@ class MeetService extends BaseProjectService {
           data: {
             JOIN_STATUS: 3,
             JOIN_EDIT_TIME: now,
+            JOIN_CANCEL_TYPE: 0,
           }
         });
 
@@ -989,6 +1023,14 @@ class MeetService extends BaseProjectService {
 
   }
 
+  convertJoinStatus(join) {
+    const now = timeUtil.time();
+    if (join.JOIN_STATUS === 1 && now > join.JOIN_MEET_END_TIME) {
+      // 已过期
+      join.JOIN_STATUS = 4;
+    }
+  }
+
   /** 取得我的预约详情 */
   async getMyJoinDetail(userId, joinId) {
 
@@ -1008,7 +1050,10 @@ class MeetService extends BaseProjectService {
     };
     const res = await JoinModel.getListJoin(joinParams, where, fields, orderBy, 1, 1, true, 0);
     if (res.list.length === 0) return null;
-    else return res.list[0];
+    else {
+      this.convertJoinStatus(res.list[0]);
+      return res.list[0];
+    }
   }
 
   /** 取得我的预约分页列表 */
@@ -1033,41 +1078,56 @@ class MeetService extends BaseProjectService {
       JOIN_USER_ID: userId
     };
     //where.MEET_STATUS = ['in', [MeetModel.STATUS.COMM, MeetModel.STATUS.OVER]]; // 状态  
-
+    // let joinParams = undefined;
+    const $ = dbCmd.aggregate
     if (util.isDefined(search) && search) {
-      // where['JOIN_MEET_TITLE'] = {
-      //   $regex: '.*' + search,
-      //   $options: 'i'
+      where['meetInfo.MEET_TITLE'] = {
+        $regex: '.*' + search + '.*',
+        $options: 'i'
+      };
+      // joinParams = {
+      //   from: 'bx_meet',
+      //   let: {
+      //     join_meet_id: '$JOIN_MEET_ID'
+      //   },
+      //   pipeline: $.pipeline()
+      //     .match(dbCmd.expr($.and([
+      //       $.eq(['$_id', '$$join_meet_id']),
+      //       $.gt([$.indexOfBytes(['$MEET_TITLE', search]), 0]),
+      //     ])))
+      //     .done(),
+      //   as: 'meetInfo',
       // };
-    } else if (sortType) {
+    }
+    if (sortType) {
       // 搜索菜单
       switch (sortType) {
-        case 'cateId': {
-          if (sortVal) where.JOIN_MEET_CATE_ID = String(sortVal);
-          break;
-        }
-        case 'use': { //可用未过期
-          where.JOIN_STATUS = 1;
+        // case 'cateId': {
+        //   if (sortVal) where.JOIN_MEET_CATE_ID = String(sortVal);
+        //   break;
+        // }
+        case 'use': { //待使用
+          where.JOIN_STATUS = JoinModel.STATUS.SUCC;
           where.JOIN_MEET_END_TIME = ['>=', timeUtil.time()];
           break;
         }
         case 'check': { //已核销
-          where.JOIN_STATUS = JoinModel.STATUS.SUCC;
-          where.JOIN_IS_CHECKIN = 1;
+          where.JOIN_STATUS = JoinModel.STATUS.CHECKED_IN;
+          // where.JOIN_IS_CHECKIN = 1;
           break;
         }
         case 'timeout': { //已过期未核销
           where.JOIN_STATUS = 1;
-          where.JOIN_IS_CHECKIN = 0;
+          // where.JOIN_IS_CHECKIN = 0;
           where.JOIN_MEET_END_TIME = ['<', timeUtil.time()];
           break;
         }
-        case 'succ': { //预约成功
-          where.JOIN_STATUS = 1;
-          //where.JOIN_MEET_DAY = ['>=', timeUtil.time('Y-M-D h:m')];
-          //where.JOIN_MEET_TIME_START = ['>=', timeUtil.time('h:m')];
-          break;
-        }
+        // case 'succ': { //预约成功
+        //   where.JOIN_STATUS = 1;
+        //   //where.JOIN_MEET_DAY = ['>=', timeUtil.time('Y-M-D h:m')];
+        //   //where.JOIN_MEET_TIME_START = ['>=', timeUtil.time('h:m')];
+        //   break;
+        // }
         case 'cancel': { //已取消
           where.JOIN_STATUS = 3;
           break;
@@ -1075,16 +1135,19 @@ class MeetService extends BaseProjectService {
       }
     }
     console.log("Get list:", where, fields, orderBy, page, size, isTotal, oldTotal);
+
     const joinParams = {
       from: 'bx_meet',
       localField: 'JOIN_MEET_ID',
       foreignField: '_id',
       as: 'meetInfo',
     };
+
     let result = await JoinModel.getListJoin(joinParams, where, fields, orderBy, page, size, isTotal, oldTotal);
     result.list?.forEach((item) => {
       item.startTimeStr = timeUtil.timestamp2Time(item.JOIN_MEET_START_TIME, 'Y-M-D h:m');
       item.endTimeStr = timeUtil.timestamp2Time(item.JOIN_MEET_END_TIME, 'Y-M-D h:m');
+      this.convertJoinStatus(item);
     });
     return result;
   }
