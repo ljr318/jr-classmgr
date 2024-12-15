@@ -84,8 +84,11 @@ Page({
 			await cloudHelper.callCloudSumbit('admin/teacher_insert', data).then(res => {
 
 				let callback = async function () {
-					PublicBiz.removeCacheList('admin-teacher-list');
-					wx.navigateBack();
+					// PublicBiz.removeCacheList('admin-teacher-list');
+          // wx.navigateBack();
+          wx.navigateTo({
+            url: '../list/admin_teacher_list'
+          });
 				}
 				pageHelper.showSuccToast('添加成功', 2000, callback);
 			});

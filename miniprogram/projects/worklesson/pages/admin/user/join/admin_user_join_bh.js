@@ -24,7 +24,7 @@ module.exports = Behavior({
 
 		menuIdx: 0,
 
-		meetId: '',
+		userId: '',
 		mark: '',
 
 		title: '',
@@ -43,20 +43,20 @@ module.exports = Behavior({
 		_init: function (options) {
       // 附加参数 
       this.setData({options:options});
-			if (options && options.meetId) {
+			if (options && options.userId) {
 				//设置搜索菜单 
 				this._getSearchMenu();
 
 				this.setData({
-					meetId: options.meetId,
-					mark: '',
+					userId: options.userId,
+					mark: options.mark,
 					parentDayIdx: options.dayidx,
 					parentTimeIdx: options.timeidx,
 					time: options.time,
 
 					_params: {
-						meetId: options.meetId,
-						mark: '',
+						userId: options.userId,
+						mark: options.mark,
 					}
 				}, () => {
 					this.setData({

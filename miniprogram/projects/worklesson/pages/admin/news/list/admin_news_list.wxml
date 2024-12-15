@@ -43,7 +43,7 @@
 
 						<view bindtap="bindStatusMoreTap" data-id="{{item._id}}" class="btn margin-right-s">状态管理</view>
 
-						<view data-idx="{{index}}"  bindtap="bindMoreTap" data-id="{{item._id}}" data-idx="{{index}}" data-qr="{{item.NEWS_QR}}" data-title="{{item.NEWS_TITLE}}" class="btn margin-right-s">更多操作</view> 
+						<!--<view data-idx="{{index}}"  bindtap="bindMoreTap" data-id="{{item._id}}" data-idx="{{index}}" data-qr="{{item.NEWS_QR}}" data-title="{{item.NEWS_TITLE}}" class="btn margin-right-s">更多操作</view> -->
 
 						<view bindtap="url"  data-url="../../../news/detail/news_detail?id={{item._id}}" class="btn margin-right-s">预览</view>
 

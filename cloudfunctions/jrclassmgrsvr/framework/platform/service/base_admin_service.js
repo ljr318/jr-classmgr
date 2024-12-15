@@ -70,7 +70,9 @@ class BaseAdminService extends BaseService {
 			LOG_ADMIN_ID: admin._id,
 			LOG_ADMIN_NAME: admin.ADMIN_NAME,
 			LOG_ADMIN_DESC: admin.ADMIN_DESC,
-			LOG_TYPE: type
+      LOG_TYPE: type,
+      LOG_ADD_TIME: timeUtil.time(),
+      LOG_EDIT_TIME: timeUtil.time(),
 		}
 		await LogModel.insert(data);
 	} 

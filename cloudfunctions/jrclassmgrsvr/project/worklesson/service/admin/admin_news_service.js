@@ -29,14 +29,27 @@ class AdminNewsService extends BaseProjectAdminService {
 		desc = '',
 		forms
 	}) {
-
-
-		this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
+    const news = {
+      NEWS_TITLE: title,
+      NEWS_DESC: desc,
+      NEWS_CATE_ID: cateId,
+      NEWS_CATE_NAME: cateName,
+      NEWS_ORDER: order,
+      NEWS_FORMS: forms,
+      NEWS_ADD_TIME: timeUtil.time(),
+      NEWS_EDIT_TIME: timeUtil.time(),
+    }
+    // this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
+    return await NewsModel.insert(news);
 	}
 
 	/**删除资讯数据 */
 	async delNews(id) {
-		this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
+    const where = {
+      _id: id,
+    };
+    return await NewsModel.del(where);
+		// this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
 
 	}
 
@@ -70,9 +83,15 @@ class AdminNewsService extends BaseProjectAdminService {
 		id,
 		content // 富文本数组
 	}) {
-
-		this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
-
+    const where = {
+      _id: id,
+    };
+    const data = {
+      NEWS_CONTENT: content,
+    }
+    await NewsModel.edit(where, data);
+    return content;
+		// this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
 	}
 
 	/**
@@ -83,7 +102,14 @@ class AdminNewsService extends BaseProjectAdminService {
 		id,
 		imgList // 图片数组
 	}) {
-
+    const where = {
+      _id: id,
+    };
+    const data = {
+      NEWS_PIC: imgList,
+    }
+    await NewsModel.edit(where, data);
+    return imgList;
 		this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
 
 	}
@@ -99,8 +125,19 @@ class AdminNewsService extends BaseProjectAdminService {
 		desc = '',
 		forms
 	}) {
-
-		this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
+    const where = {
+      _id: id,
+    };
+    const data = {
+      NEWS_TITLE: title,
+      NEWS_DESC: desc,
+      NEWS_CATE_ID: cateId,
+      NEWS_CATE_NAME: cateName,
+      NEWS_ORDER: order,
+      NEWS_FORMS: forms,
+    }
+    return await NewsModel.edit(where, data);
+		// this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
 	}
 
 	/**取得资讯分页列表 */
@@ -124,7 +161,7 @@ class AdminNewsService extends BaseProjectAdminService {
 
 		let where = {};
 		where.and = {
-			_pid: this.getProjectId() //复杂的查询在此处标注PID
+			// _pid: this.getProjectId() //复杂的查询在此处标注PID
 		};
 
 		if (util.isDefined(search) && search) {
@@ -164,7 +201,14 @@ class AdminNewsService extends BaseProjectAdminService {
 
 	/**修改资讯状态 */
 	async statusNews(id, status) {
-		this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
+    const where = {
+      _id: id,
+    };
+    const data = {
+      NEWS_STATUS: status,
+    }
+    return await NewsModel.edit(where, data);
+		// this.AppError('[课时]该功能暂不开放，如有需要请加作者微信：cclinux0730');
 	}
 
 	/**置顶与排序设定 */

@@ -38,8 +38,17 @@ class BaseController {
 		console.log('------------------------');
 		console.log(`【${time}】【Request -- ↘↘↘】\n【↘Token = ${this._token}】\n【↘USER-ID = ${userId}】\n【↘↘IN DATA】=\n`, JSON.stringify(this._request, null, 4));
 
-	}
-
+  }
+  
+	/**
+	 * 抛出异常
+	 * @param {*} msg 
+	 * @param {*} code 
+	 */
+	AppError(msg, code = appCode.LOGIC) {
+		throw new AppError(msg, code);
+  }
+  
 	/**
 	 * 数据校验
 	 * @param {*} rules 

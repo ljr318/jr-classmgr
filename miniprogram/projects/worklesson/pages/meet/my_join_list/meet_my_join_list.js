@@ -19,7 +19,7 @@ Page({
 	onLoad: async function (options) {
 		ProjectBiz.initPage(this);
 		if (!await PassportBiz.loginMustBackWin(this)) return;
-
+    this.setData({options});
 		if (options && helper.isDefined(options.status)) {
 			this.setData({
 				isLoad: true,
@@ -129,12 +129,16 @@ Page({
 				}
 
 				await cloudHelper.callCloudSumbit('meet/my_join_cancel', params, opts).then(res => {
-					pageHelper.delListNode(joinId, this.data.dataList.list, '_id');
-					this.data.dataList.total--;
-					this.setData({
-						dataList: this.data.dataList
-					});
-					pageHelper.showNoneToast('取消成功');
+					// pageHelper.delListNode(joinId, this.data.dataList.list, '_id');
+					// this.data.dataList.total--;
+					// this.setData({
+					// 	dataList: this.data.dataList
+					// });
+          pageHelper.showNoneToast('取消成功');
+          // this.onLoad(this.options);
+          wx.redirectTo({
+            url: './meet_my_join_list',
+          })
 				});
 			} catch (err) {
 				console.log(err);

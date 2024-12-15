@@ -34,6 +34,7 @@ MeetModel.DB_STRUCTURE = {
   MEET_RESERVED_STUDENT_CNT: 'int|true|default=0|comment=课程已预约人数',
   MEET_ADD_TIME: 'int|true',
   MEET_EDIT_TIME: 'int|true',
+  MEET_CANCEL_REASON: 'string|false|comment=课程取消原因',
 };
 
 // 字段前缀

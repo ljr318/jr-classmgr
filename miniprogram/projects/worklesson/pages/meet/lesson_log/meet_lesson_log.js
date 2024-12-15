@@ -2,6 +2,7 @@
 const pageHelper = require('../../../../../helper/page_helper.js');
 const helper = require('../../../../../helper/helper.js'); 
 const ProjectBiz = require('../../../biz/project_biz.js');  
+const PassportBiz = require('../../../../../comm/biz/passport_biz.js');
 
 Page({
 	/**
@@ -16,7 +17,7 @@ Page({
 	 */
 	onLoad: async function (options) {
 		ProjectBiz.initPage(this);  
-
+    if (!await PassportBiz.loginMustBackWin(this)) return;
 		if (options && helper.isDefined(options.id)) {
 			this.setData({
 				isLoad: true,

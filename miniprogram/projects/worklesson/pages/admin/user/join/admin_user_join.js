@@ -1,37 +1,37 @@
-const WorkBiz = require('../../../../biz/work_biz.js');
-const behavior = require('../../../admin/meet/join/admin_meet_join_bh.js');
+const AdminBiz = require('../../../../../../comm/biz/admin_biz.js');
+const behavior = require('./admin_user_join_bh.js'); 
 
 Page({
 
-  behaviors: [behavior],
+	behaviors: [behavior],
 
-  /**
-   * 页面的初始数据
-   */
-  data: {
-    oprt: 'work',
+	/**
+	 * 页面的初始数据
+	 */
+	data: {
     isLoad: false,
-  },
+    oprt: 'admin'
+	},
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    if (!WorkBiz.isWork(this)) return;
-    console.log('options:', options);
-    this._init(options);
+	/**
+	 * 生命周期函数--监听页面加载
+	 */
+	onLoad: function (options) {
+		if (!AdminBiz.isAdmin(this)) return;
+
+		this._init(options);
     this.setData({
       isLoad: true,
     });
-  },
-
+  }, 
+  
   _init(options) {
+    this._getSearchMenu();
     this.setData({
       _params: {
-        meetId: options.id
+        userId: options.userId
       }
     });
-    this._getSearchMenu();
   },
   _getSearchMenu: function () {
     let sortItems = [];
@@ -65,5 +65,4 @@ Page({
       sortMenus
     })
   },
-
 })

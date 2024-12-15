@@ -219,7 +219,7 @@ AdminBiz.CHECK_FORM_TEACHER_EDIT = {
   _id: '_id|string|name=id',
   TEACHER_NAME: 'TEACHER_NAME|must|string|max:30|name=姓名',
   PHONE_NUMBER: 'PHONE_NUMBER|string|len:11|name=手机',
-  LOGIN_PASSWORD: 'LOGIN_PASSWORD|must|int|name=登陆密码',
+  LOGIN_PASSWORD: 'LOGIN_PASSWORD|must|string|name=登陆密码',
   AVATAR: 'AVATAR|string|name=头像',
   STATUS: 'STATUS|must|int|name=教练状态',
 };

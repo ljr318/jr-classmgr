@@ -27,6 +27,8 @@ StudentModel.DB_STRUCTURE = {
   INVITE_CODE: 'string|false|comment=内部学员邀请码',
   MEMBERSHIP_USAGE_TIMES: 'int|false|default=0|comment=模拟课程会员卡剩余使用次数',
   MEMBERSHIP_USED_TIMES: 'int|false|default=0|comment=模拟课程会员卡已使用次数',
+  SPECIAL_FLAG: 'int|false|default=0|comment=1:教练 2:管理员',
+  CHECKED_IN_TIMES: 'int|false|default=0|comment=已核销次数',
 	// USER_TYPE: 'int|true|default=1|comment=类型 0=未注册,1=已注册',
 	// USER_NAME: 'string|false|comment=用户昵称',
 	// USER_MOBILE: 'string|false|comment=联系电话',

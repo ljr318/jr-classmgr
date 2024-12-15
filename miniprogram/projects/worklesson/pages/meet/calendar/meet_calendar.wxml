@@ -36,8 +36,8 @@
         <text>{{item.teacherInfo.TEACHER_NAME}}</text>
       </view>
       <view class="line">
-        <view wx:if="{{item.MEET_STATUS === 0}}" class="appt">预约</view>
-        <view wx:if="{{item.MEET_STATUS === 1}}" class="appt">进行中</view>
+        <view wx:if="{{item.MEET_STATUS === 0}}" class="waiting">预约</view>
+        <view wx:if="{{item.MEET_STATUS === 1}}" class="doing">进行中</view>
         <view wx:if="{{item.MEET_STATUS === 2}}" class="appt">已结束</view>
         <view wx:if="{{item.MEET_STATUS === 3}}" class="cancel">已取消</view>
       </view>

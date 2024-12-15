@@ -56,7 +56,7 @@ Page({
       join.startTimeStr = timeHelper.timestamp2Time(join.JOIN_MEET_START_TIME);
       join.endTimeStr = timeHelper.timestamp2Time(join.JOIN_MEET_END_TIME);
       console.log("join time:", join);
-			let qrImageData = qrcodeLib.drawImg(join.JOIN_CODE, {
+			let qrImageData = qrcodeLib.drawImg(join._id, {
 				typeNumber: 1,
 				errorCorrectLevel: 'L',
 				size: 100
@@ -128,11 +128,11 @@ Page({
 
 	bindCalendarTap: function (e) {
 		let join = this.data.join;
-		let title = join.JOIN_MEET_TITLE;
+		let title = join.meetInfo.MEET_TITLE;
 
-		let startTime = timeHelper.time2Timestamp(join.JOIN_MEET_DAY + ' ' + join.JOIN_MEET_TIME_START + ':00') / 1000;
-		let endTime = timeHelper.time2Timestamp(join.JOIN_MEET_DAY + ' ' + join.JOIN_MEET_TIME_END + ':00') / 1000;
+		// let startTime = timeHelper.time2Timestamp(join.JOIN_MEET_DAY + ' ' + join.JOIN_MEET_TIME_START + ':00') / 1000;
+		// let endTime = timeHelper.time2Timestamp(join.JOIN_MEET_DAY + ' ' + join.JOIN_MEET_TIME_END + ':00') / 1000;
 
-		pageHelper.addPhoneCalendar(title, startTime, endTime);
+		pageHelper.addPhoneCalendar(title, join.JOIN_MEET_START_TIME/1000, join.JOIN_MEET_END_TIME/1000);
 	}
 })

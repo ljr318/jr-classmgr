@@ -1,4 +1,4 @@
-<cmpt-comm-list source='{{oprt}}' id="cmpt-comm-list" type="{{oprt}}-meet-join-list" search="{{search||''}}" _params="{{_params}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="{{oprt}}/meet_join_list" topBottom="50" placeholder="搜索姓名，手机等" sortMenusDefaultIndex="0" bind:list="bindCommListCmpt">
+<cmpt-comm-list source='{{oprt}}' id="cmpt-comm-list" type="{{oprt}}-meet-join-list" search="{{search||''}}" _params="{{_params}}" _menus="{{sortMenus}}" _items="{{sortItems}}" route="admin/user_join_list" topBottom="50" placeholder="搜索课程标题、详情等" sortMenusDefaultIndex="0" bind:list="bindCommListCmpt">
 
   <view slot="searchEnd">
 
@@ -15,7 +15,7 @@
     <view class="item" wx:for="{{dataList.list}}" wx:key="key">
       <view class="header">
         <view class="left">
-          <text style="font-weight: bold;">{{item.studentInfo.STUDENT_NAME}}</text>
+          <text style="font-weight: bold;">{{item.meetInfo.MEET_TITLE}}</text>
         </view>
         <view class="right">
           <text style="font-weight: bold;">{{item.JOIN_ADD_TIME}}</text>
@@ -23,19 +23,58 @@
       </view>
       <view class="info">
         <view class="info-item">
-          <view class="title">手机</view>
+          <view class="title">课程详情</view>
           <view class="mao">：</view>
           <view class="content">
-            <view>{{item.studentInfo.PHONE_NUMBER}}</view>
+            <view>{{item.meetInfo.MEET_DESC}}</view>
           </view>
         </view>
 
         <view class="info-item">
-          <view class="title">学员类型</view>
+          <view class="title">课程地点</view>
           <view class="mao">：</view>
           <view class="content">
-            <view wx:if="{{item.studentInfo.STUDENT_TYPE==1}}">本校</view>
-            <view wx:elif="{{item.studentInfo.STUDENT_TYPE==2}}">外校</view>
+            <view>{{item.meetInfo.MEET_LOCATION}}</view>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <view class="title">课程车辆</view>
+          <view class="mao">：</view>
+          <view class="content">
+            <view>{{item.meetInfo.MEET_USING_CAR_ID}}</view>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <view class="title">教练姓名</view>
+          <view class="mao">：</view>
+          <view class="content">
+            <view>{{item.teacherName}}</view>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <view class="title">教练手机</view>
+          <view class="mao">：</view>
+          <view class="content">
+            <view>{{item.teacherPhoneNumber}}</view>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <view class="title">课程开始时间</view>
+          <view class="mao">：</view>
+          <view class="content">
+            <view>{{item.meetInfo.MEET_START_TIME_STR}}</view>
+          </view>
+        </view>
+
+        <view class="info-item">
+          <view class="title">课程结束时间</view>
+          <view class="mao">：</view>
+          <view class="content">
+            <view>{{item.meetInfo.MEET_END_TIME_STR}}</view>
           </view>
         </view>
 

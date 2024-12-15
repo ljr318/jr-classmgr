@@ -64,6 +64,8 @@
 
         <view class="info text-grey margin-top-xs text-s">提交时间：{{join.JOIN_ADD_TIME}}</view>
         <view wx:if="{{join.JOIN_STATUS==2}}" class="info text-grey margin-top-xs text-s">核销时间：{{join.JOIN_CHECKIN_TIME}}</view>
+        <view wx:if="{{join.JOIN_STATUS==3}}" class="info text-grey margin-top-xs text-s">取消类型：{{join.JOIN_CANCEL_TYPE === 1 ? '系统取消' : '用户自主取消'}}</view>
+        <view wx:if="{{join.JOIN_STATUS==3 && join.JOIN_CANCEL_TYPE === 1}}" class="info text-grey margin-top-xs text-s">取消原因：{{join.JOIN_CANCEL_REASON}}</view>
       </view>
     </view>
   </view>

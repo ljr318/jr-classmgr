@@ -3,7 +3,7 @@
 </view>
 <view class="main">
   <view class="list">
-    <view class="item" bindtap="url" data-type="relaunch" data-url="../../news/index/news_index">
+    <view class="item" bindtap="url" data-type="relaunch" data-url="../../news/cate1/news_cate1">
       <image mode="aspectFill" src="../../../images/menu/notice.png" />
       <view class="title">最新通知</view>
     </view>
@@ -13,15 +13,10 @@
       <view class="title">预约日历</view>
     </view>
 
-    <view class="item" bindtap="url" data-url="../../meet/index/meet_index?id=1">
-      <image mode="aspectFill" src="../../../images/menu/laoshi.png" />
-      <view class="title">老师预约</view>
-    </view>
-    <view class="item" bindtap="url" data-url="../../meet/index/meet_index?id=2">
+    <view class="item" bindtap="url" data-url="../../meet/my_join_list/meet_my_join_list">
       <image mode="aspectFill" src="../../../images/menu/kechen.png" />
-      <view class="title">课程预约</view>
+      <view class="title">我的预约</view>
     </view>
-
 
     <view class="item" bindtap="url" data-type="relaunch" data-url="../../my/index/my_index">
       <image mode="aspectFill" src="../../../images/menu/my.png" />

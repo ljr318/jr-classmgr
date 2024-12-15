@@ -27,9 +27,9 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad: function (options) {
+  onLoad: async function (options) {
     ProjectBiz.initPage(this);
-
+    if (!await PassportBiz.loginMustBackWin(this)) return;
     if (!pageHelper.getOptions(this, options)) return;
 
     this._loadDetail();
@@ -104,8 +104,8 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow: function () {
-
+  onShow: async function () {
+    if (!await PassportBiz.loginMustBackWin(this)) return;
   },
 
   /**

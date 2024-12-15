@@ -236,17 +236,17 @@ class MeetService extends BaseProjectService {
     const meetLockKey = `join_meet_${meetId}`;
     const userLockKey = `join_user_${userId}`;
     // 锁住meetId
-    let lockRet = await dbUtil.lock(meetLockKey);
+    let lockRet = await dbUtil.lock(meetLockKey, 60000, userId);
     console.log('DBG MARK lock ret:', lockRet);
     if (lockRet !== 0) {
       console.log('DBG MARK2 lock ret:', lockRet);
       this.AppError('系统繁忙，请稍后再试！');
     }
     // 锁住userId
-    lockRet = await dbUtil.lock(userLockKey);
+    lockRet = await dbUtil.lock(userLockKey, 60000, userId);
     console.log('DBG MARK lock ret:', lockRet);
     if (lockRet !== 0) {
-      await dbUtil.unlock(meetLockKey);
+      await dbUtil.unlock(meetLockKey, userId);
       this.AppError('系统繁忙，请稍后再试！');
     }
     // 预约过程需要开启事务
@@ -355,6 +355,7 @@ class MeetService extends BaseProjectService {
           const updateStudentRemainUsageRes = await transaction.collection('bx_student').doc(userId).update({
             data: {
               MEMBERSHIP_USAGE_TIMES: dbCmd.inc(-1),
+              MEMBERSHIP_USED_TIMES: dbCmd.inc(1),
             }
           });
         }
@@ -371,16 +372,16 @@ class MeetService extends BaseProjectService {
         }
       });
       console.log(`Join transaction succeeded`, result);
-      await dbUtil.unlock(meetLockKey);
-      await dbUtil.unlock(userLockKey);
+      await dbUtil.unlock(meetLockKey, userId);
+      await dbUtil.unlock(userLockKey, userId);
       return {
         success: true,
         joinId: result.joinId,
       };
     } catch (e) {
       console.error(`transaction error`, e);
-      await dbUtil.unlock(meetLockKey);
-      await dbUtil.unlock(userLockKey);
+      await dbUtil.unlock(meetLockKey, userId);
+      await dbUtil.unlock(userLockKey, userId);
       if (e === 1) {
         this.AppError('该课程仅支持本校学员预约！');
       } else if (e === 2) {
@@ -875,17 +876,17 @@ class MeetService extends BaseProjectService {
     const meetLockKey = `join_meet_${meetId}`;
     const userLockKey = `join_user_${userId}`;
     // 锁住meetId
-    let lockRet = await dbUtil.lock(meetLockKey);
+    let lockRet = await dbUtil.lock(meetLockKey, 60000, userId);
     console.log('DBG MARK lock ret:', lockRet);
     if (lockRet !== 0) {
       console.log('DBG MARK2 lock ret:', lockRet);
       this.AppError('系统繁忙，请稍后再试！');
     }
     // 锁住userId
-    lockRet = await dbUtil.lock(userLockKey);
+    lockRet = await dbUtil.lock(userLockKey, 60000, userId);
     console.log('DBG MARK lock ret:', lockRet);
     if (lockRet !== 0) {
-      await dbUtil.unlock(meetLockKey);
+      await dbUtil.unlock(meetLockKey, userId);
       this.AppError('系统繁忙，请稍后再试！');
     }
     // 预约过程需要开启事务
@@ -933,6 +934,7 @@ class MeetService extends BaseProjectService {
           const updateStudentRemainUsageRes = await transaction.collection('bx_student').doc(userId).update({
             data: {
               MEMBERSHIP_USAGE_TIMES: dbCmd.inc(1),
+              MEMBERSHIP_USED_TIMES: dbCmd.inc(-1),
             }
           });
         }
@@ -947,15 +949,15 @@ class MeetService extends BaseProjectService {
         return {};
       });
       console.log(`Cancel join transaction succeeded`, result);
-      await dbUtil.unlock(meetLockKey);
-      await dbUtil.unlock(userLockKey);
+      await dbUtil.unlock(meetLockKey, userId);
+      await dbUtil.unlock(userLockKey, userId);
       return {
         success: true
       };
     } catch (e) {
       console.error(`transaction error`, e);
-      await dbUtil.unlock(meetLockKey);
-      await dbUtil.unlock(userLockKey);
+      await dbUtil.unlock(meetLockKey, userId);
+      await dbUtil.unlock(userLockKey, userId);
       if (e === 1) {
         this.AppError('已经开始的课程不得取消');
       } else if (e === 2) {

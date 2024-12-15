@@ -47,17 +47,20 @@ class WorkMeetService extends BaseProjectWorkService {
     return await service.insertMeet(meet);
   }
 
-  async cancelMeet(meet, openID) {
+  async cancelMeet(params, openID) {
     let teacher = await this.isWork(openID);
-    console.log('Current login teacher info:', teacher);
-    const whereMeet = {
-      _id: meet._id,
-      MEET_TEACHER_ID: teacher._id,
-    }
-    const editData = {
-      MEET_STATUS: 3,
-    }
-    return await MeetModel.edit(whereMeet, editData);
+    console.log("Current operating teacher:", teacher);
+    // console.log('Current login teacher info:', teacher);
+    // const whereMeet = {
+    //   _id: meet._id,
+    //   MEET_TEACHER_ID: teacher._id,
+    // }
+    // const editData = {
+    //   MEET_STATUS: 3,
+    // }
+    // return await MeetModel.edit(whereMeet, editData);
+    let service = new AdminMeetService();
+    return await service.cancelMeet(params, 'teacher');
   }
 
   async editMeet(meet, openID) {

@@ -11,6 +11,7 @@ const picHelper = require('./pic_helper.js');
 
 // 加入手机日程 单位秒
 function addPhoneCalendar(title, startTime, endTime, alarmOffset = 3600) {
+  console.log(title, startTime, endTime);
   wx.addPhoneCalendar({
     title,
     startTime,
@@ -19,11 +20,11 @@ function addPhoneCalendar(title, startTime, endTime, alarmOffset = 3600) {
     alarm: 'true',
     alarmOffset, //提前时间，秒
     success: () => {
-      pageHelper.showSuccToast('添加成功');
+      // this.showSuccToast('添加成功');
     },
     fail: (res) => {
       if (res && res.errMsg && res.errMsg.includes('refuesed')) {
-        pageHelper.showModal('请在手机的"设置›微信" 选项中，允许微信访问你的日历', '日历权限未开启')
+        this.showModal('请在手机的"设置›微信" 选项中，允许微信访问你的日历', '日历权限未开启')
       }
     },
     complete: (res) => {

@@ -272,11 +272,13 @@ Page({
     if (!WorkBiz.isWork(this) || !e) return;
     let id = pageHelper.dataset(e, 'id');
     if (!id) return;
-    const callback = async function () {
+    const callback = async function (cancelReason) {
       let params = {
-        _id: id
+        _id: id,
+        cancelReason
       }
       try {
+        console.log("About to call with param:", params);
         await cloudHelper.callCloudSumbit('work/meet_cancel', params).then(res => {
           // pageHelper.modifyListNode(id, this.data.dataList.list, 'MEET_STATUS', status, '_id');
           // this.setData({

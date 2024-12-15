@@ -3,8 +3,8 @@
 	CLOUD_ID: 'jrclassmgrsvr-1gl1udlh1bf4eaf8', //云服务id ,本地测试环境 
 
 	// #### 版本信息 
-	VER: 'build 2023.03.13',
-	COMPANY: '联系作者',
+	VER: 'build in 2024',
+	COMPANY: 'jr',
 
 	// #### 系统参数 
 	IS_SUB: false, //分包模式 

@@ -7,6 +7,7 @@
 const BaseProjectService = require('./base_project_service.js');
 const cloudBase = require('../../../framework/cloud/cloud_base.js');
 const StudentModel = require('../model/student_model.js');
+const TeacherModel = require('../model/teacher_model.js');
 const dataUtil = require('../../../framework/utils/data_util.js');
 const LessonLogModel = require('../model/lesson_log_model.js');
 const MeetService = require('../service/meet_service.js');
@@ -64,7 +65,7 @@ class PassportService extends BaseProjectService {
     let data = {
       REG_TIME: this._timestamp,
       AVATAR: avatarUrl,
-      STUDENT_NAME:name,
+      STUDENT_NAME: name,
       OPENID: userId
     }
     await StudentModel.edit(editWhere, data);
@@ -91,8 +92,20 @@ class PassportService extends BaseProjectService {
     let where = {
       OPENID: userId,
     }
-    let fields = 'STUDENT_ID,OPENID,STUDENT_NAME,AVATAR,STATUS'
-    return await StudentModel.getOne(where);
+    // let fields = 'STUDENT_ID,OPENID,STUDENT_NAME,AVATAR,STATUS,SPECIAL_FLAG'
+    let res = await StudentModel.getOne(where);
+    if (res) {
+      // 检查下当前用户是不是教练
+      let teacherWhere = {
+        PHONE_NUMBER: res.PHONE_NUMBER
+      };
+      let teacher = await TeacherModel.getOne(teacherWhere);
+      if (teacher && !res.SPECIAL_FLAG) {
+        res.SPECIAL_FLAG = 1;
+      }
+    }
+
+    return res;
   }
 
   /** 修改用户资料 */

@@ -3,7 +3,7 @@
 
     <view slot="searchEnd">
       <button bindtap="url" data-url="../add/admin_user_add" class="btn mid radius bg-orange text-white margin-right-s"><text class="icon-add margin-right-xxs"></text>添加待注册学员</button>
-      <button bindtap="url" data-url="../export/admin_user_export?condition={{dataList.condition}}" class="btn mid radius bg-admin text-white margin-right-s"><text class="icon-down margin-right-xxs"></text>导出学员</button>
+      <!--<button bindtap="url" data-url="../export/admin_user_export?condition={{dataList.condition}}" class="btn mid radius bg-admin text-white margin-right-s"><text class="icon-down margin-right-xxs"></text>导出学员</button>-->
     </view>
 
     <!-- List Begin -->
@@ -39,7 +39,16 @@
             <view class="mao">：</view>
             <view class="content">可预约<text style="font-weight: bold;">{{item.MEMBERSHIP_USAGE_TIMES}}</text>节模拟课程 </view>
           </view>
-
+          <view class="info-item">
+            <view class="title">已使用</view>
+            <view class="mao">：</view>
+            <view class="content">{{item.MEMBERSHIP_USED_TIMES}}</view>
+          </view>
+          <view class="info-item">
+            <view class="title">已核销</view>
+            <view class="mao">：</view>
+            <view class="content">{{item.CHECKED_IN_TIMES}}</view>
+          </view>
           <view class="info-item">
             <view class="title">创建时间</view>
             <view class="mao">：</view>
@@ -64,6 +73,8 @@
             <view wx:if="{{item.STATUS==1}}" bindtap="bindStatusTap" data-status="9" data-idx="{{index}}" class="btn  margin-right-s"><text class="icon-close margin-right-xxs text-purple"></text>禁用</view>-->
 
             <view bindtap="url" data-url="../edit/admin_user_edit?id={{item.OPENID}}" class="btn  margin-right-s"><text class="icon-profile margin-right-xxs text-orange"></text>编辑/详情</view>
+
+            <view bindtap="url" data-url="../join/admin_user_join?userId={{item._id}}" class="btn  margin-right-s"><text class="icon-calendar margin-right-xxs text-orange"></text>预约记录</view>
             
             <view bindtap="bindDelTap" data-id="{{item.OPENID}}" class="btn  margin-right-s"><text class="icon-delete margin-right-xxs text-orange"></text>删除</view>
 

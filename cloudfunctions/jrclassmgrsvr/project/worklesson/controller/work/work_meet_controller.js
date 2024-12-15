@@ -8,6 +8,7 @@ const BaseProjectWorkController = require('./base_project_work_controller.js');
 const timeUtil = require('../../../../framework/utils/time_util.js');
 const dataUtil = require('../../../../framework/utils/data_util.js');
 const WorkMeetService = require('../../service/work/work_meet_service.js');
+const AdminMeetService = require('../../service/admin/admin_meet_service.js');
 
 class WorkMeetController extends BaseProjectWorkController {
 
@@ -180,6 +181,7 @@ class WorkMeetController extends BaseProjectWorkController {
     // 数据校验
     let rules = {
       _id: 'must|id',
+      cancelReason: 'string',
     };
 
     // 取得数据
@@ -217,7 +219,6 @@ class WorkMeetController extends BaseProjectWorkController {
       sortVal: 'name=搜索类型值',
       orderBy: 'object|name=排序',
       meetId: 'must|id',
-      mark: 'must|string',
       page: 'must|int|default=1',
       size: 'int|default=10',
       isTotal: 'bool',
@@ -226,7 +227,6 @@ class WorkMeetController extends BaseProjectWorkController {
 
     // 取得数据
     let input = this.validateData(rules);
-    input.meetId = this._workId;
 
     let service = new AdminMeetService();
     let result = await service.getJoinList(input);
@@ -238,16 +238,15 @@ class WorkMeetController extends BaseProjectWorkController {
       list[k].JOIN_CHECKIN_TIME = timeUtil.timestamp2Time(list[k].JOIN_CHECKIN_TIME);
 
       //分解成数组，高亮显示
-      let forms = list[k].JOIN_FORMS;
-      for (let j in forms) {
-        forms[j].valArr = dataUtil.splitTextByKey(forms[j].val, input.search);
-      }
+      // let forms = list[k].JOIN_FORMS;
+      // for (let j in forms) {
+      //   forms[j].valArr = dataUtil.splitTextByKey(forms[j].val, input.search);
+      // }
 
     }
     result.list = list;
 
     return result;
-
   }
 
   /** 预约名单列表 */
@@ -335,15 +334,15 @@ class WorkMeetController extends BaseProjectWorkController {
     await this.isWork();
 
     let rules = {
-      meetId: 'must|id',
-      code: 'must|string|len:15',
+      // meetId: 'must|id',
+      code: 'must|string',
     };
 
     // 取得数据
     let input = this.validateData(rules);
 
     let service = new AdminMeetService();
-    await service.scanJoin(this._workId, input.code);
+    await service.scanJoin(input.code);
   }
 
 

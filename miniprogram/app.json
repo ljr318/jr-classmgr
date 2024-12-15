@@ -32,6 +32,7 @@
     "projects/worklesson/pages/admin/user/detail/admin_user_detail",
     "projects/worklesson/pages/admin/user/edit/admin_user_edit",
     "projects/worklesson/pages/admin/user/export/admin_user_export",
+    "projects/worklesson/pages/admin/user/join/admin_user_join",
     "projects/worklesson/pages/admin/car/add/admin_car_add",
     "projects/worklesson/pages/admin/car/edit/admin_car_edit",
     "projects/worklesson/pages/admin/car/list/admin_car_list",

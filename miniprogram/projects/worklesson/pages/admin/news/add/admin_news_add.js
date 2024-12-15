@@ -100,7 +100,7 @@ Page({
 
 			// 先创建，再上传 
 			let result = await cloudHelper.callCloudSumbit('admin/news_insert', data);
-			let newsId = result.data.id;
+			let newsId = result.data;
 
 			// 封面图片 提交处理 
 			wx.showLoading({

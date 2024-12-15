@@ -71,9 +71,10 @@
           </view>
 
           <view class="oprt">
-            <view bindtap="url" data-url="../edit/work_meet_edit?id={{item._id}}" class="btn margin-right-s"><text class="icon-settings margin-right-xxs text-blue"></text>编辑/详情</view>
+            <view wx:if="{{item.MEET_STATUS === 0}}" bindtap="url" data-url="../edit/work_meet_edit?id={{item._id}}" class="btn margin-right-s"><text class="icon-settings margin-right-xxs text-blue"></text>编辑/详情</view>
 
-            <view bindtap="bindRecordSelectTap" data-id="{{item._id}}" data-title="{{item.MEET_TITLE}}" class="btn margin-right-s"><text class="icon-peoplelist margin-right-xxs text-blue"></text>预约名单</view>
+            <!--<view bindtap="bindRecordSelectTap" data-id="{{item._id}}" data-title="{{item.MEET_TITLE}}" class="btn margin-right-s"><text class="icon-peoplelist margin-right-xxs text-blue"></text>预约名单</view>-->
+            <view bindtap="url" data-url="../join/work_meet_join?id={{item._id}}" class="btn margin-right-s"><text class="icon-peoplelist margin-right-xxs text-blue"></text>预约名单</view>
 
             <view bindtap="bindCancelMeet" wx:if="{{item.MEET_STATUS === 0}}" data-id="{{item._id}}" class="btn   margin-right-s"><text class="icon-deletefill margin-right-xxs text-orange"></text>取消课程</view>
 

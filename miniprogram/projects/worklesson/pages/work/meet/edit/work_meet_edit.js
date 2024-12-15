@@ -220,6 +220,7 @@ Page({
     if (data.formMeetStartTime == '' || data.formMeetEndTime == '') {
       return pageHelper.showModal('请选择开课时间');
     }
+    const now = timeHelper.time();
     let startTimestamp = timeHelper.time2Timestamp(data.formMeetStartTime);
     let endTimestamp = timeHelper.time2Timestamp(data.formMeetEndTime);
     if (startTimestamp >= endTimestamp) {
@@ -278,7 +279,7 @@ Page({
 
   onStartEndTimeChange: async function () {
     console.log("call onStartEndTimeChange:", this.data);
-
+    const now = timeHelper.time();
     if (this.data.formMeetStartTime && this.data.formMeetEndTime) {
       const occupyStartTime = timeHelper.time2Timestamp(this.data.formMeetStartTime);
       const occupyEndTime = timeHelper.time2Timestamp(this.data.formMeetEndTime);
@@ -288,6 +289,13 @@ Page({
           formMeetEndTime: ''
         });
         return pageHelper.showModal('课程开始时间不能晚于结束时间');
+      }
+      if (now + 1200000 >= occupyStartTime) {
+        this.setData({
+          formMeetStartTime: '',
+          formMeetEndTime: ''
+        });
+        return pageHelper.showModal('课程需提前至少20分钟发布！');
       }
       const tmpCars = await cloudHelper.callCloudData('car/get_cars', {
         carStatus: 0,

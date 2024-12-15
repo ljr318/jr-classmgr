@@ -15,8 +15,7 @@ class NewsModel extends BaseProjectModel {
 NewsModel.CL = BaseProjectModel.C('news');
 
 NewsModel.DB_STRUCTURE = {
-	_pid: 'string|true',
-	NEWS_ID: 'string|true',
+	// NEWS_ID: 'string|true',
 
 	NEWS_TITLE: 'string|false|comment=标题',
 	NEWS_DESC: 'string|false|comment=描述',

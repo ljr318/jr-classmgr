@@ -15,8 +15,8 @@ class LogModel extends BaseModel {
 LogModel.CL = BaseModel.C('log');
 
 LogModel.DB_STRUCTURE = {
-	_pid: 'string|true',
-	LOG_ID: 'string|true',
+	// _pid: 'string|true',
+	// LOG_ID: 'string|true',
 
 	LOG_ADMIN_ID: 'string|true|comment=管理员',
 	LOG_ADMIN_DESC: 'string|false',

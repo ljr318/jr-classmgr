@@ -101,7 +101,7 @@ Page({
 	},
 
 	bindSetTap: function (e, skin) {
-		let itemList = ['清除缓存', '后台管理', '老师平台'];
+		let itemList = ['清除缓存'];
 		wx.showActionSheet({
 			itemList,
 			success: async res => {
@@ -110,31 +110,8 @@ Page({
 					cacheHelper.clear();
 					pageHelper.showNoneToast('清除缓存成功');
 				}
-
-				if (idx == 1) {
-					if (setting.IS_SUB) {
-						AdminBiz.adminLogin(this, 'admin', '123456');
-					} else {
-						wx.reLaunch({
-							url: '../../admin/index/login/admin_login',
-						});
-					}
-
-				}
-
-				if (idx == 2) {
-					if (setting.IS_SUB) {
-						WorkBiz.workLogin(this, '13700000000', '123456');
-					} else {
-						wx.reLaunch({
-							url: '../../work/index/login/work_login',
-						});
-					}
-
-				}
-
 			},
 			fail: function (res) { }
 		})
-	}
+  },
 })

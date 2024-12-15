@@ -144,6 +144,18 @@ page {
 	border-bottom-left-radius: 20rpx;
 }
 
+.list .item .waiting {
+	position: absolute;
+	right: 0;
+	bottom: 30rpx;
+  background-color: #cf7602;
+  color:#fff;
+	font-size: 24rpx;
+	padding: 8rpx 20rpx;
+	border-top-left-radius: 20rpx;
+	border-bottom-left-radius: 20rpx;
+}
+
 .list .item .doing {
 	position: absolute;
 	right: 0;

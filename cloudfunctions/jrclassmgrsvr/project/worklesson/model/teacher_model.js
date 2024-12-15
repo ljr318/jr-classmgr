@@ -13,7 +13,7 @@ class TeacherModel extends BaseProjectModel {}
 TeacherModel.CL = BaseProjectModel.C('teacher');
 
 TeacherModel.DB_STRUCTURE = {
-  _id: 'string|true|comment=教练员ID',
+  // _id: 'string|true|comment=教练员ID',
   TEACHER_NAME: 'string|true',
   PHONE_NUMBER: 'string|true|comment=添加的管理员',
   AVATAR: 'string|true|default=|comment=头像cdn链接',

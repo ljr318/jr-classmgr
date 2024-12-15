@@ -140,7 +140,7 @@ class PassportBiz extends BaseBiz {
 					cancelText: '取消',
 					success(result) {
 						if (result.confirm) {
-							let url = pageHelper.fmtURLByPID('/pages/my/reg/my_reg') + '?retUrl=back';
+							let url = pageHelper.fmtURLByPID('/pages/my/reg/my_reg');
 							wx.navigateTo({ url });
 
 						} else if (result.cancel) {

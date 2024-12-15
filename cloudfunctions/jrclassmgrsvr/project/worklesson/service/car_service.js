@@ -59,8 +59,11 @@ class CarService extends BaseProjectService {
     console.log("carNumber:", carNumber);
     const tmpFields = "_id";
     const where = {
-      MEET_USING_CAR_ID: carNumber,
-      MEET_STATUS: 0,
+      and: [{
+        MEET_USING_CAR_ID: carNumber
+      }, {
+        MEET_STATUS: 0
+      }],
       or: [{
           MEET_START_TIME: [
             ['>=', occupiedTimeSpan.startTime],

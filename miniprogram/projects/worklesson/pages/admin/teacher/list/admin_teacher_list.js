@@ -205,9 +205,9 @@ Page({
 	_getSearchMenu: async function () {
 
 		let sortItems1 = [
-			{ label: '创建时间', type: '', value: '' },
-			{ label: '创建时间正序', type: 'sort', value: 'USER_ADD_TIME|asc' },
-			{ label: '创建时间倒序', type: 'sort', value: 'USER_ADD_TIME|desc' },
+			// { label: '创建时间', type: '', value: '' },
+			// { label: '创建时间正序', type: 'sort', value: 'USER_ADD_TIME|asc' },
+			// { label: '创建时间倒序', type: 'sort', value: 'USER_ADD_TIME|desc' },
 		];
 		let sortMenus = [
 			{ label: '全部', type: '', value: '' },
@@ -218,7 +218,7 @@ Page({
 
 		this.setData({
 			search: '',
-			sortItems: [sortItems1],
+			// sortItems: [sortItems1],
 			sortMenus,
 			isLoad: true
 		})

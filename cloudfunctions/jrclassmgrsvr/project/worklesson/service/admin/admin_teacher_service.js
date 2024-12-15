@@ -81,16 +81,25 @@ class AdminTeacherService extends BaseProjectAdminService {
     openID
   }) {
     let teacher = {};
-    teacher.TEACHER_ID = shortUUID.generate();
+    // teacher.TEACHER_ID = shortUUID.generate();
     teacher.TEACHER_NAME = teacherName;
     teacher.PHONE_NUMBER = phoneNumber;
     teacher.LOGIN_PASSWORD = password;
     teacher.STATUS = 1;
     teacher.PUBLISHED_LESSONS = {};
-    teacher.LAST_LOGIN_OPENID = openID;
+    teacher.LAST_LOGIN_OPENID = '';
     teacher.AVATAR = '';
     console.log('Teacher about to insert: ', teacher);
-    return await TeacherModel.insert(teacher);
+    try {
+      res = await TeacherModel.insert(teacher);
+      return res;
+    } catch(ex) {
+      console.log(ex);
+      if (ex.errCode === -502001) {
+        this.AppError("请勿重复添加！");
+      }
+    }
+    return null;
   }
 
   /** 修改状态 */

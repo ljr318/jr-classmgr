@@ -84,7 +84,7 @@ Page({
 			await cloudHelper.callCloudSumbit('admin/car_insert', data).then(res => {
 
 				let callback = async function () {
-          wx.navigateTo({
+          wx.redirectTo({
             url: '../list/admin_car_list'
           });
 				}

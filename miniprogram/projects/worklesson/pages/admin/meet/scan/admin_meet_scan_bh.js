@@ -44,22 +44,23 @@ module.exports = Behavior({
 		},
 
 		bindScanTap: function (e) {
-			let meetId = this.data.meetId;
+			// let meetId = this.data.meetId;
 			let that = this;
 			wx.scanCode({
 				async success(res) { 
-					if (!res ||
-						!res.result ||
-						!res.result.includes('meet=') ||
-						res.result.length != 20) {
-						pageHelper.showModal('错误的预约码，请重新扫码');
-						return;
-					}
+					// if (!res ||
+					// 	!res.result ||
+					// 	!res.result.includes('meet=') ||
+					// 	res.result.length != 20) {
+					// 	pageHelper.showModal('错误的预约码，请重新扫码');
+					// 	return;
+					// }
 
-					let code = res.result.replace('meet=', '');
+          // let code = res.result.replace('meet=', '');
+          console.log("code:", res.result);
 					let params = {
-						meetId,
-						code
+						// meetId,
+						code: res.result
 					};
 					let options = {
 						title: '预约码核销中'

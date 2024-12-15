@@ -23,7 +23,7 @@ async function set(key, val, type = '') {
 		SETUP_TYPE: type,
 		SETUP_VALUE: {
 			val
-		}, 
+		},
 	}
 	 
 	await SetupModel.insertOrUpdate(where, data);

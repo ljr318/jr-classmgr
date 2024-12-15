@@ -101,9 +101,9 @@ class MultiModel extends Model {
 	}
 
 	static async insertOrUpdate(where, data, mustPID = true) {
-		if (mustPID) {
-			where._pid = util.getProjectId();
-		}
+		// if (mustPID) {
+		// 	where._pid = util.getProjectId();
+		// }
 		return await super.insertOrUpdate(where, data);
 	}
 
