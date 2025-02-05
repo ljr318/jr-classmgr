@@ -409,15 +409,15 @@ class AdminMeetController extends BaseProjectAdminController {
 
     let rules = {
       _id: 'must|id',
-      meetTitle: 'must|string|min:2|max:50|name=课程标题',
+      // meetTitle: 'must|string|min:2|max:50|name=课程标题',
       // meetCateID: 'must|int|name=课程类型',
       // meetSubjectType: 'must|int|name=科目类型',
       // meetDrivingLicenseType: 'must|string|name=驾照等级',
-      meetDesc: 'must|string|min:6|max:30|name=课程详情',
+      // meetDesc: 'must|string|min:6|max:30|name=课程详情',
       // meetUsingCarID: 'string|min:6|max:30|name=课程使用的车辆ID',
       // meetStartTime: 'must|int|name=课程开始时间',
       // meetEndTime: 'must|int|name=课程结束时间',
-      meetLocation: 'must|string|name=课程地点',
+      // meetLocation: 'must|string|name=课程地点',
       // meetReserveStudentCnt: 'must|int|name=课程可预约人数',
       meetCancelSet: 'must|int|name=可取消时间',
       meetCanReserveStudentType: 'must|int|name=可预约学员类型',

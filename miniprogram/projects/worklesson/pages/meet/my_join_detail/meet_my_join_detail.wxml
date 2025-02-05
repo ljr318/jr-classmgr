@@ -6,7 +6,13 @@
     <view class="text-pic-list-box margin-top-xs">
       <view class="item card-project shadow-project">
         <view class="title-line" bindtap="url" data-url="../detail/meet_detail?id={{join.JOIN_MEET_ID}}">
-          <view class="title content-cut-two">{{join.meetInfo.MEET_TITLE}} </view>
+          <!--<view class="title content-cut-two">{{join.meetInfo.MEET_TITLE}} </view>-->
+          <view class="title content-cut-two"> <text wx-if="{{join.meetInfo.MEET_SUBJECT_TYPE === 1}}">科目二</text>
+            <text wx-if="{{join.meetInfo.MEET_SUBJECT_TYPE === 2}}">科目三</text>
+            <text> - </text>
+            <text wx-if="{{join.meetInfo.MEET_CATE_ID === 0}}">模拟</text>
+            <text wx-if="{{join.meetInfo.MEET_CATE_ID === 1}}">训练</text>
+          </view>
           <view class="arrow"><text class="icon-right"></text></view>
         </view>
 

@@ -312,6 +312,9 @@ class AdminMeetService extends BaseProjectAdminService {
           await StudentModel.inc({
             _id: item.JOIN_USER_ID
           }, "MEMBERSHIP_USAGE_TIMES");
+          await StudentModel.inc({
+            _id: item.JOIN_USER_ID
+          }, "MEMBERSHIP_USED_TIMES", -1);
         }
       }
     }

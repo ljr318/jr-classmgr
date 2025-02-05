@@ -19,18 +19,27 @@
   <view class="list">
     <view class="item shadow-project" wx:for="{{list}}" wx:key="key" bindtap="url" data-url="../detail/meet_detail?id={{item._id}}" data-status="{{item.MEET_STATUS}}">
 
-      <view class="title text-cut">{{item.MEET_TITLE}}</view>
+      <!--<view class="title text-cut">{{item.MEET_TITLE}}</view>-->
+      <view class="title text-cut">
+        <text>{{item.MEET_DRIVING_LICENSE_TYPE}}</text>
+        <text wx:if="{{item.MEET_SUBJECT_TYPE === 1}}"> 科目二</text>
+        <text wx:if="{{item.MEET_SUBJECT_TYPE === 2}}"> 科目三</text>
+        <text wx:if="{{item.MEET_CATE_ID === 0}}"> 模拟</text>
+        <text wx:if="{{item.MEET_CATE_ID === 1}}"> 训练</text>
+        <text></text>
+      </view>
       <view class="desc">剩余<text style="	font-weight: bold; color: rgb(177, 2, 2);">{{item.MEET_RESERVE_STUDENT_CNT - item.MEET_RESERVED_STUDENT_CNT}}</text>个名额可约</view>
       <view class="desc">{{item.startTimeStr}} ~ {{item.endTimeStr}}</view>
-      <view class="desc">地点：{{item.MEET_LOCATION}}</view>
-      <view class="desc">
+      <!--<view class="desc">地点：{{item.MEET_LOCATION}}</view>-->
+      <view class="desc">{{item.MEET_USING_CAR_ID ? item.MEET_USING_CAR_ID : ""}}</view>
+      <!--<view class="desc">
         <text>{{item.MEET_DRIVING_LICENSE_TYPE}}</text>
         <text wx:if="{{item.MEET_CATE_ID === 0}}"> 模拟</text>
         <text wx:if="{{item.MEET_CATE_ID === 1}}"> 训练</text>
         <text wx:if="{{item.MEET_SUBJECT_TYPE === 1}}"> 科目二</text>
         <text wx:if="{{item.MEET_SUBJECT_TYPE === 2}}"> 科目三</text>
         <text></text>
-      </view>
+      </view>-->
       <view class="img">
         <image class="loading shadow" mode="aspectFill" src="{{item.teacherInfo.AVATAR}}"></image>
         <text>{{item.teacherInfo.TEACHER_NAME}}</text>

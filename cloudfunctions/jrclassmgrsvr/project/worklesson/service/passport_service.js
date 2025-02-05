@@ -34,7 +34,7 @@ class PassportService extends BaseProjectService {
 
     // 看下是不是已经提前预注册好了
     where = {
-      PHONE_NUMBER: phoneNumber
+      PHONE_NUMBER: phoneNumber,
     }
     cnt = await StudentModel.count(where);
 
@@ -56,6 +56,11 @@ class PassportService extends BaseProjectService {
       return await this.login(userId);
     }
 
+    // 已经在库的查一下详细信息
+    const existsUser =  await StudentModel.getOne(where);
+    if (existsUser && existsUser.OPENID != phoneNumber) {
+      this.AppError("该手机号已注册，请更换！");
+    }
 
     // 如果已经在库里的则直接更新一下openid和注册时间
     // 入库

@@ -109,15 +109,15 @@ class AdminMeetBiz extends BaseBiz {
 
 /** 表单校验  */
 AdminMeetBiz.CHECK_FORM = {
-  meetTitle: 'meetTitle|must|string|min:2|max:50|name=课程标题',
+  // meetTitle: 'meetTitle|must|string|min:2|max:50|name=课程标题',
   meetCateID: 'meetCateID|must|int|name=课程类型',
   meetSubjectType: 'meetSubjectType|must|int|name=科目类型',
   meetDrivingLicenseType: 'meetDrivingLicenseType|must|string|name=驾照等级',
-  meetDesc: 'meetDesc|must|string|min:6|max:30|name=课程详情',
+  // meetDesc: 'meetDesc|must|string|min:6|max:30|name=课程详情',
   meetUsingCarID: 'meetUsingCarID|string|min:6|max:30|name=课程使用的车辆ID',
   meetStartTime: 'meetStartTime|must|int|name=课程开始时间',
   meetEndTime: 'meetEndTime|must|int|name=课程结束时间',
-  meetLocation: 'meetLocation|must|string|name=课程地点',
+  // meetLocation: 'meetLocation|must|string|name=课程地点',
   meetReserveStudentCnt: 'meetReserveStudentCnt|must|int|name=课程可预约人数',
   meetCancelSet: 'meetCancelSet|must|int|name=可取消时间',
   meetCanReserveStudentType: 'meetCanReserveStudentType|must|int|name=可预约学员类型',
@@ -125,9 +125,9 @@ AdminMeetBiz.CHECK_FORM = {
 
 AdminMeetBiz.EDIT_CHECK_FORM = {
   _id: 'id|must|string',
-  meetTitle: 'meetTitle|must|string|min:2|max:50|name=课程标题',
-  meetDesc: 'meetDesc|must|string|min:6|max:30|name=课程详情',
-  meetLocation: 'meetLocation|must|string|name=课程地点',
+  // meetTitle: 'meetTitle|must|string|min:2|max:50|name=课程标题',
+  // meetDesc: 'meetDesc|must|string|min:6|max:30|name=课程详情',
+  // meetLocation: 'meetLocation|must|string|name=课程地点',
   meetCancelSet: 'meetCancelSet|must|int|name=可取消时间',
   meetCanReserveStudentType: 'meetCanReserveStudentType|must|int|name=可预约学员类型',
 };

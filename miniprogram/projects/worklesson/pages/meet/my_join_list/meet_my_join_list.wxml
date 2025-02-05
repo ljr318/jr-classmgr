@@ -22,10 +22,10 @@
 
         <view class="title">{{item.JOIN_MEET_TITLE}}</view>
 
-        <view class="author content-cut-two">名称：{{item.meetInfo.MEET_TITLE}}</view>
+        <!--<view class="author content-cut-two">名称：{{item.meetInfo.MEET_TITLE}}</view>-->
         <view class="author">时间：{{item.startTimeStr}} ~ {{item.endTimeStr}}
         </view>
-        <view class="author content-cut-two">地点：{{item.meetInfo.MEET_LOCATION}}</view>
+        <!--<view class="author content-cut-two">地点：{{item.meetInfo.MEET_LOCATION}}</view>-->
         <view class="author content-cut-two">车辆：{{item.meetInfo.MEET_USING_CAR_ID}}
         </view>
         <view class="author content-cut-two">科目：<text wx-if="{{item.meetInfo.MEET_SUBJECT_TYPE === 1}}">科目二</text>

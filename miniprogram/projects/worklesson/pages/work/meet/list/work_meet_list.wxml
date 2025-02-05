@@ -12,7 +12,9 @@
       <view class="item" wx:for="{{dataList.list}}" wx:key="key">
         <view class="no">{{index+1}}</view>
         <view class="header">
-          <view class="left text-cut"> {{item.MEET_TITLE}}
+          <!--<view class="left text-cut"> {{item.MEET_TITLE}}
+          </view>-->
+          <view class="left text-cut"> {{index+1}}
           </view>
           <view class="right" bindtap="bindScanTap" data-id="{{item._id}}" data-title="{{item.MEET_TITLE}}">
             <text class="icon-scan"></text>
@@ -40,11 +42,12 @@
             </view>
           </view>
 
-          <view class="info-item">
+
+          <!--<view class="info-item">
             <view class="title">详情</view>
             <view class="mao">：</view>
             <view class="content">{{item.MEET_DESC}}</view>
-          </view>
+          </view>-->
 
           <view class="info-item">
             <view class="title">车辆</view>
@@ -53,10 +56,17 @@
           </view>
 
           <view class="info-item">
+            <view class="title">驾照等级</view>
+            <view class="mao">：</view>
+            <view class="content">
+              <text>{{item.MEET_DRIVING_LICENSE_TYPE}}</text>
+            </view>
+          </view>
+          <!--<view class="info-item">
             <view class="title">地点</view>
             <view class="mao">：</view>
             <view class="content">{{item.MEET_LOCATION}}</view>
-          </view>
+          </view>-->
 
           <view class="info-item">
             <view class="title">开始时间</view>

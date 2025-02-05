@@ -43,6 +43,11 @@ class MeetController extends BaseProjectController {
 
     let service = new MeetService();
     let list = await service.getMeetListByDay(input.day);
+    list.forEach((item)=>{
+      if (!item.teacherInfo.AVATAR || item.teacherInfo.AVATAR.length === 0) {
+        item.teacherInfo.AVATAR = "cloud://jrclassmgrsvr-1gl1udlh1bf4eaf8.6a72-jrclassmgrsvr-1gl1udlh1bf4eaf8-1325441838/teacher_icon.jpeg";
+      }
+    });
     return list;
   }
 
@@ -86,7 +91,9 @@ class MeetController extends BaseProjectController {
     // }
 
     //result.list = this.transMeetList(list);
-
+    if (!result.teacherInfo.AVATAR || result.teacherInfo.AVATAR.length === 0) {
+      result.teacherInfo.AVATAR = "cloud://jrclassmgrsvr-1gl1udlh1bf4eaf8.6a72-jrclassmgrsvr-1gl1udlh1bf4eaf8-1325441838/teacher_icon.jpeg";
+    }
     return result;
   }
 

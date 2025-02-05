@@ -5,10 +5,10 @@
     <view class="meet-title">
       <image mode="aspectFill" class="loading shadow" src="{{meet.teacherInfo.AVATAR}}" />
       <view style="display: flex;flex-direction: column;">
-        <view class="title">{{meet.MEET_TITLE}}</view>
-        <view class="subtitle">{{meet.startTimeStr}} ~ {{meet.endTimeStr}}</view>
-        <view class="subtitle">{{meet.teacherInfo.TEACHER_NAME}} - {{meet.teacherInfo.PHONE_NUMBER}}</view>
-        
+        <!--<view class="title">{{meet.MEET_TITLE}}</view>-->
+        <!--<view class="subtitle">{{meet.startTimeStr}} ~ {{meet.endTimeStr}}</view>-->
+        <!--<view class="subtitle">{{meet.teacherInfo.TEACHER_NAME}} - {{meet.teacherInfo.PHONE_NUMBER}}</view>-->
+        <view class="title">{{meet.teacherInfo.TEACHER_NAME}} - {{meet.teacherInfo.PHONE_NUMBER}}</view>
       </view>
     </view>
     <view class="meet-tab">
@@ -80,6 +80,18 @@
       </view>
       <view class="article">
         <view class="meetItem">
+          <text class="icon-time text-bold">开始时间：</text>
+          <text style="white-space: normal;word-wrap: break-word;">{{meet.startTimeStr}} </text>
+        </view>
+      </view>
+      <view class="article">
+        <view class="meetItem">
+          <text class="icon-timefill text-bold">结束时间：</text>
+          <text style="white-space: normal;word-wrap: break-word;">{{meet.endTimeStr}} </text>
+        </view>
+      </view>
+      <!--<view class="article">
+        <view class="meetItem">
           <text class="icon-form text-bold">课程详情：</text>
           <text style="white-space: normal;word-wrap: break-word;">{{meet.MEET_DESC}}</text>
         </view>
@@ -89,7 +101,7 @@
           <text class="icon-locationfill text-bold">课程地点：</text>
           <text style="white-space: normal;word-wrap: break-word;">{{meet.MEET_LOCATION}}</text>
         </view>
-      </view>
+      </view>-->
       <view class="article">
         <view class="meetItem">
           <text class="icon-taxi text-bold">课程车辆：</text>
@@ -97,7 +109,7 @@
         </view>
       </view>
 
-      
+
       <view class="article" wx:if="{{meet.MEET_OBJ.content && meet.MEET_OBJ.content.length>0}}">
         <block wx:for="{{meet.MEET_OBJ.content}}" wx:key="key">
           <view class="content" wx:if="{{item.type=='text'}}">
